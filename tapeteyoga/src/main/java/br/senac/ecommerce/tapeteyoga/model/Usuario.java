@@ -1,14 +1,19 @@
 package br.senac.ecommerce.tapeteyoga.model;
 
 import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
 import lombok.Data;
 
-@Entity
 @Data
+@Entity
 public class Usuario {
-    String nome;
-    String senha;
+
+    @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
+    Long id;
+
     String email;
-    String grupo;
-    boolean desabilitado;
+    String senha;
+    String descricao;
 }
