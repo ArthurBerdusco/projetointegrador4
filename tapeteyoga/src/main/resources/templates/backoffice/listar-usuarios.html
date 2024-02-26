@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Listar Usuários</title>
+</head>
+<body>
+    <header>
+        <h1>Listagem de Usuários</h1>
+    </header>
+    <main>
+        <!-- Tabela para listar os usuários -->
+        <button class="btn" onclick="location.href='/backoffice/cadastrar-usuario'">Cadastrar Usuário</button>
+        <table>
+            <thead>
+                <tr>
+                    <th>Nome</th>
+                    <th>Email</th>
+                    <th>Status</th>
+                    <th>Grupo</th>
+                    <th>Ações</th>
+                </tr>
+            </thead>
+            <tbody>
+                <!-- Adicione linhas para cada usuário -->
+                <tr>
+                    <td>Nome do Usuário</td>
+                    <td>usuario@example.com</td>
+                    <td>Ativo</td>
+                    <td>Admin</td>
+                    <td>
+                        <!-- Adicione links para editar, habilitar/desabilitar -->
+                        <a href="/backoffice/editar-usuario">Editar</a> |
+                        <a href="#">Habilitar/Desabilitar</a>
+                    </td>
+                </tr>
+                <!-- Repita conforme necessário para outros usuários -->
+                <tr>
+                    <td>Usuario 2</td>
+                    <td>usuario@example.com</td>
+                    <td>Ativo</td>
+                    <td>Admin</td>
+                    <td>
+                        <!-- Adicione links para editar, habilitar/desabilitar -->
+                        <a href="/backoffice/editar-usuario">Editar</a> |
+                        <a href="#">Habilitar/Desabilitar</a>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </main>
+</body>
+</html>
