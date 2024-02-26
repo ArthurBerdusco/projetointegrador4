@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="pt">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Login</title>
+</head>
+
+<body>
+    <header></header>
+    <main>
+        <h2>Login</h2>
+        <form th:action="@{/backoffice}" th:method="post" th:object="${usuario}">
+
+            <!--EMAIL-->
+            <label for="email">Email:</label>
+            <input type="text" th:field="*{email}" required>
+
+
+            <!--SENHA-->
+            <label for="senha">Senha:</label>
+            <input type="password" th:field="*{senha}" required>
+
+            <button type="submit">Entrar</button>
+        </form>
+    </main>
+    <footer></footer>
+</body>
+
+</html>
