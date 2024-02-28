@@ -8,6 +8,6 @@ import br.senac.ecommerce.tapeteyoga.model.Usuario;
 
 public interface UsuarioRepository extends JpaRepository<Usuario, Long> {
 
-    List<Usuario> findByEmail(String email);
+    Usuario findByEmail(String email);
 
 }
