@@ -1,25 +1,50 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Cadastro de Usuário</title>
 </head>
+
 <body>
     <h2>Cadastro de Usuário</h2>
+
+    <form th:action="@{/backoffice/cadastrar-usuario}" th:method="post" th:object="${usuario}">
     
-    <form th:action="@{/registrar}" th:method="post" th:object="${usuario}">
-        <!-- Nome do Usuário -->
         <label for="nome">Nome:</label>
         <input type="text" th:field="*{nome}" required>
         <br>
 
-        <!-- CPF -->
         <label for="cpf">CPF:</label>
         <input type="text" th:field="*{cpf}" required>
         <br>
 
+        <label for="email">Email:</label>
+        <input type="text" th:field="*{email}" required>
+        <br>
+
+        <label for="grupo">Grupo:</label>
+        <select th:field="*{grupo}" required>
+            <option value="administrador">Administrador</option>
+            <option value="estoquista">Estoquista</option>
+        </select>
+        <br>
+
+        <label for="senha">Senha:</label>
+        <input type="password" th:field="*{senha}" required>
+        <br>
+
+        <label for="confirmaSenha">Confirmar Senha:</label>
+        <input type="password" name="confirmaSenha" required>
+        <br>
+
+        <div th:if="${senhaErro}" class="alert alert-danger" role="alert">
+            <span th:text="${senhaErro}"></span>
+        </div>
+
         <input type="submit" value="Registrar">
     </form>
 </body>
+
 </html>
