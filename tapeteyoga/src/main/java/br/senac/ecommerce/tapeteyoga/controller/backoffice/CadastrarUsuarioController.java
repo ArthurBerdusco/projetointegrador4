@@ -35,11 +35,7 @@ public class CadastrarUsuarioController {
             return "redirect:/backoffice/cadastrar-usuario";
         }
 
-       // BCryptPasswordEncoder criptografar = new BCryptPasswordEncoder();
 
-       // String senhaCriptografada = criptografar.encode(usuario.getSenha());
-
-      //  usuario.setSenha(senhaCriptografada);
 
        usuarioRepository.save(usuario);
         return "redirect:/backoffice/cadastrar-usuario";
