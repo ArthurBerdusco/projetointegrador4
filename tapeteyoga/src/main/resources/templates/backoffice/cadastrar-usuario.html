@@ -5,43 +5,56 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Cadastro de Usuário</title>
+    <script>
+        function validatePassword() {
+            var password = document.getElementById("password").value;
+            var confirmPassword = document.getElementById("confirmPassword").value;
+
+            if (password !== confirmPassword) {
+                alert("As senhas não coincidem.");
+                return false;
+            }
+            return true;
+        }
+    </script>
 </head>
 
 <body>
     <h2>Cadastro de Usuário</h2>
 
-    <form th:action="@{/backoffice/cadastrar-usuario}" th:method="post" th:object="${usuario}">
-    
-        <label for="nome">Nome:</label>
-        <input type="text" th:field="*{nome}" required>
+
+    <form th:action="@{/backoffice/cadastrar-usuario}" th:method="post" th:object="${usuario}"
+        onsubmit="return validatePassword()" enctype="application/x-www-form-urlencoded">
+        <!-- Nome completo -->
+        <label for="nome">Nome completo:</label>
+        <input type="text" th:field="*{fullname}" required>
+
         <br>
 
         <label for="cpf">CPF:</label>
         <input type="text" th:field="*{cpf}" required>
         <br>
 
-        <label for="email">Email:</label>
-        <input type="text" th:field="*{email}" required>
+        <!-- Email referencia username banco de dados-->
+        <label for="cpf">Email:</label>
+        <input type="text" th:field="*{username}" required>
         <br>
 
-        <label for="grupo">Grupo:</label>
-        <select th:field="*{grupo}" required>
-            <option value="administrador">Administrador</option>
-            <option value="estoquista">Estoquista</option>
+        <!-- Senha -->
+        <label for="password">Senha:</label>
+        <input type="password" th:field="*{password}" required>
+        <br>
+
+        <!-- Confirmar senha -->
+        <label for="confirmPassword">Confirmar senha:</label>
+        <input type="password" id="confirmPassword" required>
+        <br>
+
+        <select th:field="*{role}" required>
+            <option value="ADMIN">Admin</option>
+            <option value="USER">Estoquista</option>
         </select>
-        <br>
 
-        <label for="senha">Senha:</label>
-        <input type="password" th:field="*{senha}" required>
-        <br>
-
-        <label for="confirmaSenha">Confirmar Senha:</label>
-        <input type="password" name="confirmaSenha" required>
-        <br>
-
-        <div th:if="${senhaErro}" class="alert alert-danger" role="alert">
-            <span th:text="${senhaErro}"></span>
-        </div>
 
         <input type="submit" value="Registrar">
     </form>
