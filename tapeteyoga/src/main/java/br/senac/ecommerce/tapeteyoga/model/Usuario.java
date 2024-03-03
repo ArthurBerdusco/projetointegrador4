@@ -8,9 +8,7 @@ import jakarta.persistence.Id;
 import lombok.Data;
 
 @Data
-
 @Entity
-@Table
 public class Usuario {
 
     @Id
