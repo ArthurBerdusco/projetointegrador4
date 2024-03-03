@@ -22,5 +22,6 @@ public class ListarUsuarioController {
         System.out.println(usuarios);
         model.addAttribute("usuarios", usuarios);
         return "backoffice/listar-usuarios";
+        
     }
 }
