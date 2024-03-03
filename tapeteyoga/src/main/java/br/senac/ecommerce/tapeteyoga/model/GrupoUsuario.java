@@ -1,8 +1,8 @@
 package br.senac.ecommerce.tapeteyoga.model;
 
 public enum GrupoUsuario {
-    ADMINISTRADOR("administrador"),
-    ESTOQUISTA("estoquista");
+    ADMIN("admin"),
+    USER("user");
 
     private String grupo;
 

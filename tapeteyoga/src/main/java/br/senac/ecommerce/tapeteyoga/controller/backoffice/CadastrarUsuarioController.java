@@ -1,16 +1,23 @@
 package br.senac.ecommerce.tapeteyoga.controller.backoffice;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 
 import br.senac.ecommerce.tapeteyoga.model.Usuario;
+import br.senac.ecommerce.tapeteyoga.repository.UsuarioRepository;
 
 @Controller
 public class CadastrarUsuarioController {
+
+    @Autowired
+    UsuarioRepository repository;
     
-    @GetMapping("/backoffice/cadastrar-usuario")
-    public String cadastrarUsuario(Usuario usuario, Model model){
+    @PostMapping("/backoffice/cadastrar-usuario")
+    public String cadastrarUsuario(@RequestBody Usuario usuario){
+        repository.save(usuario);
+        System.out.println("Usuario cadastrado com sucesso.");
         return "/backoffice/cadastrar-usuario";
     }
 

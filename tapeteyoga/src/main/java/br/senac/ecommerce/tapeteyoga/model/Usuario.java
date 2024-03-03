@@ -11,7 +11,6 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
-import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -21,7 +20,6 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
-@Table(name = "usuario")
 @EqualsAndHashCode
 public class Usuario implements UserDetails {
 
@@ -32,13 +30,18 @@ public class Usuario implements UserDetails {
     private String cpf;
     private String email;
     private String senha;
-    private String confirmSenha;
     private GrupoUsuario grupo;
+
+    public Usuario(String email, String senha, GrupoUsuario grupo){
+        this.email = email;
+        this.senha = senha;
+        this.grupo = grupo;
+    }
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         
-        if(this.grupo == GrupoUsuario.ADMINISTRADOR) return List.of(new SimpleGrantedAuthority("ROLE_ADMIN"), new SimpleGrantedAuthority("ROLE_ADMIN"));
+        if(this.grupo == GrupoUsuario.ADMIN) return List.of(new SimpleGrantedAuthority("ROLE_ADMIN"), new SimpleGrantedAuthority("ROLE_ADMIN"));
         else return List.of(new SimpleGrantedAuthority("ROLE_USER"));
 
     }

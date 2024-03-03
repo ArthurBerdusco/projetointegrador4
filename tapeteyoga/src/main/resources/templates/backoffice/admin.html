@@ -11,7 +11,7 @@
     <header></header>
     <main>
         <h2>Login</h2>
-        <form th:action="@{/backoffice}" th:method="post" th:object="${usuario}">
+        <form th:action="@{/auth/backofficelogin}" th:method="post" th:object="${usuario}">
 
             <!--EMAIL-->
             <label for="email">Email:</label>
