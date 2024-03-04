@@ -1,5 +1,7 @@
 package br.senac.ecommerce.tapeteyoga.model;
 
+import java.util.List;
+
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -16,9 +18,13 @@ public class Usuario {
     private Long id;
     private String fullname;
     private String cpf;
+    private String email;
+    private String senha;
+    private String grupo;
     private String username;//EMAIL
     private String password;
     private String role;
+
     
 
 }
