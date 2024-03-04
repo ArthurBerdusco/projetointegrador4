@@ -1,44 +1,39 @@
 package br.senac.ecommerce.tapeteyoga.controller.backoffice;
 
+import java.util.Optional;
+
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 import br.senac.ecommerce.tapeteyoga.model.Usuario;
 import br.senac.ecommerce.tapeteyoga.repository.UsuarioRepository;
 
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.servlet.mvc.support.RedirectAttributes;
-
-@Controller
+@RestController
 public class CadastrarUsuarioController {
 
     @Autowired
-    UsuarioRepository usuarioRepository;
+    private UsuarioRepository repository;
 
+    @Autowired
+    private PasswordEncoder passwordEncoder;
 
-    @GetMapping("/backoffice/cadastrar-usuario")
-    public String usuario(Usuario usuario, Model model) {
-        return "/backoffice/cadastrar-usuario";
-    }
-
-    @PostMapping("/backoffice/cadastrar-usuario")
-    public String cadastrarUsuario(Usuario usuario, @RequestParam("confirmaSenha") String confirmaSenha, RedirectAttributes attr) {
-
-        String grupo = "administrador".equals(usuario.getGrupo()) ? "administrador" : "estoquista";
-        usuario.setGrupo(grupo);
-
-        if (!usuario.getSenha().equals(confirmaSenha)) {
-            attr.addFlashAttribute("senhaErro", "As senhas não são iguais.");
-            return "redirect:/backoffice/cadastrar-usuario";
+    @PostMapping("backoffice/cadastrar-usuario")
+    public ResponseEntity<?> cadastrarUsuario(@ModelAttribute Usuario usuario) {
+        // Check if the username is already taken
+        Optional<Usuario> user = repository.findByUsername(usuario.getUsername());
+        if (user.isPresent()) {
+            return ResponseEntity.badRequest().body("Email já cadastrado, tente novamente");
         }
 
+        usuario.setPassword(passwordEncoder.encode(usuario.getPassword()));
 
+        Usuario savedUser = repository.save(usuario);
 
-       usuarioRepository.save(usuario);
-        return "redirect:/backoffice/cadastrar-usuario";
+        return ResponseEntity.ok(savedUser);
     }
 
 }

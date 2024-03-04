@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import br.senac.ecommerce.tapeteyoga.model.Usuario;
+import br.senac.ecommerce.tapeteyoga.repository.UsuarioRepository;
 
 import java.util.List;
 
@@ -15,7 +16,7 @@ import java.util.List;
 @RequestMapping("/administrador/usuarios")
 public class ListarUsuarioController {
     @Autowired
-    private Usuario usuarioService;
+    private UsuarioRepository repository;
 
     @ModelAttribute("filtro")
     public Usuario getFiltro() {
@@ -23,12 +24,11 @@ public class ListarUsuarioController {
     }
     
     @GetMapping("/backoffice/listar-usuarios")
-    public String listarUsuario(Model model, @RequestParam(required = false)String nome) {
-        List<Usuario> usuarios;
-        if (nome != null && !nome.isBlank()) {
-            usuarios = usuarioService.buscarPorNome(nome);
-        } else {
-            usuarios = ((Object) usuarioService).listarUsuario();
+    public String listarUsuario(Model model) {
+        List<Usuario> usuarios = repository.findAll();
+        
+        if (usuarios.isEmpty()) {
+            return null;
         }
 
         model.addAttribute("usuarios", usuarios);
@@ -36,12 +36,4 @@ public class ListarUsuarioController {
     }
     
 }
-
-
-
-
-    
-
-    
-
 
