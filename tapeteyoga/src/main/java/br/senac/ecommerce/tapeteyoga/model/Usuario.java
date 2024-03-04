@@ -1,5 +1,7 @@
 package br.senac.ecommerce.tapeteyoga.model;
 
+import java.util.List;
+
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -27,5 +29,10 @@ public class Usuario {
     private String email;
     private String senha;
     private String grupo;
+    public List<Usuario> buscarPorNome(String nome2) {
+        
+        throw new UnsupportedOperationException("Unimplemented method 'buscarPorNome'");
+    }
+    
 
 }

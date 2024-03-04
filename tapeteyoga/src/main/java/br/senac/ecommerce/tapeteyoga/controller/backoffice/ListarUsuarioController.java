@@ -19,7 +19,7 @@ public class ListarUsuarioController {
 
     @ModelAttribute("filtro")
     public Usuario getFiltro() {
-        return new Usuario(); // Crie um objeto de filtro vazio
+        return new Usuario(); 
     }
     
     @GetMapping("/backoffice/listar-usuarios")
