@@ -22,28 +22,17 @@
                     <th>Ações</th>
                 </tr>
             </thead>
-            <tbody>
+            <tbody th:each="usuario : ${usuarios}">
                 <!-- Adicione linhas para cada usuário -->
                 <tr>
-                    <td>Nome do Usuário</td>
-                    <td>usuario@example.com</td>
-                    <td>Ativo</td>
-                    <td>Admin</td>
+                    <td th:text="${usuario.fullname}"></td>
+                    <td th:text="${usuario.username}"></td>
+                    <!-- Adicione lógica para verificar o status e o grupo do usuário -->
+                    <td th:text="${usuario.isActive ? 'Ativo' : 'Inativo'}"></td>
+                    <td th:text="${usuario.role}"></td>
                     <td>
                         <!-- Adicione links para editar, habilitar/desabilitar -->
-                        <a href="/backoffice/editar-usuario">Editar</a> |
-                        <a href="#">Habilitar/Desabilitar</a>
-                    </td>
-                </tr>
-                <!-- Repita conforme necessário para outros usuários -->
-                <tr>
-                    <td>Usuario 2</td>
-                    <td>usuario@example.com</td>
-                    <td>Ativo</td>
-                    <td>Admin</td>
-                    <td>
-                        <!-- Adicione links para editar, habilitar/desabilitar -->
-                        <a href="/backoffice/editar-usuario">Editar</a> |
+                        <a th:href="@{/backoffice/editar-usuario/{id}(id=${usuario.id})}">Editar</a> |
                         <a href="#">Habilitar/Desabilitar</a>
                     </td>
                 </tr>

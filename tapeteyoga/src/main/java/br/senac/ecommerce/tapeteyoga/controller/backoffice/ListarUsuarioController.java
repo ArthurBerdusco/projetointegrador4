@@ -17,11 +17,8 @@ public class ListarUsuarioController {
 
     @GetMapping("/backoffice/listar-usuarios")
     public String listarUsuarios(Model model) {
-        System.out.println("cheguei");
         List<Usuario> usuarios = repository.findAll();
-        System.out.println(usuarios);
         model.addAttribute("usuarios", usuarios);
         return "backoffice/listar-usuarios";
-        
     }
 }
