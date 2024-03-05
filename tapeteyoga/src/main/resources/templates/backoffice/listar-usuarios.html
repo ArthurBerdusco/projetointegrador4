@@ -1,15 +1,27 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="/css/listar.css">
     <title>Listar Usuários</title>
 </head>
+
 <body>
     <header>
         <h1>Listagem de Usuários</h1>
     </header>
     <main>
+        <div class="search">
+            <form th:action="@{/backoffice/procurar}" th:method="get">
+                <input type="text" id="fullname" name="fullname" placeholder="Procurar Nome">
+                <button type="submit">Buscar</button>
+            </form>
+        </div>
+
+
+
         <!-- Tabela para listar os usuários -->
         <button class="btn" onclick="location.href='/backoffice/cadastrar-usuario'">Cadastrar Usuário</button>
         <table>
@@ -33,7 +45,7 @@
                     <td th:text="${usuario.role}"></td>
                     <td>
                         <!-- Adicione links para editar, habilitar/desabilitar -->
-                        <a th:href="@{/backoffice/editar-usuario/{id}(id=${usuario.id})}">Editar</a> |
+                        <a th:href="@{/backoffice/editar-usuario/{id}(id=${usuario.id})}">Editar</a>
 
                     </td>
                     <td>
@@ -50,4 +62,5 @@
         </table>
     </main>
 </body>
+
 </html>
