@@ -8,29 +8,25 @@ import br.senac.ecommerce.tapeteyoga.model.Usuario;
 @Controller
 public class ContentController {
 
-  @GetMapping("/home")
-  public String handleWelcome() {
-    return "home";
-  }
-
   @GetMapping("/backoffice/home")
   public String handleBackofficeHome(Usuario usuario) {
     return "/backoffice/home_backoffice";
   }
 
-
   @GetMapping("/backoffice/cadastrar-usuario")
   public String handleBackofficeCadastro(Usuario usuario) {
     return "/backoffice/cadastrar-usuario";
+
   }
 
-  @GetMapping("/user/home")
-  public String handleUserHome() {
-    return "home_user";
+  @GetMapping("/backoffice/listar-produtos")
+  public String handleBackofficeProdutos(Usuario usuario) {
+    return "/backoffice/produtos_backoffice";
   }
 
   @GetMapping("/login/backoffice")
   public String handleBackofficeLogin(Usuario usuario) {
     return "backoffice/backoffice_login";
   }
+
 }
