@@ -24,13 +24,14 @@ public class ListarUsuarioController {
     }
     
     @GetMapping("/backoffice/listar-usuarios")
+
     public String listarUsuario(Model model) {
         List<Usuario> usuarios = repository.findAll();
         
         if (usuarios.isEmpty()) {
             return null;
         }
-
+      
         model.addAttribute("usuarios", usuarios);
         return "backoffice/listar-usuarios";
     }

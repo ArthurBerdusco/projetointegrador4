@@ -24,7 +24,7 @@
 
 
     <form th:action="@{/backoffice/cadastrar-usuario}" th:method="post" th:object="${usuario}"
-        onsubmit="return validatePassword()" enctype="application/x-www-form-urlencoded">
+        onsubmit="return validatePassword()">
         <!-- Nome completo -->
         <label for="nome">Nome completo:</label>
         <input type="text" th:field="*{fullname}" required>
