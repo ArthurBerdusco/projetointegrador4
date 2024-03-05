@@ -28,7 +28,10 @@ public class SecurityConfiguration {
                 .authorizeHttpRequests(registry -> {
                     registry.requestMatchers("/home","/setup", "/backoffice/cadastrar-usuario").permitAll();
                     registry.requestMatchers("/", "/img/**", "/css/**", "/js/**").permitAll();
+                    registry.requestMatchers("/backoffice/home").hasAnyRole("ADMIN", "USER");
+                    registry.requestMatchers("/backoffice/listar-produtos").hasAnyRole("ADMIN", "USER");
                     registry.requestMatchers("/backoffice/**").hasRole("ADMIN");
+
                     registry.requestMatchers("/user/**").hasRole("USER");
                     registry.anyRequest().authenticated();
                 })
