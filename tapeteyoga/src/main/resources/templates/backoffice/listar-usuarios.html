@@ -19,7 +19,8 @@
                     <th>Email</th>
                     <th>Status</th>
                     <th>Grupo</th>
-                    <th>Ações</th>
+                    <th>Editar</th>
+                    <th>Gerenciar</th>
                 </tr>
             </thead>
             <tbody th:each="usuario : ${usuarios}">
@@ -33,7 +34,16 @@
                     <td>
                         <!-- Adicione links para editar, habilitar/desabilitar -->
                         <a th:href="@{/backoffice/editar-usuario/{id}(id=${usuario.id})}">Editar</a> |
-                        <a href="#">Habilitar/Desabilitar</a>
+
+                    </td>
+                    <td>
+                        <!-- Lógica para exibir a opção correta com base no status do usuário -->
+                        <span th:if="${usuario.isActive}">
+                            <a th:href="@{'/backoffice/desabilitar-usuario/' + ${usuario.id}}">Desabilitar</a>
+                        </span>
+                        <span th:unless="${usuario.isActive}">
+                            <a th:href="@{'/backoffice/habilitar-usuario/' + ${usuario.id}}">Habilitar</a>
+                        </span>
                     </td>
                 </tr>
             </tbody>
