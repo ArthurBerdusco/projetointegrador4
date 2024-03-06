@@ -40,7 +40,6 @@
                 <tr>
                     <td th:text="${usuario.fullname}"></td>
                     <td th:text="${usuario.username}"></td>
-                    <!-- Adicione lógica para verificar o status e o grupo do usuário -->
                     <td th:text="${usuario.isActive ? 'Ativo' : 'Inativo'}"></td>
                     <td th:text="${usuario.role}"></td>
                     <td>
@@ -51,10 +50,15 @@
                     <td>
                         <!-- Lógica para exibir a opção correta com base no status do usuário -->
                         <span th:if="${usuario.isActive}">
-                            <a th:href="@{'/backoffice/desabilitar-usuario/' + ${usuario.id}}">Desabilitar</a>
+                            <form th:action="@{'/backoffice/desabilitar-usuario/' + ${usuario.id}}" th:method="post">
+                                <button class="btn" type="submit">Desabilitar</a>
+                            </form>
+                        
                         </span>
                         <span th:unless="${usuario.isActive}">
-                            <a th:href="@{'/backoffice/habilitar-usuario/' + ${usuario.id}}">Habilitar</a>
+                            <form  th:action="@{'/backoffice/habilitar-usuario/' + ${usuario.id}}" th:method="post">
+                                <button class="btn" type="submit">Habilitar</a>
+                            </form>
                         </span>
                     </td>
                 </tr>
