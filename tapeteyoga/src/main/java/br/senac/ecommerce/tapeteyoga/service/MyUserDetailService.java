@@ -21,7 +21,7 @@ public class MyUserDetailService implements UserDetailsService {
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         Optional<Usuario> user = repository.findByUsername(username);
-        if (user.isPresent()) {
+        if (user.isPresent() && user.get().isActive()) { 
             var userObj = user.get();
             return User.builder()
                     .username(userObj.getUsername())
