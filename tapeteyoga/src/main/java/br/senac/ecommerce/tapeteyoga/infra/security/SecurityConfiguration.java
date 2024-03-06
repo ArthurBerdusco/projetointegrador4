@@ -26,13 +26,16 @@ public class SecurityConfiguration {
         return httpSecurity
                 .csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(registry -> {
-                    registry.requestMatchers("/home","/setup", "/backoffice/cadastrar-usuario", "/backoffice/procurar").permitAll();
-                    registry.requestMatchers("/", "/img/**", "/css/**", "/js/**").permitAll();
-                    registry.requestMatchers("/backoffice/home").hasAnyRole("ADMIN", "USER");
-                    registry.requestMatchers("/backoffice/listar-produtos").hasAnyRole("ADMIN", "USER");
-                    registry.requestMatchers("/backoffice/**").hasRole("ADMIN");
 
-                    registry.requestMatchers("/user/**").hasRole("USER");
+                    /*Todos */
+                    registry.requestMatchers("/setup", "/", "/img/**", "/css/**", "/js/**").permitAll();
+   
+
+                    /*Administrador */
+                    registry.requestMatchers("/backoffice/**").hasRole("ADMIN");
+                    
+                    /*Estoquista */
+                    registry.requestMatchers("/user/**", "/backoffice/home", "/backoffice/listar-produtos").hasRole("USER");
                     registry.anyRequest().authenticated();
                 })
                 .logout(logoutConfigurer ->

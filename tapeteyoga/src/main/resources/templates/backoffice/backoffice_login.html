@@ -29,6 +29,9 @@
             
             <button type="submit">Login</button>
             </form>
+            <div th:if="${mensagem}" class="alert alert-danger" role="alert">
+                <p th:text="${mensagem}"></p>
+            </div>
         </div>
     </div>
 </body>
