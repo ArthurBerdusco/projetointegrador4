@@ -3,10 +3,12 @@ package br.senac.ecommerce.tapeteyoga.controller.backoffice;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.ModelAndView;
+import org.springframework.web.servlet.view.RedirectView;
 
 import br.senac.ecommerce.tapeteyoga.model.Usuario;
 import br.senac.ecommerce.tapeteyoga.repository.UsuarioRepository;
@@ -43,7 +45,7 @@ public class CadastrarUsuarioController {
     }
 
     @GetMapping("/setup")
-    public ResponseEntity<?> cadastrarUsuario() {
+    public RedirectView cadastrarUsuario(Model model) {
 
         Usuario usuario = new Usuario();
 
@@ -55,12 +57,13 @@ public class CadastrarUsuarioController {
         boolean userExists = repository.existsByUsername(usuario.getUsername());
 
         if (userExists) {
-            return ResponseEntity.badRequest().body("Conta admin já cadastrada");
+            model.addAttribute("mensagem", "Erro, usuário admin já cadastrado");
+            return new RedirectView("/backoffice/backoffice_login");
         }
 
-        Usuario savedUser = repository.save(usuario);
+        repository.save(usuario);
 
-        return ResponseEntity.ok(savedUser);
+        return new RedirectView("/backoffice/backoffice_login");
     }
 
 }
