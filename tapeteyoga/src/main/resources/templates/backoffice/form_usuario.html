@@ -5,68 +5,116 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Cadastro de Usuário</title>
+    <link rel="stylesheet" href="/css/style.css">
     <link rel="stylesheet" href="/css/form_usuario.css">
-    <script>
-        function validatePassword() {
-            var password = document.getElementById("password").value;
-            var confirmPassword = document.getElementById("confirmPassword").value;
-
-            if (password !== confirmPassword) {
-                alert("As senhas não coincidem.");
-                return false;
-            }
-            return true;
-        }
-    </script>
 </head>
 
 <body>
-    
-    <form
-        th:action="${usuario.id != null} ? @{/backoffice/editar-usuario/{id}(id=${usuario.id})} : @{/backoffice/cadastrar-usuario}"
-        th:method="post" th:object="${usuario}" onsubmit="return validatePassword()">
-        <h2>Cadastro de Usuário</h2>
 
-        <!-- Nome completo -->
-        <label for="nome">Nome completo:</label>
-        <input type="text" th:field="*{fullname}" required>
-        <span th:errors="*{fullname}"></span>
-        <br>
+    <header>
+        <a href="/backoffice/home" class="logo"></a>
+        <h2>Harmony</h2>
+        <div class="header-right">
+            <a class="active" href="http://localhost:8080/logout">Logout</a>
+        </div>
+    </header>
 
-        <!-- CPF -->
-        <label for="cpf">CPF:</label>
-        <input type="text" th:field="*{cpf}" required>
-        <span th:errors="*{cpf}"></span>
-        <br>
+    <div class="container">
+        <nav>
+            <p th:text="'Usuário: ' + ${usuario.fullname}"></p>
+            <p th:text="'Autoridades: ' + ${usuario.role}"></p>
+        
+            <a href="/backoffice/home" class="nav-link">
+                <p>Home</p>
+            </a>
+        
+            <a href="/backoffice/listar-usuarios" class="nav-link">
+                <p>Listar Usuários</p>
+            </a>
+        
+            <a href="/backoffice/listar-produtos" class="nav-link active">
+                <p>Listar Produtos</p>
+            </a>
+        </nav>
 
-        <!-- Email -->
-        <label for="username">Email:</label>
-        <input type="text" th:field="*{username}" th:readonly="${usuario.id != null}" required>
-        <span th:errors="*{username}"></span>
-        <br>
+        <main class="formulario-usuario">
 
-        <!-- Senha -->
-        <label for="password">Senha:</label>
-        <input type="password" th:field="*{password}" th:minlength="${usuario.id == null ? 4 : null}" th:placeholder="${usuario.id != null} ? '*******'" th:required="${usuario.id == null}" >
-        <span th:errors="*{password}"></span>
-        <br>
+            <form
+                th:action="${usuario.id != null} ? @{/backoffice/editar-usuario/{id}(id=${usuario.id})} : @{/backoffice/cadastrar-usuario}"
+                th:method="post" th:object="${usuario}" onsubmit="return validatePassword()">
+                <h2>Cadastro de Usuário</h2>
 
-        <!-- Confirmar senha -->
-        <label for="confirmPassword">Confirmar senha:</label>
-        <input type="password" id="confirmPassword" th:minlength="${usuario.id == null ? 4 : null}" th:placeholder="${usuario.id != null} ? '*******'" th:required="${usuario.id == null}">
-        <br>
+                <!-- Nome completo -->
+                <label for="nome">Nome completo:</label>
+                <input type="text" th:field="*{fullname}" required>
+                <span th:errors="*{fullname}"></span>
+                <br>
 
-        <!-- Função do usuário -->
-        <label for="role">Função do usuário:</label>
-        <select th:field="*{role}" required>
-            <option value="Administrador">Administrador</option>
-            <option value="Estoquista">Estoquista</option>
-        </select>
-        <span th:errors="*{role}"></span>
-        <br>
+                <!-- CPF -->
+                <label for="cpf">CPF:</label>
+                <input type="number" onKeyPress="if(this.value.length==11) return false;" th:field="*{cpf}" required>
+                <span th:errors="*{cpf}"></span>
+                <br>
 
-        <button>Salvar</button>
-    </form>
+                <!-- Email -->
+                <label for="username">Email:</label>
+                <input type="text" th:field="*{username}" th:readonly="${usuario.id != null}" required>
+                <span th:errors="*{username}"></span>
+                <br>
+
+                <!-- Senha -->
+                <label for="password">Senha:</label>
+                <input type="password" th:field="*{password}" th:minlength="${usuario.id == null ? 4 : null}"
+                    th:placeholder="${usuario.id != null} ? '*******'" th:required="${usuario.id == null}">
+                <span th:errors="*{password}"></span>
+                <br>
+
+                <!-- Confirmar senha -->
+                <label for="confirmPassword">Confirmar senha:</label>
+                <input type="password" id="confirmPassword" th:minlength="${usuario.id == null ? 4 : null}"
+                    th:placeholder="${usuario.id != null} ? '*******'" th:required="${usuario.id == null}">
+                <br>
+
+                <!-- Função do usuário -->
+                <label for="role">Função do usuário:</label>
+                <select th:field="*{role}" th:readonly="${usuario.id == usuarioAutenticadoId}" required>
+                    <option value="Administrador">Administrador</option>
+                    <option value="Estoquista">Estoquista</option>
+                </select>
+                <span th:errors="*{role}"></span>
+                <br>
+
+
+                <!-- Função do usuário -->
+                    <label for="isActive">Gerenciar:</label>
+                    <select th:field="*{active}" th:disabled="${usuario.id == null}" required>
+                        <option value="1" selected>Ativo</option>
+                        <option value="0" >Inativo</option>
+                    </select>
+                <span th:errors="*{active}"></span>
+                <br>
+                <button>Salvar</button>
+            </form>
+
+        </main>
+    </div>
+
+
+
+
 </body>
+
+<script>
+    function validatePassword() {
+        var password = document.getElementById("password").value;
+        var confirmPassword = document.getElementById("confirmPassword").value;
+
+        if (password !== confirmPassword) {
+            alert("As senhas não coincidem.");
+            return false;
+        }
+        return true;
+    }
+</script>
 
 </html>

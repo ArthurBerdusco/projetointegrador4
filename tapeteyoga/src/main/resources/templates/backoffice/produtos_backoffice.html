@@ -4,8 +4,37 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Produtos - Backoffice</title>
+    <link rel="stylesheet" href="/css/style.css">
 </head>
 <body>
-    <h1>Produtos</h1>
+    <header>
+        <a href="/backoffice/home" class="logo"></a>
+        <h2>Harmony</h2>
+        <div class="header-right">
+            <a href="http://localhost:8080/logout">Logout</a>
+        </div>
+    </header>
+
+    <div class="container">
+        <nav>
+            <p th:text="'Usuário: ' + ${usuario.fullname}"></p>
+            <p th:text="'Autoridades: ' + ${usuario.role}"></p>
+
+            <a href="/backoffice/home" class="nav-link">
+                <p>Home</p>
+            </a>
+
+            <a href="/backoffice/listar-usuarios" class="nav-link">
+                <p>Listar Usuários</p>
+            </a>
+
+            <a href="/backoffice/listar-produtos" class="nav-link active">
+                <p>Listar Produtos</p>
+            </a>
+        </nav>
+
+        <main>
+            <h1>Produtos</h1>
+        </main>
 </body>
 </html>

@@ -4,72 +4,109 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="/css/style.css">
     <link rel="stylesheet" href="/css/listar.css">
+
     <title>Listar Usuários</title>
+
 </head>
 
 <body>
+
+
     <header>
-        <h1>Listagem de Usuários</h1>
-        <a href="http://localhost:8080/logout">Logout</a>
-
-    </header>
-    <main>
-        <div class="search">
-            <form th:action="@{/backoffice/procurar}" th:method="get">
-                <input type="text" id="fullname" name="fullname" placeholder="Procurar Nome">
-                <button class="btn cadastrar" type="submit">Buscar</button>
-            </form>
-            <button class="btn cadastrar" onclick="location.href='/backoffice/cadastrar-usuario'">Cadastrar Usuário</button>
+        <a href="/backoffice/home" class="logo"></a>
+        <h2>Harmony</h2>
+        <div class="header-right">
+            <a href="http://localhost:8080/logout">Logout</a>
         </div>
+    </header>
 
-        <table>
-            <thead>
-                <tr>
-                    <th>Nome</th>
-                    <th>Email</th>
-                    <th>Status</th>
-                    <th>Grupo</th>
-                    <th>Editar</th>
-                    <th>Gerenciar</th>
-                </tr>
-            </thead>
-            <tbody th:each="usuario : ${usuarios}">
-                <!-- Adicione linhas para cada usuário -->
-                <tr>
-                    <td th:text="${usuario.fullname}"></td>
-                    <td th:text="${usuario.username}"></td>
-                    <td th:text="${usuario.isActive ? 'Ativo' : 'Inativo'}"></td>
-                    <td th:text="${usuario.role}"></td>
-                    <td>
-                        <!-- Adicione links para editar, habilitar/desabilitar -->
-                        <a class="btn editar" th:href="@{/backoffice/editar-usuario/{id}(id=${usuario.id})}">Editar</a>
+    <div class="container">
+        <nav>
+            <p th:text="'Usuário: ' + ${usuario.fullname}"></p>
+            <p th:text="'Autoridades: ' + ${usuario.role}"></p>
 
-                    </td>
-                    <td>
-                        <!-- Lógica para exibir a opção correta com base no status do usuário -->
-                        <span th:if="${usuario.isActive}">
-                            <form th:action="@{'/backoffice/desabilitar-usuario/' + ${usuario.id}}" th:method="post">
-                                <button th:disabled="${usuario.username == usuarioLogado}"
-                                    th:classappend="${usuario.username == usuarioLogado} ? 'btn desabilitado' : 'btn desabilitar'"
-                                    class="btn" type="submit">Desabilitar</button>
-                            </form>
+            <a href="/backoffice/home" class="nav-link">
+                <p>Home</p>
+            </a>
+
+            <a href="/backoffice/listar-usuarios" class="nav-link active">
+                <p>Listar Usuários</p>
+            </a>
+
+            <a href="/backoffice/listar-produtos" class="nav-link">
+                <p>Listar Produtos</p>
+            </a>
+        </nav>
+
+        <main>
+            <div class="search">
+                <form th:action="@{/backoffice/procurar}" th:method="get">
+                    <input type="text" id="fullname" name="fullname" placeholder="Procurar Nome">
+                    <button class="btn cadastrar" type="submit">Buscar</button>
+                </form>
+                <button class="btn cadastrar" onclick="location.href='/backoffice/cadastrar-usuario'">Cadastrar
+                    Usuário</button>
+            </div>
+
+            <table>
+                <thead>
+                    <tr>
+                        <th>Nome</th>
+                        <th>Email</th>
+                        <th>Status</th>
+                        <th>Grupo</th>
+                        <th>Editar</th>
+                        <th>Gerenciar</th>
+                    </tr>
+                </thead>
+                <tbody th:each="usuario : ${usuarios}">
+                    <!-- Adicione linhas para cada usuário -->
+                    <tr>
+                        <td th:text="${usuario.fullname}"></td>
+                        <td th:text="${usuario.username}"></td>
+                        <td th:text="${usuario.isActive ? 'Ativo' : 'Inativo'}"></td>
+                        <td th:text="${usuario.role}"></td>
+                        <td>
+                            <!-- Adicione links para editar, habilitar/desabilitar -->
+                            <a class="btn editar"
+                                th:href="@{/backoffice/editar-usuario/{id}(id=${usuario.id})}">Editar</a>
+
+                        </td>
+                        <td>
+                            <!-- Lógica para exibir a opção correta com base no status do usuário -->
+                            <span th:if="${usuario.isActive}">
+                                <form th:action="@{'/backoffice/desabilitar-usuario/' + ${usuario.id}}"
+                                    th:method="post">
+                                    <button th:disabled="${usuario.username == usuarioLogado}"
+                                        th:classappend="${usuario.username == usuarioLogado} ? 'btn desabilitado' : 'btn desabilitar'"
+                                        class="btn" type="submit">Desabilitar</button>
+                                </form>
 
 
-                        </span>
-                        <span th:unless="${usuario.isActive}">
-                            <form th:action="@{'/backoffice/habilitar-usuario/' + ${usuario.id}}" th:method="post">
-                                <button th:disabled="${usuario.username == usuarioLogado}"
-                                    th:classappend="${usuario.username == usuarioLogado} ? 'btn desabilitado' : 'btn habilitar'"
-                                    class="btn" type="submit">Habilitar</button>
-                            </form>
+                            </span>
+                            <span th:unless="${usuario.isActive}">
+                                <form th:action="@{'/backoffice/habilitar-usuario/' + ${usuario.id}}" th:method="post">
+                                    <button th:disabled="${usuario.username == usuarioLogado}"
+                                        th:classappend="${usuario.username == usuarioLogado} ? 'btn desabilitado' : 'btn habilitar'"
+                                        class="btn" type="submit">Habilitar</button>
+                                </form>
 
-                        </span>
-                    </td>
-                </tr>
-            </tbody>
-        </table>
-    </main>
+                            </span>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+
+
+        </main>
+
+    </div>
+
+
+
+
 </body>
 
 </html>

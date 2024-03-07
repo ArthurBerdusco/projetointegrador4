@@ -2,6 +2,8 @@ package br.senac.ecommerce.tapeteyoga.controller.backoffice;
 
 import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -26,12 +28,19 @@ public class EditarUsuarioController {
     UsuarioRepository repository;
 
     @GetMapping("editar-usuario/{id}")
-    public String handleBackofficeGetUsuario(@PathVariable Long id, Model model) {
+    public String handleBackofficeGetUsuario(@PathVariable Long id, Model model, Authentication authentication) {
+
+         UserDetails userDetails = (UserDetails) authentication.getPrincipal();
+
+    String username = userDetails.getUsername();
+
+    Usuario userAutenticado = repository.findByUsername(username).get();
 
         Optional<Usuario> usuario = repository.findById(id);
 
         if (usuario.isPresent()) {
             model.addAttribute("usuario", usuario.get());
+            model.addAttribute("usuarioAutenticadoId", userAutenticado.getId());
         }
 
         return "backoffice/form_usuario";
