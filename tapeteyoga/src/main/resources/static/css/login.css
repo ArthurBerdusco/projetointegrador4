@@ -41,7 +41,7 @@ body {
     color: #FFFFFF;
     background-size: cover;
     background-repeat: no-repeat;
-    background-image: url("https://i.pinimg.com/736x/5d/73/ea/5d73eaabb25e3805de1f8cdea7df4a42--tumblr-backgrounds-iphone-phone-wallpapers-iphone-wallaper-tumblr.jpg");
+    background-image: url("/img/login.jpg");
     overflow: hidden;
 }
 
