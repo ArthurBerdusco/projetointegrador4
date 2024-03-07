@@ -1,30 +1,61 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Editar Usuário</title>
+    <script>
+        function validatePassword() {
+            var password = document.getElementById("password").value;
+            var confirmPassword = document.getElementById("confirmPassword").value;
+
+            if (password !== confirmPassword) {
+                alert("As senhas não coincidem.");
+                return false;
+            }
+            return true;
+        }
+    </script>
 </head>
+
 <body>
-    <header>
-        <h1>Editar Usuário</h1>
-    </header>
-    <main>
-        <form action="/backoffice/editar-usuario" method="post">
-            <label for="nome">Nome:</label>
-            <input type="text" id="nome" name="nome" value="Nome do Usuário" required>
+    <h2>Editar usuário</h2>
 
-            <label for="cpf">CPF:</label>
-            <input type="text" id="cpf" name="cpf" value="123.456.789-00" required>
+    <form th:action="@{'/backoffice/editar-usuario/' + ${usuario.id}}" th:method="post" th:object="${usuario}"
+        onsubmit="return validatePassword()">
+        <!-- Nome completo -->
+        <label for="nome">Nome completo:</label>
+        <input type="text" th:field="*{fullname}" required>
 
-            <label for="senha">Senha:</label>
-            <input type="password" id="senha" name="senha" required>
+        <br>
 
-            <label for="confirmarSenha">Confirmar Senha:</label>
-            <input type="password" id="confirmarSenha" name="confirmarSenha" required>
+        <label for="cpf">CPF:</label>
+        <input type="text" th:field="*{cpf}" required>
+        <br>
 
-            <button type="submit">Salvar Alterações</button>
-        </form>
-    </main>
+        <!-- Email referencia username banco de dados-->
+        <label for="cpf">Email:</label>
+        <input type="text" th:field="*{username}" required disabled>
+        <br>
+
+        <!-- Senha -->
+        <label for="password">Senha:</label>
+        <input type="password" th:field="*{password}" placeholder="********">
+        <br>
+
+        <!-- Confirmar senha -->
+        <label for="confirmPassword">Confirmar senha:</label>
+        <input type="password" id="confirmPassword" placeholder="********">
+        <br>
+
+        <select th:field="*{role}" required>
+            <option value="ADMIN">Admin</option>
+            <option value="USER">Estoquista</option>
+        </select>
+
+        <button type="submit">Salvar</button>
+    </form>
 </body>
+
 </html>

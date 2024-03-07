@@ -31,11 +31,12 @@ public class SecurityConfiguration {
                     registry.requestMatchers("/setup", "/", "/img/**", "/css/**", "/js/**").permitAll();
    
 
-                    /*Administrador */
-                    registry.requestMatchers("/backoffice/**").hasRole("ADMIN");
+                    /*Administrador e Estoquista */
+                    registry.requestMatchers("/backoffice/").hasAnyRole("Administrador", "Estoquista");
                     
-                    /*Estoquista */
-                    registry.requestMatchers("/user/**", "/backoffice/home", "/backoffice/listar-produtos").hasRole("USER");
+                    /*Estoquista ---> NÃO PODE ACESSAR /backoffice/listar-produtos*/
+                    registry.requestMatchers("/backoffice/listar-usuarios", "/backoffice/listar-usuarios").hasRole("Administrador");
+                    
                     registry.anyRequest().authenticated();
                 })
                 .logout(logoutConfigurer ->
