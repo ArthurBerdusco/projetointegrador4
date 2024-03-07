@@ -1,19 +1,18 @@
 package br.senac.ecommerce.tapeteyoga.controller.backoffice;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.stereotype.Controller;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.servlet.ModelAndView;
-import org.springframework.web.servlet.view.RedirectView;
-
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import br.senac.ecommerce.tapeteyoga.model.Usuario;
 import br.senac.ecommerce.tapeteyoga.repository.UsuarioRepository;
+import jakarta.validation.Valid;
 
-@RestController
+@Controller
+@RequestMapping("backoffice")
 public class CadastrarUsuarioController {
 
     @Autowired
@@ -22,48 +21,24 @@ public class CadastrarUsuarioController {
     @Autowired
     private PasswordEncoder passwordEncoder;
 
+    @PostMapping("cadastrar-usuario")
+    public String cadastrarUsuario(@Valid Usuario usuario, BindingResult result, RedirectAttributes redirectAttributes) {
 
-    @PostMapping("/backoffice/cadastrar-usuario")
-    public ModelAndView cadastrarUsuario(Usuario usuario) {
-        ModelAndView modelAndView = new ModelAndView();
-
-        boolean userExists = repository.existsByUsernameOrCpf(usuario.getUsername(), usuario.getCpf());
-
-        if (userExists) {
-            modelAndView.setViewName("redirect:/backoffice/cadastrar-usuario?error=Email ou CPF já cadastrado, tente novamente");
-        } else {
-            usuario.setPassword(passwordEncoder.encode(usuario.getPassword()));
-            usuario.setActive(true);
-
-            repository.save(usuario);
-
-            modelAndView.setViewName("redirect:/backoffice/listar-usuarios");
-
+        if (result.hasErrors()) {
+            return "backoffice/form_usuario";
         }
 
-        return modelAndView;
-    }
+        if (repository.existsByUsernameOrCpf(usuario.getUsername(), usuario.getCpf())) {
+            redirectAttributes.addFlashAttribute("error", "Email ou CPF já cadastrado, tente novamente");
+            return "backoffice/form_usuario";
+        }
 
-    @GetMapping("/setup")
-    public RedirectView cadastrarUsuario(Model model) {
-
-        Usuario usuario = new Usuario();
-
-        usuario.setUsername("admin@root.com");
-        usuario.setPassword(passwordEncoder.encode("admin"));
-        usuario.setRole("ADMIN");
+        usuario.setPassword(passwordEncoder.encode(usuario.getPassword()));
         usuario.setActive(true);
-
-        boolean userExists = repository.existsByUsername(usuario.getUsername());
-
-        if (userExists) {
-            model.addAttribute("mensagem", "Erro, usuário admin já cadastrado");
-            return new RedirectView("/backoffice/backoffice_login");
-        }
 
         repository.save(usuario);
 
-        return new RedirectView("/backoffice/backoffice_login");
+        return "redirect:/backoffice/listar-usuarios";
     }
 
 }

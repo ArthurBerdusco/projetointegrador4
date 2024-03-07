@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cadastro de Usuário</title>
+    <link rel="stylesheet" href="/css/form_usuario.css">
+    <script>
+        function validatePassword() {
+            var password = document.getElementById("password").value;
+            var confirmPassword = document.getElementById("confirmPassword").value;
+
+            if (password !== confirmPassword) {
+                alert("As senhas não coincidem.");
+                return false;
+            }
+            return true;
+        }
+    </script>
+</head>
+
+<body>
+    
+    <form
+        th:action="${usuario.id != null} ? @{/backoffice/editar-usuario/{id}(id=${usuario.id})} : @{/backoffice/cadastrar-usuario}"
+        th:method="post" th:object="${usuario}" onsubmit="return validatePassword()">
+        <h2>Cadastro de Usuário</h2>
+
+        <!-- Nome completo -->
+        <label for="nome">Nome completo:</label>
+        <input type="text" th:field="*{fullname}" required>
+        <span th:errors="*{fullname}"></span>
+        <br>
+
+        <!-- CPF -->
+        <label for="cpf">CPF:</label>
+        <input type="text" th:field="*{cpf}" required>
+        <span th:errors="*{cpf}"></span>
+        <br>
+
+        <!-- Email -->
+        <label for="username">Email:</label>
+        <input type="text" th:field="*{username}" th:readonly="${usuario.id != null}" required>
+        <span th:errors="*{username}"></span>
+        <br>
+
+        <!-- Senha -->
+        <label for="password">Senha:</label>
+        <input type="password" th:field="*{password}" th:minlength="${usuario.id == null ? 4 : null}" th:placeholder="${usuario.id != null} ? '*******'" th:required="${usuario.id == null}" >
+        <span th:errors="*{password}"></span>
+        <br>
+
+        <!-- Confirmar senha -->
+        <label for="confirmPassword">Confirmar senha:</label>
+        <input type="password" id="confirmPassword" th:minlength="${usuario.id == null ? 4 : null}" th:placeholder="${usuario.id != null} ? '*******'" th:required="${usuario.id == null}">
+        <br>
+
+        <!-- Função do usuário -->
+        <label for="role">Função do usuário:</label>
+        <select th:field="*{role}" required>
+            <option value="Administrador">Administrador</option>
+            <option value="Estoquista">Estoquista</option>
+        </select>
+        <span th:errors="*{role}"></span>
+        <br>
+
+        <button>Salvar</button>
+    </form>
+</body>
+
+</html>

@@ -9,6 +9,8 @@
     <header>
         <h1>Bem-vindo ao Backoffice</h1>
         <!-- Incluir links para as operações de admin/estoquista -->
+        <p th:text="'Usuário: ' + ${usuario.fullname}"></p>
+        <p th:text="'Autoridades: ' + ${usuario.role}"></p>
         <nav>
             <ul>
                 <li><a href="/backoffice/listar-usuarios">Listar Usuários</a></li>

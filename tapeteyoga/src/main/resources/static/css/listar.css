@@ -1,115 +1,130 @@
-/* Reset de estilos */
 * {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-  }
-  
-  /* Estilo geral da página */
-  body {
-    font-family: sans-serif;
-    font-size: 16px;
-    color: #333;
-  }
-  
-  /* Cabeçalho */
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: sans-serif;
+  font-size: 16px;
+  color: #333;
+}
+
+header {
+  background-color: #f7f7f7;
+  padding: 15px 20px;
+  display: flex;
+  justify-content: space-between;
+}
+
+header h1 {
+  font-size: 20px;
+  font-weight: bold;
+  margin: 0;
+}
+
+.search {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  text-align: center;
+}
+
+
+.search input {
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  width: 450px;
+  margin-right: 10px;
+}
+
+
+
+.search button {
+  padding: 10px 15px;
+  background-color: #007bff;
+  color: #fff;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+main {
+  padding: 20px;
+}
+
+table {
+  border-collapse: collapse;
+  width: 100%;
+  border: 1px solid #ddd;
+}
+
+th,
+td {
+  padding: 10px;
+  text-align: left;
+  border: 1px solid #ddd;
+}
+
+th {
+  background-color: #f7f7f7;
+  font-weight: bold;
+}
+
+td {
+  font-size: 14px;
+}
+
+.btn {
+  padding: 10px 15px;
+  color: #fff;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.btn.cadastrar {
+  background-color: #f34dff;
+  margin-bottom: 10px;
+}
+
+.btn.habilitar {
+  background-color: #28a745;
+}
+
+.btn.editar {
+  background-color: #f34dff;
+}
+
+.btn.desabilitar {
+  background-color: #dc3545;
+}
+
+.btn.desabilitado {
+  background-color: #9d9d9dca;
+}
+
+a {
+  color: #007bff;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+.ativo {
+  color: green;
+}
+
+.inativo {
+  color: red;
+}
+
+@media screen and (max-width: 768px) {
   header {
-    background-color: #f7f7f7;
-    padding: 15px 20px;
-    display: flex;
-    justify-content: space-between;
-  }
-  
-  header h1 {
-    font-size: 20px;
-    font-weight: bold;
-    margin: 0;
+    flex-direction: column;
   }
 
-  .search{
-    display: flex;
-    justify-content: center;
-  }
-  
-  .search input {
-    padding: 10px;
-    border: 1px solid #ccc;
-    border-radius: 5px;
-    width: 450px;
-    margin-right: 10px;
-  }
-  
-  .search button {
-    padding: 10px 15px;
-    background-color: #007bff;
-    color: #fff;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-  }
-  
-  /* Seção principal */
-  main {
-    padding: 20px;
-  }
-  
-  /* Tabela de usuários */
-  table {
-    border-collapse: collapse;
+  header input {
     width: 100%;
-    border: 1px solid #ddd;
   }
-  
-  th, td {
-    padding: 10px;
-    text-align: left;
-    border: 1px solid #ddd;
-  }
-  
-  th {
-    background-color: #f7f7f7;
-    font-weight: bold;
-  }
-  
-  td {
-    font-size: 14px;
-  }
-  
-  /* Botão de Cadastrar Usuário */
-  .btn {
-    padding: 10px 15px;
-    background-color: #007bff;
-    color: #fff;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-    margin-bottom: 10px;
-  }
-  
-  /* Links de ação (editar, gerenciar) */
-  a {
-    color: #007bff;
-    text-decoration: none;
-    cursor: pointer;
-  }
-  
-  /* Estilos específicos para status do usuário */
-  .ativo {
-    color: green;
-  }
-  
-  .inativo {
-    color: red;
-  }
-  
-  /* Estilos para responsividade */
-  @media screen and (max-width: 768px) {
-    header {
-      flex-direction: column;
-    }
-  
-    header input {
-      width: 100%;
-    }
-  }
-  
+}
