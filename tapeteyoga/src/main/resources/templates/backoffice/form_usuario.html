@@ -4,9 +4,10 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Cadastro de Usuário</title>
+    <title>Harmony - backoffice usuario form</title>
     <link rel="stylesheet" href="/css/style.css">
     <link rel="stylesheet" href="/css/form_usuario.css">
+    <link rel="icon" type="image/x-icon" href="/img/logo.svg">
 </head>
 
 <body>
@@ -21,18 +22,24 @@
 
     <div class="container">
         <nav>
-            <p th:text="'Usuário: ' + ${usuario.fullname}"></p>
-            <p th:text="'Autoridades: ' + ${usuario.role}"></p>
-        
+            <div class="profile">
+                <p th:text="'Usuário: ' + ${usuarioAutenticado.fullname}"></p>
+                <p th:text="'Grupo: ' + ${usuarioAutenticado.role}"></p>
+            </div>
+
             <a href="/backoffice/home" class="nav-link">
                 <p>Home</p>
             </a>
-        
-            <a href="/backoffice/listar-usuarios" class="nav-link">
+
+            <a th:if="${usuario.role == 'Administrador'}" href="/backoffice/listar-usuarios" class="nav-link active">
                 <p>Listar Usuários</p>
             </a>
-        
-            <a href="/backoffice/listar-produtos" class="nav-link active">
+
+            <a th:if="${usuarioAutenticado.role == 'Administrador'}" href="/backoffice/listar-usuarios" class="nav-link active">
+                <p>Listar Usuários</p>
+            </a>
+
+            <a href="/backoffice/listar-produtos" class="nav-link">
                 <p>Listar Produtos</p>
             </a>
         </nav>
@@ -42,7 +49,7 @@
             <form
                 th:action="${usuario.id != null} ? @{/backoffice/editar-usuario/{id}(id=${usuario.id})} : @{/backoffice/cadastrar-usuario}"
                 th:method="post" th:object="${usuario}" onsubmit="return validatePassword()">
-                <h2>Cadastro de Usuário</h2>
+                <h3 style="margin-bottom: 20px;">Formulário - Usuário backoffice</h3>
 
                 <!-- Nome completo -->
                 <label for="nome">Nome completo:</label>
@@ -77,20 +84,23 @@
 
                 <!-- Função do usuário -->
                 <label for="role">Função do usuário:</label>
-                <select th:field="*{role}" th:readonly="${usuario.id == usuarioAutenticadoId}" required>
-                    <option value="Administrador">Administrador</option>
-                    <option value="Estoquista">Estoquista</option>
+                <select th:field="*{role}" required>
+                    <option value="Administrador" th:disabled="${usuario == usuarioAutenticado}">Administrador</option>
+                    <option value="Estoquista" th:disabled="${usuario == usuarioAutenticado}">Estoquista</option>
                 </select>
                 <span th:errors="*{role}"></span>
                 <br>
 
 
                 <!-- Função do usuário -->
+                <div th:if="${usuario.id != null}">
                     <label for="isActive">Gerenciar:</label>
-                    <select th:field="*{active}" th:disabled="${usuario.id == null}" required>
-                        <option value="1" selected>Ativo</option>
-                        <option value="0" >Inativo</option>
+                    <select th:field="*{active}" required>
+                        <option value="1" th:disabled="${usuario == usuarioAutenticado}" selected>Ativo</option>
+                        <option value="0" th:disabled="${usuario == usuarioAutenticado}">Inativo</option>
                     </select>
+                </div>
+
                 <span th:errors="*{active}"></span>
                 <br>
                 <button>Salvar</button>
@@ -98,9 +108,6 @@
 
         </main>
     </div>
-
-
-
 
 </body>
 

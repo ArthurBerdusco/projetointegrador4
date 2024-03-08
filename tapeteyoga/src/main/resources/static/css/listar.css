@@ -3,6 +3,7 @@
   justify-content: space-between;
   align-items: center;
   text-align: center;
+  margin: 40px;
 }
 
 
@@ -25,8 +26,8 @@
   cursor: pointer;
 }
 
-main {
-  padding: 20px;
+.list{
+  margin: 40px;
 }
 
 table {
@@ -60,7 +61,7 @@ td {
 }
 
 .btn.cadastrar {
-  background-color: #f34dff;
+  background-color: #4d5cff;
   margin-bottom: 10px;
 }
 
@@ -69,7 +70,7 @@ td {
 }
 
 .btn.editar {
-  background-color: #f34dff;
+  background-color: #4d5cff;
 }
 
 .btn.desabilitar {

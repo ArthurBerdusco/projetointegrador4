@@ -1,10 +1,10 @@
 .formulario-usuario{
     display: flex;
     justify-content: center;
-    padding: 20px;
 }
 
 form {
+    margin: 20px;
     background-color: #ffffff;
     padding: 30px;
     border-radius: 8px;
@@ -12,9 +12,10 @@ form {
     width: 700px; 
 }
 
-h2 {
+h3 {
     text-align: center;
     color: #333333;
+    font-size: 20px;
 }
 
 label {

@@ -79,8 +79,8 @@ h2 {
 }
 
 .container nav {
-    background-color: rgb(44, 44, 44);
-    box-shadow: 3px 1px rgba(215, 215, 215, 0.333);
+    background-color: #303030;
+    box-shadow: 2px 4px rgba(215, 215, 215, 0.333);
     padding: 20px;
 }
 
@@ -92,9 +92,14 @@ nav {
     flex-direction: column;
 }
 
-nav p {
-    
+nav .profile{
+    margin-bottom: 20px;
 }
+
+.profile p{
+    margin-bottom: 10px;
+}
+
 
 .nav-link {
     text-decoration: none;
@@ -110,7 +115,7 @@ nav p {
 }
 
 .nav-link:hover {
-    background-color: #a7a7a7;
+    background-color: #b7bcdad4;
     color: black;
 }
 

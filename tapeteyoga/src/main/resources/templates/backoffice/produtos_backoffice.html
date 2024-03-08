@@ -1,11 +1,15 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Produtos - Backoffice</title>
+    <title>Harmony - backoffice produtos</title>
     <link rel="stylesheet" href="/css/style.css">
+    <link rel="stylesheet" href="/css/produto.css">
+    <link rel="icon" type="image/x-icon" href="/img/logo.svg">
 </head>
+
 <body>
     <header>
         <a href="/backoffice/home" class="logo"></a>
@@ -17,14 +21,19 @@
 
     <div class="container">
         <nav>
-            <p th:text="'Usuário: ' + ${usuario.fullname}"></p>
-            <p th:text="'Autoridades: ' + ${usuario.role}"></p>
+
+            <div class="profile">
+                <p th:text="'Usuário: ' + ${usuario.fullname}"></p>
+                <p th:text="'Grupo: ' + ${usuario.role}"></p>
+            </div>
+
 
             <a href="/backoffice/home" class="nav-link">
+                <img src="/css/logo.svg" alt="">
                 <p>Home</p>
             </a>
 
-            <a href="/backoffice/listar-usuarios" class="nav-link">
+            <a th:if="${usuario.role == 'Administrador'}" href="/backoffice/listar-usuarios" class="nav-link">
                 <p>Listar Usuários</p>
             </a>
 
@@ -34,7 +43,8 @@
         </nav>
 
         <main>
-            <h1>Produtos</h1>
+            <img class="banner" src="/img/mat.jpg" alt="Banner Image">
         </main>
 </body>
+
 </html>
