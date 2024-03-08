@@ -30,17 +30,17 @@ public class EditarUsuarioController {
     @GetMapping("editar-usuario/{id}")
     public String handleBackofficeGetUsuario(@PathVariable Long id, Model model, Authentication authentication) {
 
-         UserDetails userDetails = (UserDetails) authentication.getPrincipal();
+        UserDetails userDetails = (UserDetails) authentication.getPrincipal();
 
-    String username = userDetails.getUsername();
+        String username = userDetails.getUsername();
 
-    Usuario userAutenticado = repository.findByUsername(username).get();
+        Usuario userAutenticado = repository.findByUsername(username).get();
 
         Optional<Usuario> usuario = repository.findById(id);
 
         if (usuario.isPresent()) {
             model.addAttribute("usuario", usuario.get());
-            model.addAttribute("usuarioAutenticadoId", userAutenticado.getId());
+            model.addAttribute("usuarioAutenticado", userAutenticado);
         }
 
         return "backoffice/form_usuario";

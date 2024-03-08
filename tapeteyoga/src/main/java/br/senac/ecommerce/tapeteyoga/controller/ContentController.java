@@ -28,13 +28,27 @@ public class ContentController {
 }
 
   @GetMapping("/backoffice/cadastrar-usuario")
-  public String handleBackofficeCadastro(Usuario usuario) {
+  public String handleBackofficeCadastro(Usuario usuario, Model model, Authentication authentication) {
+    UserDetails userDetails = (UserDetails) authentication.getPrincipal();
+
+        String username = userDetails.getUsername();
+
+        Usuario userAutenticado = repository.findByUsername(username).get();
+
+        model.addAttribute("usuarioAutenticado", userAutenticado);
     return "/backoffice/form_usuario";
 
   }
 
   @GetMapping("/backoffice/listar-produtos")
-  public String handleBackofficeProdutos(Usuario usuario) {
+  public String handleBackofficeProdutos(Authentication authentication, Model model) {
+    UserDetails userDetails = (UserDetails) authentication.getPrincipal();
+
+    String username = userDetails.getUsername();
+
+    Usuario usuario = repository.findByUsername(username).get();
+
+    model.addAttribute("usuario", usuario);
     return "/backoffice/produtos_backoffice";
   }
 
