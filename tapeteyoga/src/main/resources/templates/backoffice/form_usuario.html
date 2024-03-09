@@ -31,7 +31,8 @@
                 <p>Home</p>
             </a>
 
-            <a th:if="${usuarioAutenticado.role != 'Estoquista'}" href="/backoffice/listar-usuarios" class="nav-link active">
+            <a th:if="${usuarioAutenticado.role != 'Estoquista'}" href="/backoffice/listar-usuarios"
+                class="nav-link active">
                 <p>Listar Usuários</p>
             </a>
 
@@ -42,10 +43,15 @@
 
         <main class="formulario-usuario">
 
-            <form
-                th:action="${usuario.id != null} ? @{/backoffice/editar-usuario/{id}(id=${usuario.id})} : @{/backoffice/cadastrar-usuario}"
-                th:method="post" th:object="${usuario}" onsubmit="return validatePassword()">
+            <form th:action="@{/backoffice/salvar}" th:method="post" th:object="${usuario}"
+                onsubmit="return validatePassword()">
                 <h3 style="margin-bottom: 20px;">Formulário - Usuário backoffice</h3>
+
+
+                <!-- ID -->
+                <div th:if="${usuario.id != null}">
+                    <input type="hidden" th:field="*{id}" readonly>
+                </div>
 
                 <!-- Nome completo -->
                 <label for="nome">Nome completo:</label>
@@ -87,20 +93,14 @@
                 <span th:errors="*{role}"></span>
                 <br>
 
-
-                <!-- Função do usuário -->
+                <!-- Habilitar e Desabilitar -->
                 <div th:if="${usuario.id != null}">
-                    <label for="isActive">Gerenciar:</label>
-                    <select th:field="*{active}" required>
-                        <option value="1" th:disabled="${usuario == usuarioAutenticado}" selected>Ativo</option>
-                        <option value="0" th:disabled="${usuario == usuarioAutenticado}">Inativo</option>
-                    </select>
+                    <input type="hidden" th:field="*{active}" value="${usuario.active}">
                 </div>
 
                 <span th:errors="*{active}"></span>
                 <br>
                 <button>Salvar</button>
-                
             </form>
 
         </main>

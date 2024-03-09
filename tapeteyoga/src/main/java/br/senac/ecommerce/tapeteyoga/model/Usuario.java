@@ -8,7 +8,6 @@ import jakarta.persistence.Id;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Null;
-import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
 
 import lombok.Data;
@@ -44,7 +43,6 @@ public class Usuario {
     @Column(unique = true)
     @NotBlank(message = "O CPF é obrigatório")
     @Size(min = 11, max = 11, message = "O CPF deve ter exatamente 11 dígitos")
-    @Pattern(regexp = "\\d+", message = "O CPF deve conter apenas dígitos numéricos")
     private String cpf;
 
     private String grupo;
@@ -54,7 +52,7 @@ public class Usuario {
     @Email(message = "Formato de e-mail inválido")
     private String username;
 
-    private boolean isActive;
+    private boolean isActive = true;
 
     @NotBlank(message = "A senha é obrigatória", groups = {New.class})
     @Size(min = 4, message = "A senha deve ter pelo menos 4 caracteres", groups = {New.class})

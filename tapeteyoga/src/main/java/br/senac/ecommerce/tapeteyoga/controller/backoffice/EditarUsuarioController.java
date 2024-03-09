@@ -8,15 +8,13 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
-import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import br.senac.ecommerce.tapeteyoga.model.Usuario;
-import br.senac.ecommerce.tapeteyoga.model.Usuario.Existing;
 import br.senac.ecommerce.tapeteyoga.repository.UsuarioRepository;
+import jakarta.validation.Valid;
 
 @Controller
 @RequestMapping("backoffice")
@@ -27,15 +25,17 @@ public class EditarUsuarioController {
     @Autowired
     UsuarioRepository repository;
 
-    @GetMapping("editar-usuario/{id}")
-    public String handleBackofficeGetUsuario(@PathVariable Long id, Model model, Authentication authentication) {
 
+    //Método auxiliar para pegar informação do usuario que está autenticado no sistema
+    private Usuario getUsuarioAutenticado(Authentication authentication) {
         UserDetails userDetails = (UserDetails) authentication.getPrincipal();
-
         String username = userDetails.getUsername();
+        return repository.findByUsername(username).orElse(null);
+    }
 
-        Usuario userAutenticado = repository.findByUsername(username).get();
-
+    @GetMapping("editar-usuario/{id}")
+    public String handleBackofficeGetUsuario(@PathVariable long id, Model model, Authentication authentication) {
+        Usuario userAutenticado = getUsuarioAutenticado(authentication);
         Optional<Usuario> usuario = repository.findById(id);
 
         if (usuario.isPresent()) {
@@ -46,64 +46,52 @@ public class EditarUsuarioController {
         return "backoffice/form_usuario";
     }
 
-    @PostMapping("editar-usuario/{id}")
-    public String handleBackofficeEditar(@PathVariable Long id, @Validated({ Existing.class }) Usuario usuario,
-            BindingResult result, RedirectAttributes redirectAttributes) {
+    @PostMapping("trocar-status-usuario/{id}")
+    public String habilitaDesabilita(@PathVariable long id) {
+        Usuario usuario = repository.findById(id).get();
+        usuario.setActive(!usuario.isActive());
+        repository.save(usuario);
+        return "redirect:/backoffice/listar-usuarios";
+    }
 
-        if (result.hasErrors()) {
-            redirectAttributes.addFlashAttribute("error", "CPF já cadastrado para outro usuário. Tente novamente.");
-            return "backoffice/form_usuario";
+    // METODO ÚNICO PARA SALVAR OU EDITAR CADASTRO
+    @PostMapping("salvar")
+    public String salvar(@Valid Usuario usuario, BindingResult result, Authentication authentication, Model model) {
+
+        Usuario userAutenticado = getUsuarioAutenticado(authentication);
+        model.addAttribute("usuarioAutenticado", userAutenticado);
+        model.addAttribute("usuario", usuario);
+
+        // Valida o CPF
+        if (!ValidaCPF.isCPF(usuario.getCpf())) {
+            result.rejectValue("cpf", "error.cpf", "Cpf inválido");
         }
 
-        // Verificar se o CPF já está cadastrado para outro usuário
-        if (repository.existsByCpfAndIdNot(usuario.getCpf(), id)) {
-            redirectAttributes.addFlashAttribute("error", "CPF já cadastrado para outro usuário. Tente novamente.");
-            return "redirect:/backoffice/editar-usuario/" + id;
+        if (usuario.getId() == null) {
+            // Valida se já existe esse email ou cpf
+            if (repository.existsByUsername(usuario.getUsername())) {
+                result.rejectValue("username", "error.username", "Email já cadastrado");
+            }
+
+            if (repository.existsByCpf(usuario.getCpf())) {
+                result.rejectValue("cpf", "error.cpf", "Cpf já cadastrado");
+            }
+        } else {
+            // Valida se há outra usuário já cadastrado com esse CPF a não ser ele próprio
+            if (repository.existsByCpfAndIdNot(usuario.getCpf(), usuario.getId())) {
+                result.rejectValue("cpf", "error.cpf", "Cpf já cadastrado");
+            }
+        }
+
+        if (result.hasErrors()) {
+            System.out.println(result.getAllErrors());
+            return "backoffice/form_usuario";
         }
 
         usuario.setPassword(passwordEncoder.encode(usuario.getPassword()));
         repository.save(usuario);
 
         return "redirect:/backoffice/listar-usuarios";
-
-    }
-
-    @PostMapping("desabilitar-usuario/{id}")
-    public String desabilitarUsuario(@PathVariable Long id, Model model) {
-
-        Optional<Usuario> optionalUsuario = repository.findById(id);
-
-        if (optionalUsuario.isPresent()) {
-            Usuario usuario = optionalUsuario.get();
-            usuario.setActive(false);
-            repository.save(usuario);
-            model.addAttribute("message", "Usuário desabilitado com sucesso!");
-        } else {
-            model.addAttribute("message", "Usuário não encontrado para desabilitar.");
-        }
-        return "redirect:/backoffice/listar-usuarios";
-    }
-
-    @PostMapping("habilitar-usuario/{id}")
-    public String habilitarUsuario(@PathVariable Long id, Model model) {
-
-        Optional<Usuario> optionalUsuario = repository.findById(id);
-
-        if (optionalUsuario.isPresent()) {
-
-            Usuario usuario = optionalUsuario.get();
-
-            usuario.setActive(true);
-
-            repository.save(usuario);
-
-            model.addAttribute("message", "Usuário habilitado com sucesso!");
-        } else {
-            model.addAttribute("message", "Usuário não encontrado para habilitar.");
-        }
-
-        return "redirect:/backoffice/listar-usuarios";
-
     }
 
 }
