@@ -1,5 +1,6 @@
 package br.senac.ecommerce.tapeteyoga.model;
 
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -39,6 +40,8 @@ public class Usuario {
     @NotBlank(message = "O nome completo é obrigatório")
     private String fullname;
 
+
+    @Column(unique = true)
     @NotBlank(message = "O CPF é obrigatório")
     @Size(min = 11, max = 11, message = "O CPF deve ter exatamente 11 dígitos")
     @Pattern(regexp = "\\d+", message = "O CPF deve conter apenas dígitos numéricos")
@@ -46,6 +49,7 @@ public class Usuario {
 
     private String grupo;
 
+    @Column(unique = true)
     @NotBlank(message = "O e-mail é obrigatório")
     @Email(message = "Formato de e-mail inválido")
     private String username;
