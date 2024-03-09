@@ -51,6 +51,7 @@ public class EditarUsuarioController {
             BindingResult result, RedirectAttributes redirectAttributes) {
 
         if (result.hasErrors()) {
+            redirectAttributes.addFlashAttribute("error", "CPF já cadastrado para outro usuário. Tente novamente.");
             return "backoffice/form_usuario";
         }
 
