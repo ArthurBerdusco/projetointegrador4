@@ -28,7 +28,6 @@
                 <p th:text="'Grupo: ' + ${usuario.role}"></p>
             </div>
 
-
             <a href="/backoffice/home" class="nav-link">
                 <p>Home</p>
             </a>
@@ -80,8 +79,8 @@
                             <td>
                                 <!-- Lógica para exibir a opção correta com base no status do usuário -->
                                 <span th:if="${usuario.isActive}">
-                                    <form th:action="@{'/backoffice/desabilitar-usuario/' + ${usuario.id}}"
-                                        th:method="post">
+                                    <form th:action="@{'/backoffice/trocar-status-usuario/' + ${usuario.id}}"
+                                        th:method="post" onsubmit="return confirma()">
                                         <button th:disabled="${usuario.username == usuarioLogado}"
                                             th:classappend="${usuario.username == usuarioLogado} ? 'btn desabilitado' : 'btn desabilitar'"
                                             class="btn" type="submit">Desabilitar</button>
@@ -89,8 +88,8 @@
                                 </span>
 
                                 <span th:unless="${usuario.isActive}">
-                                    <form th:action="@{'/backoffice/habilitar-usuario/' + ${usuario.id}}"
-                                        th:method="post">
+                                    <form th:action="@{'/backoffice/trocar-status-usuario/' + ${usuario.id}}"
+                                        th:method="post" onsubmit="return confirma()">
                                         <button th:disabled="${usuario.username == usuarioLogado}"
                                             th:classappend="${usuario.username == usuarioLogado} ? 'btn desabilitado' : 'btn habilitar'"
                                             class="btn" type="submit">Habilitar</button>
@@ -110,9 +109,12 @@
 
     </div>
 
-
-
-
 </body>
+
+<script>
+    function confirma(){
+        return confirm("Deseja confirmar a ação?");     
+    }
+</script>
 
 </html>

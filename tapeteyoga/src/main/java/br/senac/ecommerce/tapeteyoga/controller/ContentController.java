@@ -57,6 +57,4 @@ public class ContentController {
     return "backoffice/backoffice_login";
   }
 
-
-
 }
