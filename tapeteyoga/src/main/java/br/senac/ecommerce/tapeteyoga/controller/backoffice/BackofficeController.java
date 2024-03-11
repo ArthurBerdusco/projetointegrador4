@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 
 import br.senac.ecommerce.tapeteyoga.model.Usuario;
 import br.senac.ecommerce.tapeteyoga.repository.UsuarioRepository;
-import jakarta.servlet.http.HttpServletRequest;
+
 
 @Controller
 @RequestMapping("backoffice")
@@ -55,9 +55,7 @@ public class BackofficeController {
 
     @GetMapping("home")
     public String handleBackofficeHome(Model model, Authentication authentication) {
-
         model.addAttribute("usuarioAutenticado", utils.getUsuarioAutenticado(authentication));
-        
         return "backoffice/home";
     }
 }
