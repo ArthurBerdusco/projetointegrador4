@@ -1,8 +1,9 @@
-package br.senac.ecommerce.tapeteyoga.controller.backoffice;
+package br.senac.ecommerce.tapeteyoga.controller.backoffice.usuario;
 
 import java.util.InputMismatchException;
 
 public class ValidaCPF {
+
     public static boolean isCPF(String CPF) {
         // considera-se erro CPF"s formados por uma sequencia de numeros iguais
         if (CPF.equals("00000000000") ||
@@ -61,4 +62,5 @@ public class ValidaCPF {
             return (false);
         }
     }
+
 }

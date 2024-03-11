@@ -12,6 +12,7 @@ public class AuthenticationSuccessHandler extends SavedRequestAwareAuthenticatio
 
     @Override
     public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication) throws ServletException, IOException {
+        System.out.println("SUCESSO");
         setDefaultTargetUrl("/backoffice/home");
         super.onAuthenticationSuccess(request, response, authentication);
     }

@@ -27,30 +27,28 @@ public class SecurityConfiguration {
                 .csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(registry -> {
 
-                    /*Todos */
-                    registry.requestMatchers("/setup", "/", "/img/**", "/css/**", "/js/**").permitAll();
-   
+                    /* Todos */
+                    registry.requestMatchers("/setup", "/", "/img/**", "/css/**", "/js/**", "/backoffice/setup").permitAll();
 
-                    /*Administrador e Estoquista */
+                    /* Administrador e Estoquista */
                     registry.requestMatchers("/backoffice/").hasAnyRole("Administrador", "Estoquista");
-                    
-                    /*Estoquista ---> NÃO PODE ACESSAR /backoffice/listar-produtos*/
-                    registry.requestMatchers("/backoffice/listar-usuarios", "/backoffice/listar-usuarios").hasRole("Administrador");
-                    
+
+                    /* Estoquista ---> NÃO PODE ACESSAR /backoffice/listar-produtos */
+                    registry.requestMatchers("/backoffice/usuarios").hasRole("Administrador");
+
                     registry.anyRequest().authenticated();
                 })
-                .logout(logoutConfigurer ->
-                        logoutConfigurer
-                                .logoutSuccessUrl("/login/backoffice") // Página para redirecionar após o logout
-                                .logoutUrl("/logout") // Endpoint de logout
-                                .permitAll()
-                )
                 .formLogin(httpSecurityFormLoginConfigurer -> {
                     httpSecurityFormLoginConfigurer
-                            .loginPage("/login/backoffice")
+                            .loginPage("/backoffice")
+                            .usernameParameter("email")
                             .successHandler(new AuthenticationSuccessHandler())
                             .permitAll();
                 })
+                .logout(logoutConfigurer -> logoutConfigurer
+                        .logoutSuccessUrl("/backoffice")
+                        .logoutUrl("/logout")
+                        .permitAll())
                 .build();
     }
 
