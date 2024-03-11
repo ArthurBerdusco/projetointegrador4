@@ -63,9 +63,8 @@ public class UsuarioController {
         Usuario usuario = repository.findById(id).get();
         usuario.setActive(!usuario.isActive());
         repository.save(usuario);
-        return "redirect:/backoffice/usuarios";
     }
-
+      
     @GetMapping("usuarios/cadastro")
     public String cadastrar(Usuario usuario, Model model, Authentication authentication) {
         model.addAttribute("usuarioAutenticado", utils.getUsuarioAutenticado(authentication));
