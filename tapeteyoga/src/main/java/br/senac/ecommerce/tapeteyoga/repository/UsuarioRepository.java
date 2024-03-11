@@ -7,13 +7,13 @@ import br.senac.ecommerce.tapeteyoga.model.Usuario;
 
 public interface UsuarioRepository extends JpaRepository<Usuario, Long> {
 
-    boolean existsByUsernameOrCpf(String username, String cpf);
+    boolean existsByEmailOrCpf(String email, String cpf);
     boolean existsByCpfAndIdNot(String cpf, Long id);
 
-    boolean existsByUsername(String username);
+    boolean existsByEmail(String email);
     boolean existsByCpf(String cpf);
 
-    Optional<Usuario> findByUsername(String username);
+    Optional<Usuario> findByEmail(String email);
 
     List<Usuario> findByFullnameContainingIgnoreCase(String fullname);
 

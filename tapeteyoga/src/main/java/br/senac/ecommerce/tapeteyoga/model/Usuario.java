@@ -27,8 +27,8 @@ public class Usuario {
     public Usuario() {
     }
 
-    public Usuario(String username, String password) {
-        this.username = username;
+    public Usuario(String email, String password) {
+        this.email = email;
         this.password = password;
     }
 
@@ -50,7 +50,7 @@ public class Usuario {
     @Column(unique = true)
     @NotBlank(message = "O e-mail é obrigatório")
     @Email(message = "Formato de e-mail inválido")
-    private String username;
+    private String email;
 
     private boolean isActive = true;
 

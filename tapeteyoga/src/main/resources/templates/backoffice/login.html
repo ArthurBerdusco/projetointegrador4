@@ -23,10 +23,10 @@
             <h5>Backoffice</h5>
             <p>Não tem uma conta? <br>Entre em contato com um administrador</p>
             <div class="inputs">
-                <form th:action="@{/login/backoffice}" th:method="post" th:object="${usuario}">
-                    <input type="text" placeholder="Digite seu E-mail" th:field="*{username}" required>
+                <form th:action="@{/backoffice}" th:method="post" th:object="${usuario}">
+                    <input type="text" placeholder="Digite seu E-mail" th:field="*{email}" required>
                     <br>
-                    <input type="password" placeholder="Digite sua senha" th:field="*{password}" required>
+                    <input type="password" placeholder="Digite sua senha" th:field="*{password}">
             </div>
             
             <button type="submit">Login</button>
