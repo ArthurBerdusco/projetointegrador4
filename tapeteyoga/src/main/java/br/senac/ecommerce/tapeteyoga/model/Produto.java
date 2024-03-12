@@ -33,4 +33,6 @@ public class Produto {
     @NotNull(message = "O valor não pode ser nulo")
     private Integer stockQuantity;
 
+    private boolean isActive = true;
+
 }
