@@ -1,6 +1,9 @@
 package br.senac.ecommerce.tapeteyoga.controller.backoffice.produto;
 
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Sort;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -8,9 +11,11 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import br.senac.ecommerce.tapeteyoga.controller.backoffice.Utils;
 import br.senac.ecommerce.tapeteyoga.model.Produto;
+import br.senac.ecommerce.tapeteyoga.model.Usuario;
 import br.senac.ecommerce.tapeteyoga.repository.ProdutoRepository;
 import jakarta.validation.Valid;
 
@@ -24,9 +29,28 @@ public class ProdutoController {
     @Autowired
     private ProdutoRepository repository;
 
-
     @GetMapping("produtos")
-    public String listaProdutos(Model model, Authentication authentication){
+    public String listarProdutos(Model model, Authentication authentication) {
+
+        // Obtém a lista de usuários cadastrados no backoffice.
+        List<Produto> produtos = repository.findAll(Sort.by(Sort.Direction.DESC, "id"));
+
+        // Adiciona a lista de usuários ao modelo para exibição na página.
+        model.addAttribute("produtos", produtos);
+        model.addAttribute("usuarioAutenticado", utils.getUsuarioAutenticado(authentication));
+
+        // Retorna o nome da página de listagem de usuários.
+        return "backoffice/produto/lista_produtos";
+
+    }
+
+    @GetMapping("buscar")
+    public String procurar(Model model, @RequestParam(name = "name", required = false) String name,
+            Authentication authentication) {
+
+        List<Produto> produtos = repository.findByNameContainingIgnoreCaseOrderByIdDesc(name);
+
+        model.addAttribute("produtos", produtos);
         model.addAttribute("usuarioAutenticado", utils.getUsuarioAutenticado(authentication));
         return "backoffice/produto/lista_produtos";
     }

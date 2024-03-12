@@ -25,9 +25,9 @@
 
                     <div class="row my-3">
                         <div class="col-md-6 text-start">
-                            <form th:action="@{/backoffice/procurar}" th:method="get">
+                            <form th:action="@{/backoffice/buscar}" th:method="get">
                                 <div class="input-group">
-                                    <input class="form-control" type="text" id="fullname" name="fullname"
+                                    <input class="form-control" type="text" id="name" name="name"
                                         placeholder="Procurar Nome">
                                     <button class="btn btn-primary" type="submit">Buscar</button>
 
@@ -37,8 +37,8 @@
 
 
                         <div class="col-md-6 text-end">
-                            <button class="btn btn-primary"
-                                onclick="location.href='/backoffice/produtos/cadastro'">Cadastrar</button>
+                            <button class="btn btn-success"
+                                onclick="location.href='/backoffice/produtos/cadastro'">+</button>
                         </div>
 
                     </div>
@@ -47,51 +47,37 @@
                         <table class="table table-hover">
                             <thead>
                                 <tr>
+                                    <th>Código</th>
                                     <th>Nome</th>
-                                    <th>Email</th>
+                                    <th>Quantidade</th>
+                                    <th>Preço</th>
                                     <th>Status</th>
-                                    <th>Grupo</th>
-                                    <th>Editar</th>
-                                    <th>Gerenciar</th>
+                                   
                                 </tr>
                             </thead>
-                            <tbody th:each="usuario : ${usuarios}">
+                            <tbody th:each="produto : ${produtos}">
                                 <!-- Adicione linhas para cada usuário -->
                                 <tr>
-                                    <td th:text="${usuario.fullname}"></td>
-                                    <td th:text="${usuario.email}"></td>
-                                    <td th:text="${usuario.isActive ? 'Ativo' : 'Inativo'}"></td>
-                                    <td th:text="${usuario.role}"></td>
-                                    <td>
-                                        <!-- Adicione links para editar, habilitar/desabilitar -->
-                                        <a class="btn btn-info"
-                                            th:href="@{/backoffice/usuarios/editar(id=${usuario.id})}">Editar</a>
-                                    </td>
-                                    <td>
-                                        <!-- Lógica para exibir a opção correta com base no status do usuário -->
-                                        <span th:if="${usuario.isActive}">
-                                            <form th:action="@{'/backoffice/trocar-status-usuario/' + ${usuario.id}}"
-                                                th:method="post" onsubmit="return confirma()">
-                                                <button th:disabled="${usuario.email == usuarioAutenticado.email}"
-                                                    th:classappend="${usuario.email == usuarioAutenticado.email} ? 'btn btn-secondary' : 'btn btn-danger'"
-                                                    class="btn" type="submit">Desabilitar</button>
-                                            </form>
-                                        </span>
-
-                                        <span th:unless="${usuario.isActive}">
-                                            <form th:action="@{'/backoffice/trocar-status-usuario/' + ${usuario.id}}"
-                                                th:method="post" onsubmit="return confirma()">
-                                                <button th:disabled="${usuario.email == usuarioLogado}"
-                                                    th:classappend="${usuario.email == usuarioLogado} ? 'btn btn-secondary' : 'btn btn-success'"
-                                                    class="btn" type="submit">Habilitar</button>
-                                            </form>
-                                        </span>
-                                    </td>
+                                    <td th:text="${produto.id}"></td>
+                                    <td th:text="${produto.name}"></td>
+                                    <td th:text="${produto.stockQuantity}"></td> 
+                                    <td th:text="${produto.price}"></td>
+                                    <td th:text="${produto.isActive ? 'Ativo' : 'Inativo'}"></td>
+                                                                      
                                 </tr>
                             </tbody>
                         </table>
                     </div>
                 </div>
+                <nav aria-label="Page navigation example">
+                    <ul class="pagination">
+                      <li class="page-item"><a class="page-link" href="#">Previous</a></li>
+                      <li class="page-item"><a class="page-link" href="#">1</a></li>
+                      <li class="page-item"><a class="page-link" href="#">2</a></li>
+                      <li class="page-item"><a class="page-link" href="#">3</a></li>
+                      <li class="page-item"><a class="page-link" href="#">Next</a></li>
+                    </ul>
+                  </nav>
 
             </main>
         </div>
