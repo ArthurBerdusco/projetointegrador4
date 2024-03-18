@@ -69,6 +69,8 @@
                     <a type="button" class="btn btn-secondary" href="/backoffice/produtos">Voltar</a>
                 </div>
 
+                <div th:replace="fragments/fooster.html :: adm-fooster"></div>
+
                 <script>
                     document.getElementById("btnMais").addEventListener("click", function () {
                         var quantidadeInput = document.getElementById("quantidade");
