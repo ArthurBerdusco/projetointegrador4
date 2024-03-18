@@ -8,90 +8,75 @@
     <th:insert th:insert="fragments/bootstrap.html :: bootstrap"></th:insert>
 
     <title>Detalhes Produto</title>
+    <style>
+        #carouselControls img {
+            max-height: 500px;
+        }
+    </style>
 </head>
 
 <body>
 
-    <div th:replace="fragments/header.html :: adm-header"></div>
+  <!--  <div th:replace="fragments/header.html :: adm-header"></div> -->
 
-    <div class="container-fluid" style="margin-top: 70px;">
+    <div class="container mt-2 flex-grow-1">
 
-        <div class="row" style="gap: 10px;">
-
-
-            <div id="carouselExampleControls" class="carousel slide" data-bs-ride="carousel">
-                <div class="carousel-inner">
-                    <div class="carousel-item active">
-                        <img src="/img/yoga_mat.jpg" class="d-block w-100" alt="Imagem 1">
-                    </div>
-                    <div class="carousel-item">
-                        <img src="/img/yoga_mat1.jpg" class="d-block w-100" alt="Imagem 2">
+        <div class="row">
+            <div class="col-sm-8">
+                <div class="col-md-6">
+                    <div id="carouselControls" class="carousel slide" data-bs-ride="carousel">
+                        <div class="carousel-inner">
+                            <div class="carousel-item active">
+                                <img src="/img/yoga_mat.jpg" class="d-block w-100" alt="Imagem 1">
+                            </div>
+                            <div class="carousel-item">
+                                <img src="/img/yoga_mat1.jpg" class="d-block w-100" alt="Imagem 2">
+                            </div>
+                        </div>
+                        <button class="carousel-control-prev" type="button" data-bs-target="#carouselControls"
+                            data-bs-slide="prev">
+                            <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                            <span class="visually-hidden">Anterior</span>
+                        </button>
+                        <button class="carousel-control-next" type="button" data-bs-target="#carouselControls"
+                            data-bs-slide="next">
+                            <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                            <span class="visually-hidden">Próximo</span>
+                        </button>
                     </div>
                 </div>
-                <button class="carousel-control-prev" type="button" data-bs-target="#carouselExampleControls"
-                    data-bs-slide="prev">
-                    <span class="carousel-control-prev-icon" aria-hidden="true"></span>
-                    <span class="visually-hidden">Anterior</span>
-                </button>
-                <button class="carousel-control-next" type="button" data-bs-target="#carouselExampleControls"
-                    data-bs-slide="next">
-                    <span class="carousel-control-next-icon" aria-hidden="true"></span>
-                    <span class="visually-hidden">Próximo</span>
-                </button>
             </div>
 
-
-
-            <div>
+            <div class="col-md-6 p-4 shadow-lg border rounded bg-light">
                 <h2 th:text="${produto.name}"></h2>
                 <p th:text="${'R$ ' + produto.price}"></p>
                 <p th:text="${'Descrição: ' + produto.description}"></p>
-
-                <div class="container">
-                    <div class="form-group">
-                        <label for="quantidade">Quantidade:</label>
-                        <div class="input-group">
-                            <div class="input-group-prepend">
-                                <button class="btn btn-outline-secondary" type="button" id="btnMenos">-</button>
-                            </div>
-                            <input type="text" class="form-control" id="quantidade" value="1" readonly>
-                            <div class="input-group-append">
-                                <button class="btn btn-outline-secondary" type="button" id="btnMais">+</button>
-                            </div>
-                        </div>
-                    </div>
+                <div class="mb-3">
+                    <label for="quantidade" class="form-label">Quantidade</label>
+                    <input type="number" class="form-control" id="quantidade" name="quantidade" min="1" required>
                 </div>
                 <button class="btn btn-success" id="comprarBtn" disabled>Comprar</button>
             </div>
+        </div>
 
-            <div>
-                <div>
-                    <a type="button" class="btn btn-secondary" href="/backoffice/produtos">Voltar</a>
-                </div>
 
-                <div th:replace="fragments/fooster.html :: adm-fooster"></div>
+        <div class="col-md-12">
+            <div class="row p-2 justify-content-center">
+                <a type="button" class="btn btn-secondary col-md-4 p-1 m-1" href="/backoffice/produtos">Voltar</a>
+            </div>
+        </div>
+    </div>
+    </div>
 
-                <script>
-                    document.getElementById("btnMais").addEventListener("click", function () {
-                        var quantidadeInput = document.getElementById("quantidade");
-                        var quantidade = parseInt(quantidadeInput.value);
-                        quantidadeInput.value = quantidade + 1;
-                    });
-
-                    document.getElementById("btnMenos").addEventListener("click", function () {
-                        var quantidadeInput = document.getElementById("quantidade");
-                        var quantidade = parseInt(quantidadeInput.value);
-                        if (quantidade > 1) {
-                            quantidadeInput.value = quantidade - 1;
-                        }
-                    });
-                </script>
-                <script>
-                    $('#carouselExampleControls').carousel({
-                        interval: false
-                    });
-                </script>
+    <div th:replace="fragments/fooster.html :: adm-fooster"></div>
 
 </body>
+
+<script>
+    $('#carouselExampleControls').carousel({
+        interval: false
+    });
+</script>
+
 
 </html>
