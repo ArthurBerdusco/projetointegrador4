@@ -1,5 +1,12 @@
 package br.senac.ecommerce.tapeteyoga.controller.backoffice.produto;
 
+import java.io.IOException;
+import java.io.InputStream;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -16,8 +23,10 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.multipart.MultipartFile;
 
 import br.senac.ecommerce.tapeteyoga.controller.backoffice.Utils;
+import br.senac.ecommerce.tapeteyoga.model.ImagemProduto;
 import br.senac.ecommerce.tapeteyoga.model.Produto;
 import br.senac.ecommerce.tapeteyoga.repository.ProdutoRepository;
 import jakarta.validation.Valid;
@@ -65,38 +74,111 @@ public class ProdutoController {
         return "backoffice/produto/lista_produtos";
     }
 
+    @GetMapping("produtos/{id}")
+    public String handleBackofficeGetProduto(@PathVariable Long id, Model model, Authentication authentication) {
+        Produto produto = repository.findById(id).orElseThrow();
+        model.addAttribute("produto", produto);
+        model.addAttribute("imagens", produto.getImagens());
+        model.addAttribute("usuarioAutenticado", utils.getUsuarioAutenticado(authentication));
+        return "backoffice/produto/form_produto";
+    }
+
     @GetMapping("produtos/cadastro")
     public String cadastrar(Produto produto, Model model, Authentication authentication) {
         model.addAttribute("usuarioAutenticado", utils.getUsuarioAutenticado(authentication));
         return "backoffice/produto/form_produto";
     }
 
-    @PostMapping("produto/cadastra")
-    public String cadastra(@Valid Produto produto, BindingResult result) {
+    public String cadastra(@RequestParam("arquivo") MultipartFile[] files, @Valid Produto produto,
+            BindingResult result) {
+
         if (result.hasErrors()) {
-            return "backoffice/produto/form_produto";
         }
+
+        produto = repository.save(produto); // Salvar o produto no banco de dados
+
+        List<ImagemProduto> imagensEntities = new ArrayList<>();
+
+        for (int i = 0; i < files.length; i++) {
+            MultipartFile file = files[i];
+            if (file.isEmpty()) {
+                continue; // Ignora arquivos vazios
+            }
+
+            String nomeOriginal = file.getOriginalFilename();
+            String extensao = nomeOriginal.substring(nomeOriginal.lastIndexOf("."));
+            String nomeArquivo = produto.getId() + "-" + (i + 1) + extensao;
+
+            try {
+                String uploadDir = "src/main/resources/static/img/produtos/";
+                Path uploadPath = Paths.get(uploadDir);
+                if (!Files.exists(uploadPath)) {
+                    Files.createDirectories(uploadPath);
+                }
+
+                Path destino = uploadPath.resolve(nomeArquivo);
+                Files.copy(file.getInputStream(), destino, StandardCopyOption.REPLACE_EXISTING);
+
+                ImagemProduto imgEntity = new ImagemProduto();
+                imgEntity.setNomeArquivo(nomeArquivo);
+                imgEntity.setOrdenacao(produto.getImagens().get(i).getOrdenacao());
+                imgEntity.setPrincipal(produto.getImagens().get(i).isPrincipal());
+                imgEntity.setProduto(produto);
+                imagensEntities.add(imgEntity);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+
+        produto.setImagens(imagensEntities);
         repository.save(produto);
         return "redirect:/backoffice/produtos";
     }
 
-    @GetMapping("produtos/{id}/editar")
-    public String editarProduto(@PathVariable Long id, Model model) {
-        // Busca o produto no banco de dados pelo ID
-        Optional<Produto> produtoOptional = repository.findById(id);
+    @PostMapping("produto/edita")
+    public String edita(@RequestParam("arquivo") MultipartFile[] files, @Valid Produto produto,
+            BindingResult result) {
 
-        // Verifica se o produto foi encontrado
-        if (produtoOptional.isPresent()) {
-            // Produto encontrado, adiciona-o ao modelo
-            Produto produto = produtoOptional.get();
-            model.addAttribute("produto", produto);
-            // Retorna o nome da página de edição
-            return "backoffice/produto/editar_produto";
-        } else {
-            // Produto não encontrado, redireciona para página de erro ou retorna uma
-            // mensagem de erro
-            return "redirect:/backoffice/produtos?error=Produto não encontrado";
+        if (result.hasErrors()) {
+
         }
+
+        List<ImagemProduto> imagensEntities = produto.getImagens();
+
+        for (int i = 0; i < files.length; i++) {
+            MultipartFile file = files[i];
+            if (file.isEmpty()) {
+                continue; // Ignora arquivos vazios
+            }
+
+            String nomeOriginal = file.getOriginalFilename();
+            String extensao = nomeOriginal.substring(nomeOriginal.lastIndexOf("."));
+            String nomeArquivo = produto.getId() + "-" + (i + 1) + extensao;
+
+            try {
+                String uploadDir = "src/main/resources/static/img/produtos/";
+                Path uploadPath = Paths.get(uploadDir);
+                if (!Files.exists(uploadPath)) {
+                    Files.createDirectories(uploadPath);
+                }
+
+                Path destino = uploadPath.resolve(nomeArquivo);
+                Files.copy(file.getInputStream(), destino, StandardCopyOption.REPLACE_EXISTING);
+
+                ImagemProduto imgEntity = new ImagemProduto();
+                imgEntity.setNomeArquivo(nomeArquivo);
+                imgEntity.setOrdenacao(produto.getImagens().get(i).getOrdenacao());
+                imgEntity.setPrincipal(produto.getImagens().get(i).isPrincipal());
+                imgEntity.setProduto(produto);
+                imagensEntities.add(imgEntity);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+
+        produto.setImagens(imagensEntities);
+        repository.save(produto);
+        return "redirect:/backoffice/produtos";
     }
 
     @GetMapping("produtos/{id}/inativar")
@@ -146,27 +228,5 @@ public class ProdutoController {
             return "redirect:/backoffice/produtos?error=Produto não encontrado";
         }
     }
-
-    @GetMapping("produtos/{id}/visualizar")
-
-    public String visualizarProduto(@PathVariable Long id, Model model) {
-        // Busca o produto no banco de dados pelo ID
-        Optional<Produto> produtoOptional = repository.findById(id);
-
-        // Verifica se o produto foi encontrado
-        if (produtoOptional.isPresent()) {
-            // Produto encontrado, adiciona-o ao modelo
-            Produto produto = produtoOptional.get();
-            model.addAttribute("produto", produto);
-
-            // Retorna o nome da página de visualização do produto
-            return "backoffice/produto/visualizar_produto";
-        } else {
-
-            return "redirect:/backoffice/produtos?error=Produto não encontrado";
-        }
-
-    }
     
-
 }

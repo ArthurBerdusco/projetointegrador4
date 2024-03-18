@@ -12,6 +12,8 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.SimpleUrlAuthenticationSuccessHandler;
+
 import br.senac.ecommerce.tapeteyoga.service.MyUserDetailService;
 
 @Configuration
@@ -28,7 +30,7 @@ public class SecurityConfiguration {
                 .authorizeHttpRequests(registry -> {
 
                     /* Todos */
-                    registry.requestMatchers("/setup", "/", "/img/**", "/css/**", "/js/**", "/backoffice/setup").permitAll();
+                    registry.requestMatchers("/setup", "/img/**", "/css/**", "/backoffice/setup").permitAll();
 
                     /* Administrador e Estoquista */
                     registry.requestMatchers("/backoffice/").hasAnyRole("Administrador", "Estoquista");
@@ -42,7 +44,7 @@ public class SecurityConfiguration {
                     httpSecurityFormLoginConfigurer
                             .loginPage("/backoffice")
                             .usernameParameter("email")
-                            .successHandler(new AuthenticationSuccessHandler())
+                            .successHandler(new SimpleUrlAuthenticationSuccessHandler("/backoffice/home"))
                             .permitAll();
                 })
                 .logout(logoutConfigurer -> logoutConfigurer

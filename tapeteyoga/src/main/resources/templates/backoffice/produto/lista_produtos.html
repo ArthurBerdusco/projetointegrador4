@@ -55,7 +55,6 @@
                                     <th>Editar</th>
                                     <th th:if="${usuarioAutenticado?.role != 'Estoquista'}">Inativar/Reativar</th>
                                     <th th:if="${usuarioAutenticado?.role != 'Estoquista'}">Visualizar</th>
-
                                 </tr>
                             </thead>
                             <tbody th:each="produto : ${produtos}">
@@ -91,8 +90,6 @@
                                         </td>
                                     </span>
                                     <span th:if="${usuarioAutenticado?.role != 'Estoquista'}">
-
-
                                         <td>
                                             <a class="btn btn-info"
                                                 th:href="@{/backoffice/produtos/{id}/visualizar(id=${produto.id})}">
