@@ -53,7 +53,8 @@
                                     <th>Preço</th>
                                     <th>Status</th>
                                     <th>Editar</th>
-                                   
+                                    <th th:if="${usuarioAutenticado?.role != 'Estoquista'}">Inativar/Reativar</th>
+                                    <th th:if="${usuarioAutenticado?.role != 'Estoquista'}">Visualizar</th>
                                 </tr>
                             </thead>
                             <tbody th:each="produto : ${produtos}">
@@ -61,13 +62,41 @@
                                 <tr>
                                     <td th:text="${produto.id}"></td>
                                     <td th:text="${produto.name}"></td>
-                                    <td th:text="${produto.stockQuantity}"></td> 
+                                    <td th:text="${produto.stockQuantity}"></td>
                                     <td th:text="${produto.price}"></td>
                                     <td th:text="${produto.isActive ? 'Ativo' : 'Inativo'}"></td>
                                     <td>
-                                        <a class="btn btn-info" th:href="@{/backoffice/produtos/{id}(id=${produto.id})}">Editar</a>
+                                        <a class="btn btn-primary"
+                                            th:href="@{/backoffice/produtos/{id}/editar(id=${produto.id})}">
+                                            Editar
+                                        </a>
                                     </td>
-                                                                      
+                                    <span th:if="${usuarioAutenticado?.role != 'Estoquista'}">
+                                        <td>
+
+                                            <form th:if="${produto.isActive}"
+                                                th:action="@{/backoffice/produtos/{id}/inativar(id=${produto.id})}"
+                                                onsubmit="return confirma()">
+
+                                                <button class="btn btn-danger">Inativar</button>
+                                            </form>
+
+                                            <form th:unless="${produto.isActive}"
+                                                th:action="@{/backoffice/produtos/{id}/reativar(id=${produto.id})}"
+                                                onsubmit="return confirma()">
+
+                                                <button class="btn btn-success">Reativar</button>
+                                            </form>
+                                        </td>
+                                    </span>
+                                    <span th:if="${usuarioAutenticado?.role != 'Estoquista'}">
+                                        <td>
+                                            <a class="btn btn-info"
+                                                th:href="@{/backoffice/produtos/{id}/visualizar(id=${produto.id})}">
+                                                Visualizar
+                                            </a>
+                                        </td>
+                                    </span>
                                 </tr>
                             </tbody>
                         </table>
@@ -75,13 +104,19 @@
                 </div>
                 <nav aria-label="Page navigation example">
                     <ul class="pagination">
-                      <li class="page-item"><a class="page-link" href="#">Previous</a></li>
-                      <li class="page-item"><a class="page-link" href="#">1</a></li>
-                      <li class="page-item"><a class="page-link" href="#">2</a></li>
-                      <li class="page-item"><a class="page-link" href="#">3</a></li>
-                      <li class="page-item"><a class="page-link" href="#">Next</a></li>
+                        <li class="page-item" th:classappend="${currentPage == 0 ? 'disabled' : ''}">
+                            <a class="page-link" th:href="@{/backoffice/produtos(page=0)}">Anterior</a>
+                        </li>
+                        <li th:each="pageNo : ${#numbers.sequence(0, totalPages-1)}"
+                            th:classappend="${pageNo == currentPage ? 'active' : ''}">
+                            <a class="page-link" th:href="@{/backoffice/produtos(page=${pageNo})}"
+                                th:text="${pageNo + 1}"></a>
+                        </li>
+                        <li class="page-item" th:classappend="${currentPage == totalPages-1 ? 'disabled' : ''}">
+                            <a class="page-link" th:href="@{/backoffice/produtos(page=${totalPages-1})}">Próximo</a>
+                        </li>
                     </ul>
-                  </nav>
+                </nav>
 
             </main>
         </div>
