@@ -52,6 +52,7 @@
                                     <th>Quantidade</th>
                                     <th>Preço</th>
                                     <th>Status</th>
+                                    <th>Editar</th>
                                    
                                 </tr>
                             </thead>
@@ -63,6 +64,9 @@
                                     <td th:text="${produto.stockQuantity}"></td> 
                                     <td th:text="${produto.price}"></td>
                                     <td th:text="${produto.isActive ? 'Ativo' : 'Inativo'}"></td>
+                                    <td>
+                                        <a class="btn btn-info" th:href="@{/backoffice/produtos/{id}(id=${produto.id})}">Editar</a>
+                                    </td>
                                                                       
                                 </tr>
                             </tbody>

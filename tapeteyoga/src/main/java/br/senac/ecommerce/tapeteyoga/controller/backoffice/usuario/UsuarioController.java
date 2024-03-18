@@ -72,6 +72,15 @@ public class UsuarioController {
         return "backoffice/usuario/form_usuario";
     }
 
+
+    @GetMapping("usuarios/{id}")
+    public String handleBackofficeGetUsuario(@PathVariable Long id, Model model, Authentication authentication) {
+        Usuario usuario = repository.findById(id).orElseThrow();
+        model.addAttribute("usuario", usuario);
+        model.addAttribute("usuarioAutenticado", utils.getUsuarioAutenticado(authentication));
+        return "backoffice/usuario/form_usuario";
+    }
+
     @PostMapping("usuario/cadastra")
     public String salvaFormulario(@Valid Usuario usuario, BindingResult result, Authentication authentication,
             Model model) {
