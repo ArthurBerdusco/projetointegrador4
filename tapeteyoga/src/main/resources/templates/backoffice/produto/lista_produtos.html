@@ -52,7 +52,8 @@
                                     <th>Quantidade</th>
                                     <th>Preço</th>
                                     <th>Status</th>
-                                   
+                                    <th>Visualizar</th>
+
                                 </tr>
                             </thead>
                             <tbody th:each="produto : ${produtos}">
@@ -60,10 +61,14 @@
                                 <tr>
                                     <td th:text="${produto.id}"></td>
                                     <td th:text="${produto.name}"></td>
-                                    <td th:text="${produto.stockQuantity}"></td> 
+                                    <td th:text="${produto.stockQuantity}"></td>
                                     <td th:text="${produto.price}"></td>
                                     <td th:text="${produto.isActive ? 'Ativo' : 'Inativo'}"></td>
-                                                                      
+                                    <td>
+
+                                        <a class="btn btn-info"
+                                            th:href="@{/backoffice/produto(id=${produto.getId})}">Visualizar</a>
+                                    </td>
                                 </tr>
                             </tbody>
                         </table>
@@ -71,13 +76,13 @@
                 </div>
                 <nav aria-label="Page navigation example">
                     <ul class="pagination">
-                      <li class="page-item"><a class="page-link" href="#">Previous</a></li>
-                      <li class="page-item"><a class="page-link" href="#">1</a></li>
-                      <li class="page-item"><a class="page-link" href="#">2</a></li>
-                      <li class="page-item"><a class="page-link" href="#">3</a></li>
-                      <li class="page-item"><a class="page-link" href="#">Next</a></li>
+                        <li class="page-item"><a class="page-link" href="#">Previous</a></li>
+                        <li class="page-item"><a class="page-link" href="#">1</a></li>
+                        <li class="page-item"><a class="page-link" href="#">2</a></li>
+                        <li class="page-item"><a class="page-link" href="#">3</a></li>
+                        <li class="page-item"><a class="page-link" href="#">Next</a></li>
                     </ul>
-                  </nav>
+                </nav>
 
             </main>
         </div>
