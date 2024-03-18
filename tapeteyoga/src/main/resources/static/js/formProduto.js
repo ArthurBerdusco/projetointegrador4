@@ -17,7 +17,6 @@ document.getElementById(`btnNovaImagem`).onclick = function() {
     `);
 }
 
-
 function displaySelectedImage(event, elementId) {
     const selectedImage = document.getElementById(elementId);
     const fileInput = event.target;

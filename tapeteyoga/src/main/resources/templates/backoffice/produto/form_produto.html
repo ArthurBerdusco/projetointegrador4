@@ -64,17 +64,18 @@
                         <div class="pt-4" id="inputImagem">
                             
                             <fieldset th:each="imagem, iterStat   : *{imagens}">
-                                <img th:id="'selectedImage' + ${iterStat.index}" onclick="document.getElementById('incluirImagem +${iterStat.index}').click()"
+                                <p th:text="${imagem.id}"></p>
+                                <img th:id="'selectedImage' + ${iterStat.index}" th:onclick="'document.getElementById(\'incluirImagem' + ${iterStat.index} + '\').click()'"
                                 th:src="'/img/produtos/' + ${imagem.nomeArquivo}" style="width: 200px; cursor: pointer;" />
                                 <input th:id="'incluirImagem' + ${iterStat.index}" type="file"
-                                    th:name="'arquivo'" onchange="displaySelectedImage(event, 'selectedImage${iterStat.index}')" />
+                                    th:name="'arquivo'" class="form d-none" th:attr="onchange=|displaySelectedImage(event, `selectedImage${iterStat.index}`)|" />
                                 <div>
                                     <label for="txtOrdenacao${iterStat.index}">Ordem: </label>
-                                    <input type="number" name="imagens[${iterStat.index}].ordenacao" th:value="${imagem.ordenacao}"/>
+                                    <input type="number" th:name="${'imagens[' + iterStat.index + '].ordenacao'}" th:value="${imagem.ordenacao}"/>
                                 </div>
                                 <div>
                                     <label for="principal${iterStat.index}">Principal: </label>
-                                    <input type="checkbox" name="imagens[${iterStat.index}].principal" th:value="${imagem.principal}"/>
+                                    <input type="checkbox" th:name="${'imagens[' + iterStat.index + '].principal'}" th:value="${imagem.principal}"/>
                                 </div>
                             </fieldset>
 
@@ -82,7 +83,6 @@
 
 
                         <div class="mb-3 text-end">
- 
                             <a href="/backoffice/produtos" class="btn btn-danger btn-lg">Cancelar</a>
                             <button class="btn btn-primary btn-lg">Salvar</button>
                         </div>
