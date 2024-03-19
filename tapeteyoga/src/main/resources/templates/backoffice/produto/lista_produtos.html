@@ -92,9 +92,7 @@
                                     <span th:if="${usuarioAutenticado?.role != 'Estoquista'}">
                                         <td>
                                             <a class="btn btn-info"
-                                                th:href="@{/backoffice/produtos/{id}/visualizar(id=${produto.id})}">
-                                                Visualizar
-                                            </a>
+                                            th:href="@{/backoffice/produto(id=${produto.getId})}">Visualizar</a>
                                         </td>
                                     </span>
                                 </tr>
@@ -123,7 +121,10 @@
 
     </div>
 
+    <div th:replace="fragments/fooster.html :: adm-fooster"></div>
+
 </body>
+
 
 <script>
     function confirma() {

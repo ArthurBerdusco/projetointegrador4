@@ -9,6 +9,7 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.OneToMany;
+import jakarta.persistence.Table;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
@@ -16,6 +17,7 @@ import lombok.Data;
 
 @Entity
 @Data
+@Table
 public class Produto {
 
     @Id
@@ -37,6 +39,8 @@ public class Produto {
     private Integer stockQuantity;
 
     private boolean isActive = true;
+
+    private float avaliacao;
 
     @OneToMany(mappedBy = "produto", cascade = { CascadeType.PERSIST, CascadeType.MERGE })
     private List<ImagemProduto> imagens;
@@ -97,6 +101,7 @@ public class Produto {
     public void setImagens(List<ImagemProduto> imagens) {
         this.imagens = imagens;
     }
+
 
     @Override
     public String toString() {

@@ -29,6 +29,7 @@ import br.senac.ecommerce.tapeteyoga.model.ImagemProduto;
 import br.senac.ecommerce.tapeteyoga.model.Produto;
 import br.senac.ecommerce.tapeteyoga.repository.ImagemProdutoRepository;
 import br.senac.ecommerce.tapeteyoga.repository.ProdutoRepository;
+import br.senac.ecommerce.tapeteyoga.service.ProdutoService;
 import jakarta.validation.Valid;
 
 @Controller
@@ -40,6 +41,9 @@ public class ProdutoController {
 
     @Autowired
     private ProdutoRepository repository;
+
+    @Autowired
+    private ProdutoService produtoService;
 
     @Autowired
     private ImagemProdutoRepository imgRepository;
@@ -65,6 +69,22 @@ public class ProdutoController {
         return "backoffice/produto/lista_produtos";
 
     }
+
+    @GetMapping("/produto")
+    public String obterporId(@RequestParam(name = "id", required = false) Long id, Model model) {
+                
+
+        Optional<Produto> produtoVisualizar = produtoService.buscarProdutoPorId(id);
+
+        if (produtoVisualizar.isPresent()) {
+            Produto produto = produtoVisualizar.get();
+            model.addAttribute("produto", produto);
+            return "/backoffice/produto/visualizar";
+        } else {
+            return "redirect:/produto/lista_produto";
+        }
+    }
+    
 
     @GetMapping("buscar")
     public String procurar(Model model, @RequestParam(name = "name", required = false) String name,
