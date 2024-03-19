@@ -63,9 +63,7 @@
                                     <td th:text="${usuario.isActive ? 'Ativo' : 'Inativo'}"></td>
                                     <td th:text="${usuario.role}"></td>
                                     <td>
-                                        <!-- Adicione links para editar, habilitar/desabilitar -->
-                                        <a class="btn btn-info"
-                                            th:href="@{/backoffice/usuarios/editar(id=${usuario.id})}">Editar</a>
+                                        <a class="btn btn-info" th:href="@{/backoffice/usuarios/{id}(id=${usuario.id})}">Editar</a>
                                     </td>
                                     <td>
                                         <!-- Lógica para exibir a opção correta com base no status do usuário -->
@@ -77,7 +75,6 @@
                                                     class="btn" type="submit">Desabilitar</button>
                                             </form>
                                         </span>
-
                                         <span th:unless="${usuario.isActive}">
                                             <form th:action="@{'/backoffice/trocar-status-usuario/' + ${usuario.id}}"
                                                 th:method="post" onsubmit="return confirma()">

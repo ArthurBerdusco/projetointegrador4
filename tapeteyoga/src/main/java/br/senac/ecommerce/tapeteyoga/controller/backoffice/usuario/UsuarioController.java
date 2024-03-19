@@ -63,11 +63,20 @@ public class UsuarioController {
         Usuario usuario = repository.findById(id).get();
         usuario.setActive(!usuario.isActive());
         repository.save(usuario);
-        return "backoffice/usuario/lista_usuarios";
+        return "redirect:/backoffice/usuarios";
     }
       
     @GetMapping("usuarios/cadastro")
     public String cadastrar(Usuario usuario, Model model, Authentication authentication) {
+        model.addAttribute("usuarioAutenticado", utils.getUsuarioAutenticado(authentication));
+        return "backoffice/usuario/form_usuario";
+    }
+
+
+    @GetMapping("usuarios/{id}")
+    public String handleBackofficeGetUsuario(@PathVariable Long id, Model model, Authentication authentication) {
+        Usuario usuario = repository.findById(id).orElseThrow();
+        model.addAttribute("usuario", usuario);
         model.addAttribute("usuarioAutenticado", utils.getUsuarioAutenticado(authentication));
         return "backoffice/usuario/form_usuario";
     }
