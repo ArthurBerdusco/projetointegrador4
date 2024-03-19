@@ -68,10 +68,10 @@
                                 <img th:id="'selectedImage' + ${iterStat.index}" th:onclick="'document.getElementById(\'incluirImagem' + ${iterStat.index} + '\').click()'"
                                 th:src="'/img/produtos/' + ${imagem.nomeArquivo}" style="width: 200px; cursor: pointer;" />
                                 <input th:id="'incluirImagem' + ${iterStat.index}" type="file"
-                                    th:name="'arquivo'" class="form d-none" th:attr="onchange=|displaySelectedImage(event, `selectedImage${iterStat.index}`)|" />
+                                    th:name="'arquivo'" class="form d-none" th:attr="onchange=|displaySelectedImage(event, `selectedImage${iterStat.index}`)|"/>
                                 <div>
                                     <label for="txtOrdenacao${iterStat.index}">Ordem: </label>
-                                    <input type="number" th:name="${'imagens[' + iterStat.index + '].ordenacao'}" th:value="${imagem.ordenacao}"/>
+                                    <input type="number" th:name="${'imagens[' + iterStat.index + '].ordenacao'}"  th:value="${imagem.ordenacao}"/>
                                 </div>
                                 <div>
                                     <label for="principal${iterStat.index}">Principal: </label>
