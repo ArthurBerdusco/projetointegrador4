@@ -75,7 +75,6 @@
                                                     class="btn" type="submit">Desabilitar</button>
                                             </form>
                                         </span>
-
                                         <span th:unless="${usuario.isActive}">
                                             <form th:action="@{'/backoffice/trocar-status-usuario/' + ${usuario.id}}"
                                                 th:method="post" onsubmit="return confirma()">

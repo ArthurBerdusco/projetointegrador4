@@ -7,8 +7,11 @@ import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
@@ -38,14 +41,21 @@ public class ProdutoController {
     private ProdutoRepository repository;
 
     @GetMapping("produtos")
-    public String listarProdutos(Model model, Authentication authentication) {
+    public String listarProdutos(Model model, Authentication authentication,
+            @RequestParam(name = "page", defaultValue = "0") int page) {
+
+        // Define o tamanho da página (quantidade de produtos por página)
+        int pageSize = 10;
 
         // Obtém a lista de usuários cadastrados no backoffice.
-        List<Produto> produtos = repository.findAll(Sort.by(Sort.Direction.DESC, "id"));
+        Page<Produto> produtosPage = repository
+                .findAll(PageRequest.of(page, pageSize, Sort.by(Sort.Direction.DESC, "id")));
 
         // Adiciona a lista de usuários ao modelo para exibição na página.
-        model.addAttribute("produtos", produtos);
+        model.addAttribute("produtos", produtosPage.getContent());
         model.addAttribute("usuarioAutenticado", utils.getUsuarioAutenticado(authentication));
+        model.addAttribute("currentPage", page);
+        model.addAttribute("totalPages", produtosPage.getTotalPages());
 
         // Retorna o nome da página de listagem de usuários.
         return "backoffice/produto/lista_produtos";
@@ -78,7 +88,6 @@ public class ProdutoController {
         return "backoffice/produto/form_produto";
     }
 
-    @PostMapping("produto/cadastra")
     public String cadastra(@RequestParam("arquivo") MultipartFile[] files, @Valid Produto produto,
             BindingResult result) {
 
@@ -171,4 +180,52 @@ public class ProdutoController {
         return "redirect:/backoffice/produtos";
     }
 
+    @GetMapping("produtos/{id}/inativar")
+    public String inativarProduto(@PathVariable Long id) {
+        // Busca o produto no banco de dados pelo ID
+        Optional<Produto> produtoOptional = repository.findById(id);
+
+        // Verifica se o produto foi encontrado
+        if (produtoOptional.isPresent()) {
+            // Produto encontrado, obtém o produto
+            Produto produto = produtoOptional.get();
+
+            // Realiza a lógica para inativar o produto (por exemplo, alterar o status)
+            produto.setActive(false);
+
+            // Salva as alterações no banco de dados
+            repository.save(produto);
+
+            // Redireciona para a página de listagem de produtos
+            return "redirect:/backoffice/produtos";
+        } else {
+
+            return "redirect:/backoffice/produtos?error=Produto não encontrado";
+        }
+    }
+
+    @GetMapping("produtos/{id}/reativar")
+    public String reativarProduto(@PathVariable Long id) {
+        // Busca o produto no banco de dados pelo ID
+        Optional<Produto> produtoOptional = repository.findById(id);
+
+        // Verifica se o produto foi encontrado
+        if (produtoOptional.isPresent()) {
+            // Produto encontrado, obtém o produto
+            Produto produto = produtoOptional.get();
+
+            // Realiza a lógica para reativar o produto (por exemplo, alterar o status)
+            produto.setActive(true);
+
+            // Salva as alterações no banco de dados
+            repository.save(produto);
+
+            // Redireciona para a página de listagem de produtos
+            return "redirect:/backoffice/produtos";
+        } else {
+
+            return "redirect:/backoffice/produtos?error=Produto não encontrado";
+        }
+    }
+    
 }
