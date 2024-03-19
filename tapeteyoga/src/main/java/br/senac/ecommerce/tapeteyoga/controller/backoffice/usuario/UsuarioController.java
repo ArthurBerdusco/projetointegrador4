@@ -63,7 +63,7 @@ public class UsuarioController {
         Usuario usuario = repository.findById(id).get();
         usuario.setActive(!usuario.isActive());
         repository.save(usuario);
-        return "backoffice/usuario/lista_usuarios";
+        return "redirect:/backoffice/usuarios";
     }
       
     @GetMapping("usuarios/cadastro")

@@ -27,6 +27,7 @@ import org.springframework.web.multipart.MultipartFile;
 import br.senac.ecommerce.tapeteyoga.controller.backoffice.Utils;
 import br.senac.ecommerce.tapeteyoga.model.ImagemProduto;
 import br.senac.ecommerce.tapeteyoga.model.Produto;
+import br.senac.ecommerce.tapeteyoga.repository.ImagemProdutoRepository;
 import br.senac.ecommerce.tapeteyoga.repository.ProdutoRepository;
 import jakarta.validation.Valid;
 
@@ -39,6 +40,9 @@ public class ProdutoController {
 
     @Autowired
     private ProdutoRepository repository;
+
+    @Autowired
+    private ImagemProdutoRepository imgRepository;
 
     @GetMapping("produtos")
     public String listarProdutos(Model model, Authentication authentication,
@@ -88,6 +92,7 @@ public class ProdutoController {
         return "backoffice/produto/form_produto";
     }
 
+    @PostMapping("produto/cadastra")
     public String cadastra(@RequestParam("arquivo") MultipartFile[] files, @Valid Produto produto,
             BindingResult result) {
 
@@ -100,6 +105,7 @@ public class ProdutoController {
 
         for (int i = 0; i < files.length; i++) {
             MultipartFile file = files[i];
+
             if (file.isEmpty()) {
                 continue; // Ignora arquivos vazios
             }
@@ -135,41 +141,56 @@ public class ProdutoController {
     }
 
     @PostMapping("produto/edita")
-    public String edita(@RequestParam("arquivo") MultipartFile[] files, @Valid Produto produto,
-            BindingResult result) {
-
+    public String edita(@RequestParam("arquivo") MultipartFile[] files, @Valid Produto produto, BindingResult result) {
         if (result.hasErrors()) {
-
+            // Handle validation errors
         }
 
         List<ImagemProduto> imagensEntities = produto.getImagens();
 
         for (int i = 0; i < files.length; i++) {
             MultipartFile file = files[i];
+
             if (file.isEmpty()) {
-                continue; // Ignora arquivos vazios
+                continue; // Ignore empty files
             }
 
-            String nomeOriginal = file.getOriginalFilename();
-            String extensao = nomeOriginal.substring(nomeOriginal.lastIndexOf("."));
-            String nomeArquivo = produto.getId() + "-" + (i + 1) + extensao;
-
             try {
+
+                ImagemProduto imagemProduto = imgRepository
+                        .findByNomeArquivoContaining(produto.getId() + "-" + (i + 1));
+                String nomeOriginal = file.getOriginalFilename();
+                String extensao = nomeOriginal.substring(nomeOriginal.lastIndexOf("."));
+                String nomeArquivo = produto.getId() + "-" + (i + 1) + extensao;
                 String uploadDir = "src/main/resources/static/img/produtos/";
                 Path uploadPath = Paths.get(uploadDir);
+                Path destino = uploadPath.resolve(nomeArquivo);
+
                 if (!Files.exists(uploadPath)) {
                     Files.createDirectories(uploadPath);
                 }
 
-                Path destino = uploadPath.resolve(nomeArquivo);
-                Files.copy(file.getInputStream(), destino, StandardCopyOption.REPLACE_EXISTING);
+                if (!file.getOriginalFilename().trim().equals("") && imagemProduto != null) {
 
-                ImagemProduto imgEntity = new ImagemProduto();
-                imgEntity.setNomeArquivo(nomeArquivo);
-                imgEntity.setOrdenacao(produto.getImagens().get(i).getOrdenacao());
-                imgEntity.setPrincipal(produto.getImagens().get(i).isPrincipal());
-                imgEntity.setProduto(produto);
-                imagensEntities.add(imgEntity);
+                    Files.write(destino, file.getBytes());
+
+                    // Update existing image entity
+                    imagemProduto.setNomeArquivo(nomeArquivo);
+                    imagemProduto.setOrdenacao(produto.getImagens().get(i).getOrdenacao());
+                    imagemProduto.setPrincipal(produto.getImagens().get(i).isPrincipal());
+                    imagemProduto.setProduto(produto);
+                    imgRepository.save(imagemProduto);
+                } else {
+
+                    Files.copy(file.getInputStream(), destino, StandardCopyOption.REPLACE_EXISTING);
+
+                    ImagemProduto imgEntity = new ImagemProduto();
+                    imgEntity.setNomeArquivo(nomeArquivo);
+                    imgEntity.setOrdenacao(produto.getImagens().get(i).getOrdenacao());
+                    imgEntity.setPrincipal(produto.getImagens().get(i).isPrincipal());
+                    imgEntity.setProduto(produto);
+                    imagensEntities.add(imgEntity);
+                }
             } catch (IOException e) {
                 e.printStackTrace();
             }
@@ -227,5 +248,5 @@ public class ProdutoController {
             return "redirect:/backoffice/produtos?error=Produto não encontrado";
         }
     }
-    
+
 }
