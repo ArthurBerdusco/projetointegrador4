@@ -33,7 +33,7 @@
                         <!-- Nome do produto -->
                         <div class="mb-3">
                             <label for="nome" class="form-label">Nome:</label>
-                            <input type="text" th:field="*{name}" class="form-control" disabled>
+                            <input type="text" th:field="*{name}" class="form-control" th:readonly="${usuarioAutenticado.role!='Administrador'}">
                             <span th:errors="*{name}" class="text-danger"></span>
                         </div>
 
@@ -42,7 +42,7 @@
 
                         <div class="mb-3">
                             <label for="descricao" class="form-label">Descrição:</label>
-                            <textarea th:field="*{description}" class="form-control" disabled></textarea>
+                            <textarea th:field="*{description}" class="form-control" th:readonly="${usuarioAutenticado.role!='Administrador'}"></textarea>
                             <span th:errors="*{description}" class="text-danger"></span>
                         </div>
 
@@ -51,7 +51,7 @@
 
                         <div class="mb-3">
                             <label for="preco" class="form-label">Preço:</label>
-                            <input type="number" th:field="*{price}" class="form-control" disabled>
+                            <input type="number" th:field="*{price}" class="form-control" th:readonly="${usuarioAutenticado.role!='Administrador'}">
                             <span th:errors="*{price}" class="text-danger"></span>
                         </div>
 
@@ -63,9 +63,7 @@
                             <span th:errors="*{stockQuantity}" class="text-danger"></span>
                         </div>
 
-
                         <button type="button" id="btnNovaImagem">Incluir nova imagem</button>
-
 
                         <div class="pt-4" id="inputImagem">
                             
@@ -87,15 +85,11 @@
 
                         </div>
 
-
                         <div class="mb-3 text-end">
                             <a href="/backoffice/produtos" class="btn btn-danger btn-lg">Cancelar</a>
                             <button class="btn btn-primary btn-lg">Salvar</button>
                         </div>
                     </form>
-
-
-
                 </div>
             </main>
         </div>
