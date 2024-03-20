@@ -33,30 +33,36 @@
                         <!-- Nome do produto -->
                         <div class="mb-3">
                             <label for="nome" class="form-label">Nome:</label>
-                            <input type="text" th:field="*{name}" class="form-control" required>
+                            <input type="text" th:field="*{name}" class="form-control" disabled>
                             <span th:errors="*{name}" class="text-danger"></span>
                         </div>
 
+
                         <!-- Descrição -->
+
                         <div class="mb-3">
-                            <label for="cpf" class="form-label">Descrição:</label>
-                            <textarea th:field="*{description}" class="form-control"></textarea>
+                            <label for="descricao" class="form-label">Descrição:</label>
+                            <textarea th:field="*{description}" class="form-control" disabled></textarea>
                             <span th:errors="*{description}" class="text-danger"></span>
                         </div>
 
+
                         <!-- Preço -->
+
                         <div class="mb-3">
-                            <label for="price" class="form-label">Preço:</label>
-                            <input type="number" th:field="*{price}" class="form-control" required>
+                            <label for="preco" class="form-label">Preço:</label>
+                            <input type="number" th:field="*{price}" class="form-control" disabled>
                             <span th:errors="*{price}" class="text-danger"></span>
                         </div>
 
                         <!-- Quantidade -->
+
                         <div class="mb-3">
-                            <label for="stockQuantity" class="form-label">Quantidade em estoque:</label>
+                            <label for="quantidade" class="form-label">Quantidade em estoque:</label>
                             <input type="number" th:field="*{stockQuantity}" class="form-control">
                             <span th:errors="*{stockQuantity}" class="text-danger"></span>
                         </div>
+
 
                         <button type="button" id="btnNovaImagem">Incluir nova imagem</button>
 
