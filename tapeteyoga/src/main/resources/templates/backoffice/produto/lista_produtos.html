@@ -36,7 +36,7 @@
                         </div>
 
 
-                        <div class="col-md-6 text-end">
+                        <div class="col-md-6 text-end" th:if="${usuarioAutenticado?.role != 'Estoquista'}">
                             <button class="btn btn-success"
                                 onclick="location.href='/backoffice/produtos/cadastro'">+</button>
                         </div>
@@ -103,7 +103,11 @@
                 <nav aria-label="Page navigation example">
                     <ul class="pagination">
                         <li class="page-item" th:classappend="${currentPage == 0 ? 'disabled' : ''}">
-                            <a class="page-link" th:href="@{/backoffice/produtos(page=0)}">Anterior</a>
+                            <a class="page-link" th:href="@{/backoffice/produtos(page=0)}">
+
+                                <span aria-hidden="true">&laquo;</span>
+
+                            </a>
                         </li>
                         <li th:each="pageNo : ${#numbers.sequence(0, totalPages-1)}"
                             th:classappend="${pageNo == currentPage ? 'active' : ''}">
@@ -111,7 +115,9 @@
                                 th:text="${pageNo + 1}"></a>
                         </li>
                         <li class="page-item" th:classappend="${currentPage == totalPages-1 ? 'disabled' : ''}">
-                            <a class="page-link" th:href="@{/backoffice/produtos(page=${totalPages-1})}">Próximo</a>
+                            <a class="page-link" th:href="@{/backoffice/produtos(page=${totalPages-1})}">
+                                <span aria-hidden="true">&raquo;</span>
+                            </a>
                         </li>
                     </ul>
                 </nav>
