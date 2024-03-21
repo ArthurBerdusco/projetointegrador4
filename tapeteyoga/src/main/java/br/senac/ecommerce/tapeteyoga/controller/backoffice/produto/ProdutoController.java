@@ -71,7 +71,6 @@ public class ProdutoController {
     }
 
     @GetMapping("/produto")
-
     public String obterporId(@RequestParam(name = "id", required = false) Long id, Model model,
             Authentication authentication) {
         model.addAttribute("usuarioAutenticado", utils.getUsuarioAutenticado(authentication));
