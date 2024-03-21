@@ -29,55 +29,55 @@ public class ImagemProduto {
     @JoinColumn(name = "produto_id", foreignKey = @ForeignKey(name = "fk_imagem_produto"))
     private Produto produto;
 
-   // Getters e Setters
-   public Integer getId() {
-    return id;
-}
+    // Getters e Setters
+    public Integer getId() {
+        return id;
+    }
 
-public void setId(Integer id) {
-    this.id = id;
-}
+    public void setId(Integer id) {
+        this.id = id;
+    }
 
-public String getNomeArquivo() {
-    return nomeArquivo;
-}
+    public String getNomeArquivo() {
+        return nomeArquivo;
+    }
 
-public void setNomeArquivo(String nomeArquivo) {
-    this.nomeArquivo = nomeArquivo;
-}
+    public void setNomeArquivo(String nomeArquivo) {
+        this.nomeArquivo = nomeArquivo;
+    }
 
-public int getOrdenacao() {
-    return ordenacao;
-}
+    public int getOrdenacao() {
+        return ordenacao;
+    }
 
-public void setOrdenacao(int ordenacao) {
-    this.ordenacao = ordenacao;
-}
+    public void setOrdenacao(int ordenacao) {
+        this.ordenacao = ordenacao;
+    }
 
-public boolean isPrincipal() {
-    return principal;
-}
+    public boolean isPrincipal() {
+        return principal;
+    }
 
-public void setPrincipal(boolean principal) {
-    this.principal = principal;
-}
+    public void setPrincipal(boolean principal) {
+        this.principal = principal;
+    }
 
-public Produto getProduto() {
-    return produto;
-}
+    public Produto getProduto() {
+        return produto;
+    }
 
-public void setProduto(Produto produto) {
-    this.produto = produto;
-}
+    public void setProduto(Produto produto) {
+        this.produto = produto;
+    }
 
-@Override
-public String toString() {
-    return "ImagemProduto{" +
-            "id=" + id +
-            ", nomeArquivo='" + nomeArquivo + '\'' +
-            ", ordenacao=" + ordenacao +
-            ", principal=" + principal +
-            '}';
-}
+    @Override
+    public String toString() {
+        return "ImagemProduto{" +
+                "id=" + id +
+                ", nomeArquivo='" + nomeArquivo + '\'' +
+                ", ordenacao=" + ordenacao +
+                ", principal=" + principal +
+                '}';
+    }
 
 }
