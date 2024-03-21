@@ -124,7 +124,7 @@ public class ProdutoController {
             MultipartFile file = files[i];
 
             if (file.isEmpty()) {
-                continue; // Ignora arquivos vazios
+                continue; //Ignora arquivos vazios
             }
 
             String nomeOriginal = file.getOriginalFilename();
@@ -164,7 +164,7 @@ public class ProdutoController {
         List<ImagemProduto> imagens = imgRepository.findByProdutoId(produto.getId());
 
         if (result.hasErrors()) {
-            // Handle validation errors
+            //Handle validation errors
         }
 
         try {
@@ -184,17 +184,20 @@ public class ProdutoController {
             
             MultipartFile file = files[i];
 
-            ImagemProduto imagemProd = imagens.get(i);
+            if(i < imagens.size()){
+                ImagemProduto imagemProd = imagens.get(i);
 
-            //Edição apenas dos dados da imagem
-            if(file.isEmpty() && imagemProd.getId() != null){
-                System.out.println("\n\n\n\n\n\nEDIÇÃO APENAS DOS DADOS\n\n\n\n\n\n");
-                imagemProd.setOrdenacao(produto.getImagens().get(i).getOrdenacao());
-                imagemProd.setPrincipal(produto.getImagens().get(i).isPrincipal());
-                produto.setImagens(imagens);
-                repository.save(produto);
-                continue;
+                //Edição apenas dos dados da imagem
+                if(file.isEmpty() && imagemProd.getId() != null){
+                    System.out.println("\n\n\n\n\n\nEDIÇÃO APENAS DOS DADOS" + produto.getImagens().get(i).isPrincipal() +  "\n\n\n\n\n\n") ;
+                    imagemProd.setOrdenacao(produto.getImagens().get(i).getOrdenacao());
+                    imagemProd.setPrincipal(produto.getImagens().get(i).isPrincipal());
+                    produto.setImagens(imagens);
+                    repository.save(produto);
+                }
             }
+
+            
 
             if (file.isEmpty()) {
                 continue; // Ignore empty files
@@ -223,16 +226,18 @@ public class ProdutoController {
             }
 
             //Adição de imagem nova
-            if (!file.getOriginalFilename().trim().equals("") && imagens.get(i).getId() == null) {
+            if (!file.getOriginalFilename().trim().equals("") && i>= imagens.size()) {
                 System.out.println("\n\n\n\n\nADICIONAR IMAGEM ________________________________________________________ \n\n\n\n");
 
                 Files.copy(file.getInputStream(), destino, StandardCopyOption.REPLACE_EXISTING);
 
                 ImagemProduto novaImagem = new ImagemProduto();
                 novaImagem.setNomeArquivo(nomeArquivo);
-                novaImagem.setOrdenacao(produto.getImagens().get(i).getOrdenacao());
-                novaImagem.setPrincipal(produto.getImagens().get(i).isPrincipal());
-                imgRepository.save(novaImagem);
+                novaImagem.setOrdenacao(1);
+                novaImagem.setPrincipal(false);
+                novaImagem.setProduto(produto);
+                imagens.add(novaImagem);
+                produto.setImagens(imagens);
                 repository.save(produto);
                 
             }
