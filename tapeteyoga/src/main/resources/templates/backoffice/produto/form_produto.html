@@ -78,24 +78,7 @@
                         <button type="button" id="btnNovaImagem">Incluir nova imagem</button>
 
                         <div class="pt-4" id="inputImagem">
-                            <fieldset th:each="imagem, iterStat   : *{imagens}">
-                                <p th:text="${imagem.id}"></p>
-                                <img th:id="'selectedImage' + ${iterStat.index}"
-                                    th:onclick="'document.getElementById(\'incluirImagem' + ${iterStat.index} + '\').click()'"
-                                    th:src="'/img/produtos/' + ${imagem.nomeArquivo}"
-                                    style="width: 200px; cursor: pointer;" />
-                                <input th:id="'incluirImagem' + ${iterStat.index}" type="file" th:name="'arquivo'"
-                                    class="form d-none"
-                                    th:attr="onchange=|displaySelectedImage(event, `selectedImage${iterStat.index}`)|" />
-                                <div>
-                                    <label for="txtOrdenacao${iterStat.index}">Ordem: </label>
-                                    <input type="number" th:field="*{imagens[__${iterStat.index}__].ordenacao}" />
-                                </div>
-                                <div>
-                                    <label for="principal${iterStat.index}">Principal: </label>
-                                    <input type="checkbox" th:field="*{imagens[__${iterStat.index}__].principal}" />
-                                </div>
-                            </fieldset>
+                            
                         </div>
 
                         <div class="mb-3 text-end">

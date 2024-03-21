@@ -1,11 +1,13 @@
 package br.senac.ecommerce.tapeteyoga.model;
 
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.ForeignKey;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
+import jakarta.persistence.Lob;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import lombok.Data;
@@ -24,6 +26,10 @@ public class ImagemProduto {
     private int ordenacao;
 
     private boolean principal;
+
+    @Lob
+    @Column(columnDefinition="BLOB")
+    private byte[] arquivo;
 
     @ManyToOne
     @JoinColumn(name = "produto_id", foreignKey = @ForeignKey(name = "fk_imagem_produto"))
@@ -70,6 +76,15 @@ public class ImagemProduto {
         this.produto = produto;
     }
 
+    
+    public byte[] getArquivo() {
+        return arquivo;
+    }
+
+    public void setArquivo(byte[] arquivo) {
+        this.arquivo = arquivo;
+    }
+
     @Override
     public String toString() {
         return "ImagemProduto{" +
@@ -77,6 +92,7 @@ public class ImagemProduto {
                 ", nomeArquivo='" + nomeArquivo + '\'' +
                 ", ordenacao=" + ordenacao +
                 ", principal=" + principal +
+                ", arquivo=" + arquivo +
                 '}';
     }
 
