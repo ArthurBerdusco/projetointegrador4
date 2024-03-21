@@ -33,17 +33,9 @@
                         <!-- Nome do produto -->
                         <div class="mb-3">
                             <label for="nome" class="form-label">Nome:</label>
-                            <input type="text" th:field="*{name}" class="form-control" th:readonly="${usuarioAutenticado.role!='Administrador'}">
+                            <input type="text" th:field="*{name}" class="form-control"
+                                th:readonly="${usuarioAutenticado.role!='Administrador'}">
                             <span th:errors="*{name}" class="text-danger"></span>
-                        </div>
-
-
-                        <!-- Descrição -->
-
-                        <div class="mb-3">
-                            <label for="descricao" class="form-label">Descrição:</label>
-                            <textarea th:field="*{description}" class="form-control" th:readonly="${usuarioAutenticado.role!='Administrador'}"></textarea>
-                            <span th:errors="*{description}" class="text-danger"></span>
                         </div>
 
 
@@ -51,7 +43,8 @@
 
                         <div class="mb-3">
                             <label for="preco" class="form-label">Preço:</label>
-                            <input type="number" th:field="*{price}" class="form-control" th:readonly="${usuarioAutenticado.role!='Administrador'}">
+                            <input type="number" th:field="*{price}" class="form-control"
+                                th:readonly="${usuarioAutenticado.role!='Administrador'}">
                             <span th:errors="*{price}" class="text-danger"></span>
                         </div>
 
@@ -63,22 +56,44 @@
                             <span th:errors="*{stockQuantity}" class="text-danger"></span>
                         </div>
 
+                        <!-- Avaliação -->
+
+                        <div class="mb-3">
+                            <label for="rating" class="form-label">Avaliação:</label>
+                            <input type="number" th:field="*{rating}" class="form-control">
+                            <span th:errors="*{rating}" class="text-danger"></span>
+                        </div>
+
+
+
+                        <!-- Descrição -->
+
+                        <div class="mb-3">
+                            <label for="descricao" class="form-label">Descrição:</label>
+                            <textarea th:field="*{description}" class="form-control"
+                                th:readonly="${usuarioAutenticado.role!='Administrador'}"></textarea>
+                            <span th:errors="*{description}" class="text-danger"></span>
+                        </div>
+
                         <button type="button" id="btnNovaImagem">Incluir nova imagem</button>
 
                         <div class="pt-4" id="inputImagem">
                             <fieldset th:each="imagem, iterStat   : *{imagens}">
                                 <p th:text="${imagem.id}"></p>
-                                <img th:id="'selectedImage' + ${iterStat.index}" th:onclick="'document.getElementById(\'incluirImagem' + ${iterStat.index} + '\').click()'"
-                                th:src="'/img/produtos/' + ${imagem.nomeArquivo}" style="width: 200px; cursor: pointer;" />
-                                <input th:id="'incluirImagem' + ${iterStat.index}" type="file"
-                                    th:name="'arquivo'" class="form d-none" th:attr="onchange=|displaySelectedImage(event, `selectedImage${iterStat.index}`)|"/>
+                                <img th:id="'selectedImage' + ${iterStat.index}"
+                                    th:onclick="'document.getElementById(\'incluirImagem' + ${iterStat.index} + '\').click()'"
+                                    th:src="'/img/produtos/' + ${imagem.nomeArquivo}"
+                                    style="width: 200px; cursor: pointer;" />
+                                <input th:id="'incluirImagem' + ${iterStat.index}" type="file" th:name="'arquivo'"
+                                    class="form d-none"
+                                    th:attr="onchange=|displaySelectedImage(event, `selectedImage${iterStat.index}`)|" />
                                 <div>
                                     <label for="txtOrdenacao${iterStat.index}">Ordem: </label>
                                     <input type="number" th:field="*{imagens[__${iterStat.index}__].ordenacao}" />
                                 </div>
                                 <div>
                                     <label for="principal${iterStat.index}">Principal: </label>
-                                    <input type="checkbox" th:field="*{imagens[__${iterStat.index}__].principal}"/>
+                                    <input type="checkbox" th:field="*{imagens[__${iterStat.index}__].principal}" />
                                 </div>
                             </fieldset>
                         </div>
