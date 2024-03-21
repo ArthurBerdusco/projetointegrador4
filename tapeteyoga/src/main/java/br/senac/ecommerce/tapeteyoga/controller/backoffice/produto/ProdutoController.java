@@ -72,7 +72,6 @@ public class ProdutoController {
 
     @GetMapping("/produto")
     public String obterporId(@RequestParam(name = "id", required = false) Long id, Model model) {
-                
 
         Optional<Produto> produtoVisualizar = produtoService.buscarProdutoPorId(id);
 
@@ -84,7 +83,6 @@ public class ProdutoController {
             return "redirect:/produto/lista_produto";
         }
     }
-    
 
     @GetMapping("buscar")
     public String procurar(Model model, @RequestParam(name = "name", required = false) String name,
@@ -119,8 +117,6 @@ public class ProdutoController {
         if (result.hasErrors()) {
         }
 
-        produto = repository.save(produto); // Salvar o produto no banco de dados
-
         List<ImagemProduto> imagensEntities = new ArrayList<>();
 
         for (int i = 0; i < files.length; i++) {
@@ -132,7 +128,7 @@ public class ProdutoController {
 
             String nomeOriginal = file.getOriginalFilename();
             String extensao = nomeOriginal.substring(nomeOriginal.lastIndexOf("."));
-            String nomeArquivo = produto.getId() + "-" + (i + 1) + extensao;
+            String nomeArquivo = (repository.getNextProductId()) + "-" + (i + 1) + extensao;
 
             try {
                 String uploadDir = "src/main/resources/static/img/produtos/";
@@ -161,63 +157,86 @@ public class ProdutoController {
     }
 
     @PostMapping("produto/edita")
-    public String edita(@RequestParam("arquivo") MultipartFile[] files, @Valid Produto produto, BindingResult result) {
+    public String edita(@RequestParam("arquivo") MultipartFile[] files, @Valid Produto produto, BindingResult result) throws Exception{
+
+        Path uploadPath;
+        List<ImagemProduto> imagens = imgRepository.findByProdutoId(produto.getId());
+
         if (result.hasErrors()) {
             // Handle validation errors
         }
 
-        List<ImagemProduto> imagensEntities = produto.getImagens();
+        try {
+            String uploadDir = "src/main/resources/static/img/produtos/";
+            uploadPath = Paths.get(uploadDir);
+
+            if (!Files.exists(uploadPath)) {
+                Files.createDirectories(uploadPath);
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            return "NÃO FOI POSSIVEL CRIAR DIRETORIO";
+        }
 
         for (int i = 0; i < files.length; i++) {
+            
             MultipartFile file = files[i];
+
+            ImagemProduto imagemProd = imagens.get(i);
+
+            //Edição apenas dos dados da imagem
+            if(file.isEmpty() && imagemProd.getId() != null){
+                System.out.println("\n\n\n\n\n\nEDIÇÃO APENAS DOS DADOS\n\n\n\n\n\n");
+                imagemProd.setOrdenacao(produto.getImagens().get(i).getOrdenacao());
+                imagemProd.setPrincipal(produto.getImagens().get(i).isPrincipal());
+                produto.setImagens(imagens);
+                repository.save(produto);
+                continue;
+            }
 
             if (file.isEmpty()) {
                 continue; // Ignore empty files
             }
 
-            try {
+            ImagemProduto alterarImagem = imgRepository.findByNomeArquivoContaining(produto.getId() + "-" + (i + 1));
+            String nomeOriginal = file.getOriginalFilename();
+            String extensao = nomeOriginal.substring(nomeOriginal.lastIndexOf("."));
+            String nomeArquivo = produto.getId() + "-" + (i + 1) + extensao;
 
-                ImagemProduto imagemProduto = imgRepository
-                        .findByNomeArquivoContaining(produto.getId() + "-" + (i + 1));
-                String nomeOriginal = file.getOriginalFilename();
-                String extensao = nomeOriginal.substring(nomeOriginal.lastIndexOf("."));
-                String nomeArquivo = produto.getId() + "-" + (i + 1) + extensao;
-                String uploadDir = "src/main/resources/static/img/produtos/";
-                Path uploadPath = Paths.get(uploadDir);
-                Path destino = uploadPath.resolve(nomeArquivo);
+            Path destino = uploadPath.resolve(nomeArquivo);
 
-                if (!Files.exists(uploadPath)) {
-                    Files.createDirectories(uploadPath);
-                }
+            //Alteração de imagem
+            if (!file.getOriginalFilename().trim().equals("") && alterarImagem != null) {
+                System.out.println("\n\n\n\n\nALTERAR IMAGEM ________________________________________________________ \n\n\n\n");
 
-                if (!file.getOriginalFilename().trim().equals("") && imagemProduto != null) {
+                Files.write(destino, file.getBytes());
 
-                    Files.write(destino, file.getBytes());
+                // Update existing image entity
+                
+                alterarImagem.setNomeArquivo(nomeArquivo);
+                alterarImagem.setOrdenacao(produto.getImagens().get(i).getOrdenacao());
+                alterarImagem.setPrincipal(produto.getImagens().get(i).isPrincipal());
+                produto.setImagens(imagens);
+                repository.save(produto);
+            }
 
-                    // Update existing image entity
-                    imagemProduto.setNomeArquivo(nomeArquivo);
-                    imagemProduto.setOrdenacao(produto.getImagens().get(i).getOrdenacao());
-                    imagemProduto.setPrincipal(produto.getImagens().get(i).isPrincipal());
-                    imagemProduto.setProduto(produto);
-                    imgRepository.save(imagemProduto);
-                } else {
+            //Adição de imagem nova
+            if (!file.getOriginalFilename().trim().equals("") && imagens.get(i).getId() == null) {
+                System.out.println("\n\n\n\n\nADICIONAR IMAGEM ________________________________________________________ \n\n\n\n");
 
-                    Files.copy(file.getInputStream(), destino, StandardCopyOption.REPLACE_EXISTING);
+                Files.copy(file.getInputStream(), destino, StandardCopyOption.REPLACE_EXISTING);
 
-                    ImagemProduto imgEntity = new ImagemProduto();
-                    imgEntity.setNomeArquivo(nomeArquivo);
-                    imgEntity.setOrdenacao(produto.getImagens().get(i).getOrdenacao());
-                    imgEntity.setPrincipal(produto.getImagens().get(i).isPrincipal());
-                    imgEntity.setProduto(produto);
-                    imagensEntities.add(imgEntity);
-                }
-            } catch (IOException e) {
-                e.printStackTrace();
+                ImagemProduto novaImagem = new ImagemProduto();
+                novaImagem.setNomeArquivo(nomeArquivo);
+                novaImagem.setOrdenacao(produto.getImagens().get(i).getOrdenacao());
+                novaImagem.setPrincipal(produto.getImagens().get(i).isPrincipal());
+                imgRepository.save(novaImagem);
+                repository.save(produto);
+                
             }
         }
-
-        produto.setImagens(imagensEntities);
-        repository.save(produto);
+ 
         return "redirect:/backoffice/produtos";
     }
 

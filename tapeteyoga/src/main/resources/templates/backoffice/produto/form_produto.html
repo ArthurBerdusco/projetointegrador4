@@ -61,24 +61,34 @@
                         <button type="button" id="btnNovaImagem">Incluir nova imagem</button>
 
 
-                        <div class="pt-4" id="inputImagem">
-                            
-                            <fieldset th:each="imagem, iterStat   : *{imagens}">
-                                <p th:text="${imagem.id}"></p>
-                                <img th:id="'selectedImage' + ${iterStat.index}" th:onclick="'document.getElementById(\'incluirImagem' + ${iterStat.index} + '\').click()'"
-                                th:src="'/img/produtos/' + ${imagem.nomeArquivo}" style="width: 200px; cursor: pointer;" />
-                                <input th:id="'incluirImagem' + ${iterStat.index}" type="file"
-                                    th:name="'arquivo'" class="form d-none" th:attr="onchange=|displaySelectedImage(event, `selectedImage${iterStat.index}`)|"/>
-                                <div>
-                                    <label for="txtOrdenacao${iterStat.index}">Ordem: </label>
-                                    <input type="number" th:name="${'imagens[' + iterStat.index + '].ordenacao'}"  th:value="${imagem.ordenacao}"/>
-                                </div>
-                                <div>
-                                    <label for="principal${iterStat.index}">Principal: </label>
-                                    <input type="checkbox" th:name="${'imagens[' + iterStat.index + '].principal'}" th:value="${imagem.principal}"/>
-                                </div>
-                            </fieldset>
+                        <div class="overflow-auto d-flex pt-4">
+                            <div class="row flex-nowrap py-2 px-1" id="inputImagem">
+                                <fieldset th:each="imagem, iterStat: *{imagens}" class="col-md-12 card mx-2"
+                                    style="max-width: 250px; max-height: 350px;">
 
+                                    <img th:id="'selectedImage' + ${iterStat.index}"
+                                        th:onclick="'document.getElementById(\'incluirImagem' + ${iterStat.index} + '\').click()'"
+                                        th:src="'/img/produtos/' + ${imagem.nomeArquivo}" class="card-img-top"
+                                        style="cursor: pointer;" />
+                                    <input th:id="'incluirImagem' + ${iterStat.index}" type="file" th:name="'arquivo'"
+                                        class="form d-none"
+                                        th:attr="onchange=|displaySelectedImage(event, `selectedImage${iterStat.index}`)|" />
+                                    
+                                    <div class="d-flex align-items-center my-2" style="gap: 10px;">
+                                        <label class="card-text" for="txtOrdenacao${iterStat.index}">Ordem:</label>
+                                        <input class="form-control" type="number"
+                                            th:name="${'imagens[' + iterStat.index + '].ordenacao'}"
+                                            th:value="${imagem.ordenacao}" />
+                                    </div>
+                                    <div class="d-flex" style="gap: 10px;">
+                                        <input class="checkbox" type="checkbox" 
+                                            th:name="${'imagens[' + iterStat.index + '].principal'}"
+                                            th:checked="${imagem.principal}" />
+                                        <label class="form-check-label" for="principal${iterStat.index}">Principal
+                                        </label>
+                                    </div>
+                                </fieldset>
+                            </div>
                         </div>
 
 
