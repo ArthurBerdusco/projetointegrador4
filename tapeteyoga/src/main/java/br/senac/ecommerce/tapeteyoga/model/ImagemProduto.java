@@ -28,7 +28,7 @@ public class ImagemProduto {
     private boolean principal;
 
     @Lob
-    @Column(columnDefinition="LONGBLOB")
+    @Column(columnDefinition="BLOB")
     private byte[] arquivo;
 
     @ManyToOne
