@@ -23,12 +23,10 @@ public class ImagemProduto {
 
     private String nomeArquivo;
 
-    private int ordenacao;
-
     private boolean principal;
 
     @Lob
-    @Column(columnDefinition="BLOB")
+    @Column(columnDefinition="LONGBLOB")
     private byte[] arquivo;
 
     @ManyToOne
@@ -50,14 +48,6 @@ public class ImagemProduto {
 
     public void setNomeArquivo(String nomeArquivo) {
         this.nomeArquivo = nomeArquivo;
-    }
-
-    public int getOrdenacao() {
-        return ordenacao;
-    }
-
-    public void setOrdenacao(int ordenacao) {
-        this.ordenacao = ordenacao;
     }
 
     public boolean isPrincipal() {
@@ -90,7 +80,6 @@ public class ImagemProduto {
         return "ImagemProduto{" +
                 "id=" + id +
                 ", nomeArquivo='" + nomeArquivo + '\'' +
-                ", ordenacao=" + ordenacao +
                 ", principal=" + principal +
                 ", arquivo=" + arquivo +
                 '}';

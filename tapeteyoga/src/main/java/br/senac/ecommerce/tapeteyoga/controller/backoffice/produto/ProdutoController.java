@@ -5,7 +5,6 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
@@ -17,6 +16,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -28,6 +28,7 @@ import br.senac.ecommerce.tapeteyoga.model.ImagemProduto;
 import br.senac.ecommerce.tapeteyoga.model.ImagemProdutoDto;
 import br.senac.ecommerce.tapeteyoga.model.Produto;
 import br.senac.ecommerce.tapeteyoga.model.ProdutoDto;
+import br.senac.ecommerce.tapeteyoga.repository.ImagemProdutoRepository;
 import br.senac.ecommerce.tapeteyoga.repository.ProdutoRepository;
 import br.senac.ecommerce.tapeteyoga.service.ProdutoService;
 import jakarta.validation.Valid;
@@ -41,6 +42,9 @@ public class ProdutoController {
 
     @Autowired
     private ProdutoRepository repository;
+
+    @Autowired
+    private ImagemProdutoRepository imgRepository;
 
     @Autowired
     private ProdutoService produtoService;
@@ -68,9 +72,9 @@ public class ProdutoController {
     }
 
     @GetMapping("/produto")
-    public String obterporId(@RequestParam(name = "id", required = false) Long id, Model model,
-            Authentication authentication) {
+    public String obterporId(@RequestParam(name = "id", required = false) Long id, Model model, Authentication authentication) {
         model.addAttribute("usuarioAutenticado", utils.getUsuarioAutenticado(authentication));
+
         Optional<Produto> produtoVisualizar = produtoService.buscarProdutoPorId(id);
 
         if (produtoVisualizar.isPresent()) {
@@ -126,43 +130,9 @@ public class ProdutoController {
                 return true;
             }
 
-            if (!validaOrdem(imagens)) {
-                return true;
-            }
         }
 
         return false;
-    }
-
-    public boolean validaOrdem(List<ImagemProdutoDto> imagens) {
-        List<Integer> ordenacoes = new ArrayList<>();
-
-        for (ImagemProdutoDto imgDto : imagens) {
-            ordenacoes.add(imgDto.getOrdenacao());
-        }
-
-        // Sort the order numbers
-        Collections.sort(ordenacoes);
-
-        // Check if the order numbers are consecutive and without duplicates
-        for (int i = 0; i < ordenacoes.size(); i++) {
-            if (ordenacoes.get(i) != i + 1) {
-                return false; // Return false if the order is not consecutive or has duplicates
-            }
-        }
-
-        return true; // Return true if the order is valid
-    }
-
-    public static int[] criarOrdenacao(int size) {
-        int[] array = new int[size];
-
-        for (int i = 1; i <= size; i++) {
-            array[i] = i;
-        }
-
-        return array;
-
     }
 
     @PostMapping("produto/cadastra")
@@ -199,7 +169,6 @@ public class ProdutoController {
                 } catch (IOException ex) {
                     ex.printStackTrace();
                 }
-                imgEntity.setOrdenacao(imgDto.getOrdenacao());
                 imgEntity.setPrincipal(imgDto.isPrincipal());
                 imgEntity.setProduto(entity);
                 imagensEntities.add(imgEntity);
@@ -249,16 +218,24 @@ public class ProdutoController {
                     if (imgDto.getArquivo().getOriginalFilename().trim().isEmpty()) {
                         // Se não houver bytes de arquivo, presume-se que a imagem já existe no banco de
                         // dados
-                        imgDb.setOrdenacao(imgDto.getOrdenacao());
                         imgDb.setPrincipal(imgDto.isPrincipal());
                         imagensEntities.add(imgDb); // Adiciona a imagem existente à lista de entidades
                     } else {
                         // Se houver bytes de arquivo, presume-se que seja uma nova imagem ou uma
                         // atualização
+
                         ImagemProduto updateImage = imgDb;
+                                        
+                        Path apagar = uploadPath.resolve(updateImage.getNomeArquivo());
+
+                        try {
+                            Files.delete(apagar);
+                        } catch (Exception e) {
+                            // TODO: handle exception
+                        }
+
                         updateImage.setNomeArquivo(imgDto.getArquivo().getOriginalFilename());
                         updateImage.setArquivo(imgDto.getArquivo().getBytes());
-                        updateImage.setOrdenacao(imgDto.getOrdenacao());
                         updateImage.setPrincipal(imgDto.isPrincipal());
                         updateImage.setProduto(entity);
                         imagensEntities.add(updateImage);
@@ -272,7 +249,6 @@ public class ProdutoController {
                     ImagemProduto newImageEntity = new ImagemProduto();
                     newImageEntity.setNomeArquivo(imgDto.getArquivo().getOriginalFilename());
                     newImageEntity.setArquivo(imgDto.getArquivo().getBytes());
-                    newImageEntity.setOrdenacao(imgDto.getOrdenacao());
                     newImageEntity.setPrincipal(imgDto.isPrincipal());
                     newImageEntity.setProduto(entity);
                     imagensEntities.add(newImageEntity);
@@ -338,4 +314,25 @@ public class ProdutoController {
         }
     }
 
+
+    @DeleteMapping("/produto/removerimg/{id}")
+    public String removeImg(@PathVariable Long id) {
+
+        ImagemProduto imgEntity = imgRepository.findById(id).orElseThrow();
+
+        String uploadDir = "src/main/resources/static/img/produtos/";
+        Path uploadPath = Paths.get(uploadDir);
+
+        Path apagar = uploadPath.resolve(imgEntity.getNomeArquivo());
+
+        try {
+            Files.delete(apagar);
+        } catch (Exception e) {
+            // TODO: handle exception
+        }
+        
+
+        imgRepository.deleteById(id);
+        return "redirect:/backoffice/produtos";
+    }
 }

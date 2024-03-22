@@ -21,8 +21,6 @@ public class ImagemProdutoDto {
     private MultipartFile arquivo;
     
 	private byte[] arquivoBytes;
-
-    private int ordenacao;
     
     private boolean principal;
 
@@ -61,14 +59,6 @@ public class ImagemProdutoDto {
 	public void setArquivoBytes(byte[] arquivoBytes) {
 		this.arquivoBytes = arquivoBytes;
 	}
-
-	public int getOrdenacao() {
-        return ordenacao;
-    }
-
-    public void setOrdenacao(int ordenacao) {
-        this.ordenacao = ordenacao;
-    }
 
     public boolean isPrincipal() {
         return principal;
