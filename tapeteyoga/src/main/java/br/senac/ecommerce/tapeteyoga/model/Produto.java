@@ -10,10 +10,6 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
-import jakarta.validation.constraints.Max;
-import jakarta.validation.constraints.Min;
-import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Size;
 import lombok.Data;
 
 @Entity
@@ -25,28 +21,17 @@ public class Produto {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Size(min = 2, max = 200, message = "Nome do produto deve ter no máximo 200 caracteres")
     private String name;
 
-    @Size(max = 2000, message = "A descrição deve ter no máximo 2000 caracteres")
     private String description;
 
-    @Min(value = 1, message = "Nota deve estar entre 1 e 5")
-    @Max(value = 5, message = "Nota deve estar entre 1 e 5")
-    @NotNull(message = "O valor não pode ser nulo") 
     private BigDecimal rating;
 
-    @NotNull(message = "O valor não pode ser nulo")
-    @Min(value = 0, message = "não pode ser negativo")
     private BigDecimal price;
 
-    @Min(value = 0, message = "Não pode ser negativo")
-    @NotNull(message = "O valor não pode ser nulo")
     private Integer stockQuantity;
 
     private boolean isActive = true;
-
-    private float avaliacao;
 
     @OneToMany(mappedBy = "produto", cascade = { CascadeType.PERSIST, CascadeType.MERGE })
     private List<ImagemProduto> imagens;

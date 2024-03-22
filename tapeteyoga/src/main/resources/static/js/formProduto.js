@@ -11,7 +11,7 @@ document.getElementById(`btnNovaImagem`).onclick = function () {
             <input class="form-control" type="number" value="${qtdFieldset + 1}" id="txtOrdenacao${qtdFieldset}" name="imagens[${qtdFieldset}].ordenacao" />
         </div>
         <div class="d-flex" style="gap: 10px;">
-            <input class="checkbox" type="checkbox" name="imagens[${qtdFieldset}].principal"/>
+        <input class="checkbox" type="checkbox" name="imagens[${qtdFieldset}].principal" ${(qtdFieldset <= 0) ? 'checked' : ''}/>
             <label class="form-check-label" for="txtOrdenacao${qtdFieldset}">Principal: </label>
         </div>
     </fieldset>
