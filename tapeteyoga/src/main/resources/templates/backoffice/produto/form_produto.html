@@ -21,7 +21,7 @@
                     <form
                         th:action="${produto.id != null} ? @{/backoffice/produto/edita} : @{/backoffice/produto/cadastra}"
                         th:method="post" th:object="${produto}" class="needs-validation" enctype="multipart/form-data"
-                        novalidate>
+                        >
 
                         <h3 class="h3 my-3">Formulário - Produto</h3>
 
@@ -33,41 +33,41 @@
                         <!-- Nome do produto -->
                         <div class="mb-3">
                             <label for="nome" class="form-label">Nome:</label>
-                            <input type="text" th:field="*{name}" class="form-control"
+                            <input type="text" th:field="*{name}" minlength="3" class="form-control"
                                 th:readonly="${usuarioAutenticado.role!='Administrador'}">
-                            <span th:errors="*{name}" class="text-danger"></span>
+                            <span th:if="${#fields.hasErrors('name')}" th:errors="*{name}" class="text-danger"></span>
                         </div>
 
+                        <div class="row">
+                            <!-- Preço -->
+                            <div class="col-md mb-3">
+                                <label for="preco"  class="form-label">Preço:</label>
+                                <div class="input-group">
+                                    <span class="input-group-text bg-warning">R$</span>
+                                    <input type="number" min="1" th:field="*{price}" class="form-control"
+                                        th:readonly="${usuarioAutenticado.role!='Administrador'}">
+                                </div>
+                                <span th:errors="*{price}" class="text-danger"></span>
+                            </div>
 
-                        <!-- Preço -->
+                            <!-- Quantidade -->
+                            <div class="col-md mb-3">
+                                <label for="quantidade" class="form-label">Quantidade em estoque:</label>
+                                <input type="number" min="0" th:field="*{stockQuantity}" class="form-control">
+                                <span th:errors="*{stockQuantity}" class="text-danger"></span>
+                            </div>
 
-                        <div class="mb-3">
-                            <label for="preco" class="form-label">Preço:</label>
-                            <input type="number" th:field="*{price}" class="form-control"
-                                th:readonly="${usuarioAutenticado.role!='Administrador'}">
-                            <span th:errors="*{price}" class="text-danger"></span>
-                        </div>
-
-                        <!-- Quantidade -->
-
-                        <div class="mb-3">
-                            <label for="quantidade" class="form-label">Quantidade em estoque:</label>
-                            <input type="number" th:field="*{stockQuantity}" class="form-control">
-                            <span th:errors="*{stockQuantity}" class="text-danger"></span>
-                        </div>
-
-                        <!-- Avaliação -->
-
-                        <div class="mb-3">
-                            <label for="rating" class="form-label">Avaliação:</label>
-                            <input type="number" th:field="*{rating}" class="form-control">
-                            <span th:errors="*{rating}" class="text-danger"></span>
+                            <!-- Avaliação -->
+                            <div class="col-md mb-3">
+                                <label for="rating" class="form-label">Avaliação:</label>
+                                <input type="number" th:field="*{rating}" max="5"  min="1" class="form-control"/>
+                                <span th:errors="*{rating}" class="text-danger"></span>
+                            </div>
                         </div>
 
 
 
                         <!-- Descrição -->
-
                         <div class="mb-3">
                             <label for="descricao" class="form-label">Descrição:</label>
                             <textarea th:field="*{description}" class="form-control"
@@ -75,30 +75,37 @@
                             <span th:errors="*{description}" class="text-danger"></span>
                         </div>
 
-                        <button type="button" id="btnNovaImagem">Incluir nova imagem</button>
 
-                        <div class="pt-4" id="inputImagem">
-                            <fieldset th:each="imagem, iterStat   : *{imagens}">
-                                <p th:text="${imagem.id}"></p>
-                                <img th:id="'selectedImage' + ${iterStat.index}"
-                                    th:onclick="'document.getElementById(\'incluirImagem' + ${iterStat.index} + '\').click()'"
-                                    th:src="'/img/produtos/' + ${imagem.nomeArquivo}"
-                                    style="width: 200px; cursor: pointer;" />
-                                <input th:id="'incluirImagem' + ${iterStat.index}" type="file" th:name="'arquivo'"
-                                    class="form d-none"
-                                    th:attr="onchange=|displaySelectedImage(event, `selectedImage${iterStat.index}`)|" />
-                                <div>
-                                    <label for="txtOrdenacao${iterStat.index}">Ordem: </label>
-                                    <input type="number" th:field="*{imagens[__${iterStat.index}__].ordenacao}" />
-                                </div>
-                                <div>
-                                    <label for="principal${iterStat.index}">Principal: </label>
-                                    <input type="checkbox" th:field="*{imagens[__${iterStat.index}__].principal}" />
-                                </div>
-                            </fieldset>
+                        <button class="btn btn-success" type="button" id="btnNovaImagem">Incluir nova imagem</button>
+
+                        <div class="overflow-auto  d-flex pt-4">
+
+                            <div class="row flex-nowrap p-1" id="inputImagem">
+                                <fieldset class="col-md-12 card mx-2 " style="max-width: 250px; max-height: 350px;"
+                                    th:each="imagem, iterStat   : *{imagens}">
+                                    <img class="card-img-top" th:id="'selectedImage' + ${iterStat.index}"
+                                        th:onclick="'document.getElementById(\'incluirImagem' + ${iterStat.index} + '\').click()'"
+                                        th:src="'/img/produtos/' + ${imagem.nomeArquivo}"
+                                        style="width: 200px; cursor: pointer;" />
+                                    <input th:id="'incluirImagem' + ${iterStat.index}" type="file"
+                                        th:field="*{imagens[__${iterStat.index}__].arquivo}" class="form d-none"
+                                        th:attr="onchange=|displaySelectedImage(event, `selectedImage${iterStat.index}`)|"
+                                        accept="image/*" />
+                                    <div>
+                                        <label for="txtOrdenacao${iterStat.index}">Ordem: </label>
+                                        <input type="number" th:field="*{imagens[__${iterStat.index}__].ordenacao}" />
+                                    </div>
+                                    <div>
+                                        <label for="principal${iterStat.index}">Principal: </label>
+                                        <input type="checkbox" th:field="*{imagens[__${iterStat.index}__].principal}" />
+                                    </div>
+                                </fieldset>
+                            </div>
+
+
                         </div>
 
-                        <div class="mb-3 text-end">
+                        <div class="my-3 text-end">
                             <a href="/backoffice/produtos" class="btn btn-danger btn-lg">Cancelar</a>
                             <button class="btn btn-primary btn-lg">Salvar</button>
                         </div>

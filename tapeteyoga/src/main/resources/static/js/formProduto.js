@@ -4,13 +4,14 @@ document.getElementById(`btnNovaImagem`).onclick = function () {
         `
     <fieldset  class="col-md-12 card mx-2 " style="max-width: 250px; max-height: 350px;">
         <img id="selectedImage${qtdFieldset}" onclick="document.getElementById('incluirImagem${qtdFieldset}').click()" src="/img/add-img.svg" class="card-img-top" style="cursor: pointer;" />
-        <input class="form-control d-none" id="incluirImagem${qtdFieldset}" type="file" name="arquivo" onchange="displaySelectedImage(event, 'selectedImage${qtdFieldset}')" accept="image/*"/>
+        <input class="form-control d-none" id="incluirImagem${qtdFieldset}" type="file" name="imagens[${qtdFieldset}].arquivo"
+            onchange="displaySelectedImage(event, 'selectedImage${qtdFieldset}')" accept="image/*"/>
         <div class="d-flex align-items-center my-2" style="gap: 10px;">
             <label class="card-text" for="txtOrdenacao${qtdFieldset}">Ordem</label>
             <input class="form-control" type="number" value="${qtdFieldset + 1}" id="txtOrdenacao${qtdFieldset}" name="imagens[${qtdFieldset}].ordenacao" />
         </div>
         <div class="d-flex" style="gap: 10px;">
-            <input class="checkbox" type="checkbox" name="imagens[${qtdFieldset}].principal"/>
+        <input class="checkbox" type="checkbox" name="imagens[${qtdFieldset}].principal" ${(qtdFieldset <= 0) ? 'checked' : ''}/>
             <label class="form-check-label" for="txtOrdenacao${qtdFieldset}">Principal: </label>
         </div>
     </fieldset>

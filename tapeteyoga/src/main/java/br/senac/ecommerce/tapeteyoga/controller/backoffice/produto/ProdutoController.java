@@ -4,8 +4,8 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.nio.file.StandardCopyOption;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
@@ -22,12 +22,12 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.multipart.MultipartFile;
 
 import br.senac.ecommerce.tapeteyoga.controller.backoffice.Utils;
 import br.senac.ecommerce.tapeteyoga.model.ImagemProduto;
+import br.senac.ecommerce.tapeteyoga.model.ImagemProdutoDto;
 import br.senac.ecommerce.tapeteyoga.model.Produto;
-import br.senac.ecommerce.tapeteyoga.repository.ImagemProdutoRepository;
+import br.senac.ecommerce.tapeteyoga.model.ProdutoDto;
 import br.senac.ecommerce.tapeteyoga.repository.ProdutoRepository;
 import br.senac.ecommerce.tapeteyoga.service.ProdutoService;
 import jakarta.validation.Valid;
@@ -44,9 +44,6 @@ public class ProdutoController {
 
     @Autowired
     private ProdutoService produtoService;
-
-    @Autowired
-    private ImagemProdutoRepository imgRepository;
 
     @GetMapping("produtos")
     public String listarProdutos(Model model, Authentication authentication,
@@ -111,117 +108,184 @@ public class ProdutoController {
         return "backoffice/produto/form_produto";
     }
 
-    @PostMapping("produto/cadastra")
-    public String cadastra(@RequestParam(name = "arquivo", required = false) MultipartFile[] files,
-            @Valid Produto produto,
-            BindingResult result) {
+    public boolean erroImagens(List<ImagemProdutoDto> imagens) {
 
-        if (result.hasErrors()) {
-        }
 
-        List<ImagemProduto> imagensEntities = new ArrayList<>();
+        if(imagens != null){
+            int principalCount = 0;
 
-        if (files != null) {
-            for (int i = 0; i < files.length; i++) {
-
-                MultipartFile file = files[i];
-
-                if (file.isEmpty()) {
-                    continue; // Ignora arquivos vazios
-                }
-
-                String nomeOriginal = file.getOriginalFilename();
-                String extensao = nomeOriginal.substring(nomeOriginal.lastIndexOf("."));
-                String nomeArquivo = (repository.getNextProductId()) + "-" + (i + 1) + extensao;
-
-                try {
-                    String uploadDir = "src/main/resources/static/img/produtos/";
-                    Path uploadPath = Paths.get(uploadDir);
-                    if (!Files.exists(uploadPath)) {
-                        Files.createDirectories(uploadPath);
-                    }
-
-                    Path destino = uploadPath.resolve(nomeArquivo);
-                    Files.copy(file.getInputStream(), destino, StandardCopyOption.REPLACE_EXISTING);
-
-                    ImagemProduto imgEntity = new ImagemProduto();
-                    imgEntity.setNomeArquivo(nomeArquivo);
-                    imgEntity.setOrdenacao(produto.getImagens().get(i).getOrdenacao());
-                    imgEntity.setPrincipal(produto.getImagens().get(i).isPrincipal());
-                    imgEntity.setProduto(produto);
-                    imagensEntities.add(imgEntity);
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
+            for (ImagemProdutoDto imgDto : imagens) {
+                if (imgDto.isPrincipal())
+                    principalCount++;
+            }
+    
+            if (principalCount > 1 && imagens.size() > 1) {
+                return true;
+            }
+    
+    
+            if (!validaOrdem(imagens)) {
+                return true; 
             }
         }
 
-        produto.setImagens(imagensEntities);
-        repository.save(produto);
+       
+
+        return false;
+    }
+
+    public boolean validaOrdem(List<ImagemProdutoDto> imagens) {
+        List<Integer> ordenacoes = new ArrayList<>();
+
+        for (ImagemProdutoDto imgDto : imagens) {
+            ordenacoes.add(imgDto.getOrdenacao());
+        }
+        
+
+        // Sort the order numbers
+        Collections.sort(ordenacoes);
+
+        // Check if the order numbers are consecutive and without duplicates
+        for (int i = 0; i < ordenacoes.size(); i++) {
+            if (ordenacoes.get(i) != i + 1) {
+                return false; // Return false if the order is not consecutive or has duplicates
+            }
+        }
+
+        return true; // Return true if the order is valid
+    }
+
+    public static int[] criarOrdenacao(int size){
+        int[] array = new int[size];
+
+        for(int i = 1; i <= size; i++){
+            array[i] = i;
+        }
+
+        return array;
+
+
+    }
+
+    @PostMapping("produto/cadastra")
+    public String cadastra(@Valid ProdutoDto dto, BindingResult result, Model model, Authentication authentication)
+            throws IOException {
+
+        if (result.hasErrors() || erroImagens(dto.getImagens())) {
+            return "backoffice/produto/form_produto";
+        }
+
+        String uploadDir = "src/main/resources/static/img/produtos/";
+        Path uploadPath = Paths.get(uploadDir);
+        if (!Files.exists(uploadPath)) {
+            Files.createDirectories(uploadPath);
+        }
+
+        Produto entity = new Produto();
+        entity.setName(dto.getName());
+        entity.setPrice(dto.getPrice());
+        entity.setDescription(dto.getDescription());
+        entity.setRating(dto.getRating());
+        entity.setStockQuantity(dto.getStockQuantity());
+
+        List<ImagemProduto> imagensEntities = new ArrayList<>();
+
+        System.out.println("\n\n\n\n DEBUG SEM IMAGEM FORA \n\n\n\n");
+
+        if (dto.getImagens() != null && !dto.getImagens().isEmpty()) {
+            System.out.println("\n\n\n\n DEBUG SEM IMAGEM DENTRO \n\n\n\n");
+            for (ImagemProdutoDto imgDto : dto.getImagens()) {
+                ImagemProduto imgEntity = new ImagemProduto();
+                imgEntity.setNomeArquivo(imgDto.getArquivo().getOriginalFilename());
+                try {
+                    imgEntity.setArquivo(imgDto.getArquivo().getBytes());
+                } catch (IOException ex) {
+                    ex.printStackTrace();
+                }
+                imgEntity.setOrdenacao(imgDto.getOrdenacao());
+                imgEntity.setPrincipal(imgDto.isPrincipal());
+                imgEntity.setProduto(entity);
+                imagensEntities.add(imgEntity);
+
+                Path destino = uploadPath.resolve(imgEntity.getNomeArquivo());
+                Files.write(destino, imgEntity.getArquivo());
+            }
+        }
+
+        entity.setImagens(imagensEntities);
+        repository.save(entity);
         return "redirect:/backoffice/produtos";
     }
 
     @PostMapping("produto/edita")
-    public String edita(@RequestParam("arquivo") MultipartFile[] files, @Valid Produto produto, BindingResult result)
-            throws Exception {
+    public String edita(@Valid ProdutoDto dto, BindingResult result, Model model) throws Exception {
 
-        Path uploadPath;
-        List<ImagemProduto> imagens = imgRepository.findByProdutoId(produto.getId());
-
-        if (result.hasErrors()) {
-            // Handle validation errors
+        if (result.hasErrors() || erroImagens(dto.getImagens())) {
+            model.addAttribute("erro", "Tem erro");
+            return "backoffice/produto/form_produto";
         }
 
-        try {
-            String uploadDir = "src/main/resources/static/img/produtos/";
-            uploadPath = Paths.get(uploadDir);
-
-            if (!Files.exists(uploadPath)) {
-                Files.createDirectories(uploadPath);
-            }
-
-        } catch (Exception e) {
-            e.printStackTrace();
-            return "NÃO FOI POSSIVEL CRIAR DIRETORIO";
+        String uploadDir = "src/main/resources/static/img/produtos/";
+        Path uploadPath = Paths.get(uploadDir);
+        if (!Files.exists(uploadPath)) {
+            Files.createDirectories(uploadPath);
         }
 
-        for (int i = 0; i < files.length; i++) {
+        // Fetch the existing product entity from the database
+        Produto entity = repository.findById(Long.valueOf(dto.getId())).orElseThrow();
+        entity.setName(dto.getName());
+        entity.setPrice(dto.getPrice());
+        entity.setStockQuantity(dto.getStockQuantity());
+        entity.setRating(dto.getRating());
+        entity.setDescription(dto.getDescription());
+        
+        // Handle image updates
+        if (dto.getImagens() != null && !dto.getImagens().isEmpty()) {
+            List<ImagemProduto> imagensEntities = new ArrayList<>();
+            for (int i = 0; i < dto.getImagens().size(); i++) {
+                ImagemProdutoDto imgDto = dto.getImagens().get(i);
 
-            MultipartFile file = files[i];
+                // Verifying if the index is within bounds
+                if (i < entity.getImagens().size()) {
+                    ImagemProduto imgDb = entity.getImagens().get(i);
+                    if (imgDto.getArquivo().getOriginalFilename().trim().isEmpty()) {
+                        // Se não houver bytes de arquivo, presume-se que a imagem já existe no banco de
+                        // dados
+                        imgDb.setOrdenacao(imgDto.getOrdenacao());
+                        imgDb.setPrincipal(imgDto.isPrincipal());
+                        imagensEntities.add(imgDb); // Adiciona a imagem existente à lista de entidades
+                    } else {
+                        // Se houver bytes de arquivo, presume-se que seja uma nova imagem ou uma
+                        // atualização
+                        ImagemProduto updateImage = imgDb;
+                        updateImage.setNomeArquivo(imgDto.getArquivo().getOriginalFilename());
+                        updateImage.setArquivo(imgDto.getArquivo().getBytes());
+                        updateImage.setOrdenacao(imgDto.getOrdenacao());
+                        updateImage.setPrincipal(imgDto.isPrincipal());
+                        updateImage.setProduto(entity);
+                        imagensEntities.add(updateImage);
 
-            if (i < imagens.size()) {
-                ImagemProduto imagemProd = imagens.get(i);
+                        Path destino = uploadPath.resolve(updateImage.getNomeArquivo());
+                        Files.write(destino, updateImage.getArquivo());
+                    }
+                } else {
+                    // Se o índice do DTO estiver fora dos limites da lista de entidades,
+                    // é uma nova imagem e deve ser adicionada à lista de entidades
+                    ImagemProduto newImageEntity = new ImagemProduto();
+                    newImageEntity.setNomeArquivo(imgDto.getArquivo().getOriginalFilename());
+                    newImageEntity.setArquivo(imgDto.getArquivo().getBytes());
+                    newImageEntity.setOrdenacao(imgDto.getOrdenacao());
+                    newImageEntity.setPrincipal(imgDto.isPrincipal());
+                    newImageEntity.setProduto(entity);
+                    imagensEntities.add(newImageEntity);
 
-                // Edição apenas dos dados da imagem
-                if (file.isEmpty() && imagemProd.getId() != null) {
-                    imagemProd.setOrdenacao(produto.getImagens().get(i).getOrdenacao());
-                    imagemProd.setPrincipal(produto.getImagens().get(i).isPrincipal());
-                    produto.setImagens(imagens);
-                    repository.save(produto);
+                    Path destino = uploadPath.resolve(newImageEntity.getNomeArquivo());
+                    Files.write(destino, newImageEntity.getArquivo());
                 }
             }
-
-            if (file.isEmpty()) {
-                continue; // Ignore empty files
-            }
-
-            ImagemProduto alterarImagem = imgRepository.findByNomeArquivoContaining(produto.getId() + "-" + (i + 1));
-            String nomeOriginal = file.getOriginalFilename();
-            String extensao = nomeOriginal.substring(nomeOriginal.lastIndexOf("."));
-            String nomeArquivo = produto.getId() + "-" + (i + 1) + extensao;
-
-            Path destino = uploadPath.resolve(nomeArquivo);
-
-            // Alteração de imagem
-            if (!file.getOriginalFilename().trim().equals("") && alterarImagem != null) {
-
-                Files.write(destino, file.getBytes());
-                alterarImagem.setNomeArquivo(nomeArquivo);
-                alterarImagem.setOrdenacao(produto.getImagens().get(i).getOrdenacao());
-                alterarImagem.setPrincipal(produto.getImagens().get(i).isPrincipal());
-                produto.setImagens(imagens);
-                repository.save(produto);
-            }
+            // Atualizar a lista de imagens do produto e salvar no banco de dados
+            entity.setImagens(imagensEntities);
+            repository.save(entity);
         }
 
         return "redirect:/backoffice/produtos";
