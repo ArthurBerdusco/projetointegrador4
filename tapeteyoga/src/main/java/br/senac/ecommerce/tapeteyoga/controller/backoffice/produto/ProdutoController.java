@@ -160,7 +160,6 @@ public class ProdutoController {
 
 
         if (dto.getImagens() != null && !dto.getImagens().isEmpty()) {
-  
             for (ImagemProdutoDto imgDto : dto.getImagens()) {
                 ImagemProduto imgEntity = new ImagemProduto();
                 imgEntity.setNomeArquivo(imgDto.getArquivo().getOriginalFilename());
@@ -187,7 +186,6 @@ public class ProdutoController {
     public String edita(@Valid ProdutoDto dto, BindingResult result, Model model) throws Exception {
 
         if (result.hasErrors() || erroImagens(dto.getImagens())) {
-            model.addAttribute("erro", "Tem erro");
             return "backoffice/produto/form_produto";
         }
 

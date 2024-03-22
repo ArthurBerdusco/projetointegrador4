@@ -59,7 +59,7 @@
                             <!-- Avaliação -->
                             <div class="col-md mb-3">
                                 <label for="avaliacao" class="form-label">Avaliação:</label>
-                                <select id="ratingSelect" th:field="*{rating}" class="form-select">
+                                <select id="ratingSelect" th:field="*{rating}" class="form-select" th:style="${usuarioAutenticado.role !='Administrador'} ? @{pointer-events: none;}">
                                     <option value="5.0">5.0</option>
                                     <option value="4.5">4.5</option>
                                     <option value="4.0">4.0</option>
@@ -79,7 +79,6 @@
                                     }
                                     /*]]>*/
                                 </script>
-
                                 <span th:errors="*{rating}" class="text-danger"></span>
                             </div>
                         </div>
@@ -119,7 +118,7 @@
                                         </div>
                                     </div>
                                     <div class="card-footer">
-                                        <button class="btn btn-danger delete-button" type="button"
+                                        <button class="btn btn-danger delete-button" type="button" th:disabled="${usuarioAutenticado.role!='Administrador'}"
                                                 th:attr="data-image-id=${imagem.id}">Deletar</button>
                                                 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
                                     </div>
