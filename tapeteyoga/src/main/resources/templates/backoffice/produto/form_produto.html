@@ -110,14 +110,7 @@
                                         th:field="*{imagens[__${iterStat.index}__].arquivo}" class="form d-none"
                                         th:attr="onchange=|displaySelectedImage(event, `selectedImage${iterStat.index}`)|"
                                         accept="image/*" th:disabled="${usuarioAutenticado.role!='Administrador'}" />
-
                                     <div class="card-body">
-                                        <div class="d-flex align-items-center" style="gap: 20px;">
-                                            <label for="txtOrdenacao${iterStat.index}">Ordem: </label>
-                                            <input class="form-control" type="number"
-                                                th:field="*{imagens[__${iterStat.index}__].ordenacao}"
-                                                th:disabled="${usuarioAutenticado.role!='Administrador'}" />
-                                        </div>
                                         <div class="d-flex align-items-center" style="gap: 20px;">
                                             <label for="principal${iterStat.index}">Principal: </label>
                                             <input type="checkbox"
@@ -125,7 +118,11 @@
                                                 th:disabled="${usuarioAutenticado.role!='Administrador'}" />
                                         </div>
                                     </div>
-
+                                    <div class="card-footer">
+                                        <button class="btn btn-danger delete-button" type="button"
+                                                th:attr="data-image-id=${imagem.id}">Deletar</button>
+                                                <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+                                    </div>
                                 </fieldset>
                             </div>
 

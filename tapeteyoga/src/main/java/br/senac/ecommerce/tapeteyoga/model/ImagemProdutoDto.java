@@ -1,17 +1,10 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
 package br.senac.ecommerce.tapeteyoga.model;
 
 import java.util.Base64;
 
 import org.springframework.web.multipart.MultipartFile;
 
-/**
- *
- * @author fernando.tsuda
- */
+
 public class ImagemProdutoDto {
     
     private Integer id;
@@ -21,8 +14,6 @@ public class ImagemProdutoDto {
     private MultipartFile arquivo;
     
 	private byte[] arquivoBytes;
-
-    private int ordenacao;
     
     private boolean principal;
 
@@ -61,14 +52,6 @@ public class ImagemProdutoDto {
 	public void setArquivoBytes(byte[] arquivoBytes) {
 		this.arquivoBytes = arquivoBytes;
 	}
-
-	public int getOrdenacao() {
-        return ordenacao;
-    }
-
-    public void setOrdenacao(int ordenacao) {
-        this.ordenacao = ordenacao;
-    }
 
     public boolean isPrincipal() {
         return principal;
