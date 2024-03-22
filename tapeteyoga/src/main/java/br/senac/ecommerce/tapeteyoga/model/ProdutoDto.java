@@ -24,7 +24,7 @@ public class ProdutoDto {
     @Min(value = 1, message = "Nota deve estar entre 1 e 5")
     @Max(value = 5, message = "Nota deve estar entre 1 e 5")
     @NotNull(message = "Rating valor não pode ser nulo")
-    private BigDecimal rating;
+    private float rating;
 
     @NotNull(message = "Preco valor não pode ser nulo")
     @Min(value = 0, message = "não pode ser negativo")
@@ -76,11 +76,11 @@ public class ProdutoDto {
         this.price = price;
     }
 
-    public BigDecimal getRating() {
+    public float getRating() {
         return rating;
     }
 
-    public void setRating(BigDecimal rating) {
+    public void setRating(float rating) {
         this.rating = rating;
     }
 
