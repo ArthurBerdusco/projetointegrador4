@@ -25,7 +25,7 @@ public class Produto {
 
     private String description;
 
-    private BigDecimal rating;
+    private float rating;
 
     private BigDecimal price;
 
@@ -45,11 +45,11 @@ public class Produto {
         this.id = id;
     }
 
-    public BigDecimal getRating(){
+    public float getRating(){
         return rating;
     }
 
-    public void setRating(BigDecimal rating) {
+    public void setRating(float rating) {
         this.rating = rating;
     }
 

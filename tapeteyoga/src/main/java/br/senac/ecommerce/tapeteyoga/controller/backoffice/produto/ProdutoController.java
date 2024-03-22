@@ -110,26 +110,26 @@ public class ProdutoController {
 
     public boolean erroImagens(List<ImagemProdutoDto> imagens) {
 
-
-        if(imagens != null){
+        if (imagens != null) {
             int principalCount = 0;
 
             for (ImagemProdutoDto imgDto : imagens) {
                 if (imgDto.isPrincipal())
                     principalCount++;
             }
-    
+
+            if(principalCount == 0 && imagens.size() >= 1){
+                return true;
+            }
+
             if (principalCount > 1 && imagens.size() > 1) {
                 return true;
             }
-    
-    
+
             if (!validaOrdem(imagens)) {
-                return true; 
+                return true;
             }
         }
-
-       
 
         return false;
     }
@@ -140,7 +140,6 @@ public class ProdutoController {
         for (ImagemProdutoDto imgDto : imagens) {
             ordenacoes.add(imgDto.getOrdenacao());
         }
-        
 
         // Sort the order numbers
         Collections.sort(ordenacoes);
@@ -155,15 +154,14 @@ public class ProdutoController {
         return true; // Return true if the order is valid
     }
 
-    public static int[] criarOrdenacao(int size){
+    public static int[] criarOrdenacao(int size) {
         int[] array = new int[size];
 
-        for(int i = 1; i <= size; i++){
+        for (int i = 1; i <= size; i++) {
             array[i] = i;
         }
 
         return array;
-
 
     }
 
@@ -190,10 +188,9 @@ public class ProdutoController {
 
         List<ImagemProduto> imagensEntities = new ArrayList<>();
 
-        System.out.println("\n\n\n\n DEBUG SEM IMAGEM FORA \n\n\n\n");
 
         if (dto.getImagens() != null && !dto.getImagens().isEmpty()) {
-            System.out.println("\n\n\n\n DEBUG SEM IMAGEM DENTRO \n\n\n\n");
+  
             for (ImagemProdutoDto imgDto : dto.getImagens()) {
                 ImagemProduto imgEntity = new ImagemProduto();
                 imgEntity.setNomeArquivo(imgDto.getArquivo().getOriginalFilename());
@@ -238,9 +235,10 @@ public class ProdutoController {
         entity.setStockQuantity(dto.getStockQuantity());
         entity.setRating(dto.getRating());
         entity.setDescription(dto.getDescription());
-        
+
         // Handle image updates
         if (dto.getImagens() != null && !dto.getImagens().isEmpty()) {
+
             List<ImagemProduto> imagensEntities = new ArrayList<>();
             for (int i = 0; i < dto.getImagens().size(); i++) {
                 ImagemProdutoDto imgDto = dto.getImagens().get(i);
@@ -285,8 +283,9 @@ public class ProdutoController {
             }
             // Atualizar a lista de imagens do produto e salvar no banco de dados
             entity.setImagens(imagensEntities);
-            repository.save(entity);
         }
+
+        repository.save(entity);
 
         return "redirect:/backoffice/produtos";
     }
