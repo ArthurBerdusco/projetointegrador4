@@ -7,6 +7,7 @@ import br.senac.ecommerce.tapeteyoga.repository.UsuarioRepository;
 public class EcommerceController {
 
   @Autowired
-  UsuarioRepository repository;
+  private UsuarioRepository repository;
+
 
 }

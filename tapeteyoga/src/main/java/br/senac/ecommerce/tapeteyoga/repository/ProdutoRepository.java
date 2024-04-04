@@ -14,4 +14,5 @@ public interface ProdutoRepository extends JpaRepository<Produto, Long> {
     @Query(value = "SELECT (max(id)+1) FROM produto", nativeQuery = true)
     Long getNextProductId();
 
+    List<Produto> findByIsActiveTrue();
 }
