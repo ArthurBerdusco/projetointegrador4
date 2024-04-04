@@ -1,26 +1,17 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Harmony</title>
     <link rel="icon" type="image/x-icon" href="/img/logo.svg">
+    <th:insert th:insert="fragments/bootstrap.html :: bootstrap"></th:insert>
 </head>
-<body>
-    <div th:insert="fragments/header.html :: teste"></div>
-    <header>
-        <h1>Ecommerce Tapetes de Yoga</h1>
-        <nav>
-            <ul>
-                <li><a href="#">Início</a></li>
-                <li><a href="#">Produtos</a></li>
-                <li><a href="#">Sobre Nós</a></li>
-                <li><a href="#">Contato</a></li>
-            </ul>
-        </nav>
-    </header>
 
-    <main>
+<body>
+    <div th:replace="fragments/loja/header.html :: loja-header"></div>
+    <main style="margin-top: 100px;">
         <h1>Seja bem-vindo ao nosso Ecommerce de Yoga</h1>
 
         <section>
@@ -28,7 +19,8 @@
             <article>
                 <img src="../img/yoga_mat.jpg" alt="Tapete de Yoga">
                 <h3>Tapete de Yoga Premium</h3>
-                <p>Desfrute de suas práticas de yoga com nosso tapete de alta qualidade. Feito de material antiderrapante e durável.</p>
+                <p>Desfrute de suas práticas de yoga com nosso tapete de alta qualidade. Feito de material
+                    antiderrapante e durável.</p>
                 <p><strong>Preço:</strong> $29.99</p>
                 <button>Adicionar ao Carrinho</button>
             </article>
@@ -40,4 +32,5 @@
         <p>&copy; 2024 Ecommerce Yoga. Todos os direitos reservados.</p>
     </footer>
 </body>
+
 </html>
