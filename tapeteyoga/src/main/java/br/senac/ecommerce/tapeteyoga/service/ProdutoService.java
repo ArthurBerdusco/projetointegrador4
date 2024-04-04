@@ -1,5 +1,6 @@
 package br.senac.ecommerce.tapeteyoga.service;
 
+import java.util.List;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,11 +14,16 @@ import jakarta.transaction.Transactional;
 public class ProdutoService {
 
     @Autowired
-    ProdutoRepository repository;
+    private ProdutoRepository repository;
 
     @Transactional
     public Optional<Produto> buscarProdutoPorId(Long id) {
         return repository.findById(id);
     }
+    public List<Produto> buscarProdutosAtivos(){
+        return repository.findByIsActiveTrue();
+    }
 
-}
+    }
+
+

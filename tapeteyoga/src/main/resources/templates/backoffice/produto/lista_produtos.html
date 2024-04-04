@@ -100,31 +100,6 @@
                         </table>
                     </div>
                 </div>
-                <div class="row">
-                    <!-- Percorrer cada produto -->
-                    <div th:each="produto : ${produtos}" class="col-md-4 mb-4">
-                        <!-- Cartão para cada produto -->
-                        <div class="card">
-                            <!--  Imagem do Produto -->
-                            <img class="card-img-top" th:src="@{/img/produtos/{imagens[0].nomeArquivo}}"
-                                alt="Product Image" th:if="${produto.imagemPrincipal != null}"
-                                th:attr="src=@{/img/produtos/{produto.imagemPrincipal.nomeArquivo}}" />
-                            <!-- Se nenhuma imagem estiver disponível, você pode usar uma imagem de espaço reservado -->
-                            <img class="card-img-top" src="placeholder.jpg" alt="Product Image"
-                                th:if="${produto.imagemPrincipal == null}" />
-                            <div class="card-body">
-                                <!-- Detalhes do produto -->
-                                <h5 class="card-title" th:text="${produto.name}"></h5>
-                                <p class="card-text" th:text="'Quantidade: ' + ${produto.stockQuantity}"></p>
-                                <p class="card-text" th:text="'Preço: ' + ${produto.price}"></p>
-                                <!-- Adicione mais detalhes do produto aqui -->
-                                <!-- Link para visualizar/editar produto -->
-                                <a th:href="@{/backoffice/produtos/{id}(id=${produto.id})}" class="btn btn-primary">Ver Produto</a>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
                 <nav class="container" aria-label="Page navigation example">
                     <ul class="pagination">
                         <li class="page-item" th:classappend="${currentPage == 0 ? 'disabled' : ''}">

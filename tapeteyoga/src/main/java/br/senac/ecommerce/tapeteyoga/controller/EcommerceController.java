@@ -9,7 +9,8 @@ import org.springframework.web.bind.annotation.GetMapping;
 public class EcommerceController {
 
   @Autowired
-  UsuarioRepository repository;
+  private UsuarioRepository repository;
+
 
   @GetMapping("/")
   public String index() {
