@@ -30,7 +30,7 @@ public class SecurityConfiguration {
                 .authorizeHttpRequests(registry -> {
 
                     /* Todos */
-                    registry.requestMatchers("/", "/setup", "/img/**", "/css/**", "/backoffice/setup").permitAll();
+                    registry.requestMatchers("/setup", "/img/**", "/css/**", "/backoffice/setup", "/").permitAll();
 
                     /* Administrador e Estoquista */
                     registry.requestMatchers("/backoffice/").hasAnyRole("Administrador", "Estoquista");
