@@ -50,8 +50,7 @@ public class ProdutoController {
     private ProdutoService produtoService;
 
     @GetMapping("produtos")
-    public String listarProdutos(Model model, Authentication authentication,
-            @RequestParam(name = "page", defaultValue = "0") int page) {
+    public String listarProdutos(Model model, Authentication authentication, @RequestParam(name = "page", defaultValue = "0") int page) {
 
         // Define o tamanho da página (quantidade de produtos por página)
         int pageSize = 10;
