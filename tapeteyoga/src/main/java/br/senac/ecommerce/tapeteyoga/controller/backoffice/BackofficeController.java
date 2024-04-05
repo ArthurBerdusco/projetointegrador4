@@ -27,7 +27,6 @@ public class BackofficeController {
 
     @GetMapping("setup")
     public String cadastrarUsuario() {
-        System.out.println("CHEGUEI AQUI");
 
         boolean userExists = repository.existsByEmail("admin@root.com");
 
