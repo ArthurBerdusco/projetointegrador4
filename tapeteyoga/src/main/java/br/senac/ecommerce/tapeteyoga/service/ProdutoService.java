@@ -21,7 +21,7 @@ public class ProdutoService {
         return repository.findById(id);
     }
     public List<Produto> buscarProdutosAtivos(){
-        return repository.findByIsActiveTrue();
+        return repository.findByIsActiveTrueOrderByIdDesc();
     }
 
     }

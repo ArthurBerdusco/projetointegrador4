@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Formulário de Cadastro</title>
+  <!-- Incluindo Bootstrap CSS -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+
+<body style="background-color: rgb(241, 240, 233);">
+
+  <div class="container">
+    <h2>Cadastro cliente</h2>
+
+
+
+    <form action="#" th:action="@{/cadastro}" th:object="${client}" method="post">
+
+      <div class="info-pessoal shadow-sm bg-light p-5 mb-3">
+
+        <h4 class="mb-3">Informações pessoais</h4>
+        <div class="input-group mb-3">
+          <input type="text" class="form-control" placeholder="Nome completo" th:field="*{fullName}">
+        </div>
+
+        <div class="input-group mb-3">
+          <input type="text" class="form-control" placeholder="CPF" th:field="*{cpf}">
+        </div>
+
+        <div class="input-group mb-3">
+          <input type="date" class="form-control" placeholder="Data nascimento" th:field="*{birthDate}">
+        </div>
+
+        <div class="input-group mb-3">
+          <select class="form-select" th:field="*{gender}">
+            <option value="Masculino">Masculino</option>
+            <option value="Feminino">Feminino</option>
+          </select>
+        </div>
+
+        <div class="input-group mb-3">
+          <input type="email" class="form-control" placeholder="Email" th:field="*{email}">
+        </div>
+
+        <div class="input-group mb-3">
+          <input type="password" class="form-control" placeholder="Senha" th:field="*{password}">
+        </div>
+
+      </div>
+
+
+
+      <!-- ENDEREÇO DE FATURAMENTO -->
+      <div class="container-faturamento shadow-sm bg-light p-5 mb-3">
+        <h4>Endereço de faturamento: </h4>
+        <fieldset id="faturamento">
+          <div class="input-group mb-3">
+            <input type="text" class="form-control" maxlength="9" placeholder="CEP" id="cepFaturamento"
+              name="billingAddress.zipCode">
+          </div>
+          <div class="input-group mb-3">
+            <input type="text" class="form-control" placeholder="Logradouro" id="logradouroFaturamento"
+              name="billingAddress.street">
+          </div>
+          <div class="input-group mb-3">
+            <input type="text" class="form-control" placeholder="Número" id="numeroFaturamento"
+              name="billingAddress.number">
+          </div>
+          <div class="input-group mb-3">
+            <input type="text" class="form-control" placeholder="Complemento" id="complementoFaturamento"
+              name="billingAddress.complement">
+          </div>
+          <div class="input-group mb-3">
+            <input type="text" class="form-control" placeholder="Bairro" id="bairroFaturamento"
+              name="billingAddress.neighborhood">
+          </div>
+          <div class="input-group mb-3">
+            <input type="text" class="form-control" placeholder="Cidade" id="cidadeFaturamento"
+              name="billingAddress.city">
+          </div>
+          <div class="input-group mb-3">
+            <input type="text" class="form-control" placeholder="UF" id="ufFaturamento" name="billingAddress.state">
+          </div>
+        </fieldset>
+      </div>
+
+      <!-- ENDEREÇO(S) DE ENTREGA -->
+      <div class="container-entrega shadow-sm bg-light p-5">
+        <h4>Endereços de entrega </h4>
+        <div id="inputEnderecosEntrega">
+          <fieldset th:each="address, addressIndex : *{deliveryAddresses}">
+            <legend th:text="'Endereço ' + ${addressIndex.index + 1} + ':'"></legend>
+            <div class="input-group mb-3">
+              <input type="text" class="form-control" maxlength="9" placeholder="CEP"
+                name="deliveryAddresses[__${addressIndex.index}__].zipCode">
+            </div>
+            <div class="input-group mb-3">
+              <input type="text" class="form-control" placeholder="Logradouro"
+                th:field="*{deliveryAddresses[__${addressIndex.index}__].street}">
+            </div>
+            <div class="input-group mb-3">
+              <input type="text" class="form-control" placeholder="Número"
+                th:field="*{deliveryAddresses[__${addressIndex.index}__].number}">
+            </div>
+            <div class="input-group mb-3">
+              <input type="text" class="form-control" placeholder="Complemento"
+                th:field="*{deliveryAddresses[__${addressIndex.index}__].complement}">
+            </div>
+            <div class="input-group mb-3">
+              <input type="text" class="form-control" placeholder="Bairro"
+                th:field="*{deliveryAddresses[__${addressIndex.index}__].neighborhood}">
+            </div>
+            <div class="input-group mb-3">
+              <input type="text" class="form-control" placeholder="Cidade"
+                th:field="*{deliveryAddresses[__${addressIndex.index}__].city}">
+            </div>
+            <div class="input-group mb-3">
+              <input type="text" class="form-control" placeholder="UF"
+                th:field="*{deliveryAddresses[__${addressIndex.index}__].state}">
+            </div>
+          </fieldset>
+        </div>
+        <div>
+          <button class="btn btn-primary mb-3" type="button" id="btnNovoEndereco">Adicionar outro endereço</button>
+        </div>
+      </div>
+
+      <button class="btn btn-primary" type="submit">Criar conta</button>
+    </form>
+  </div>
+
+  <script>
+
+
+    document.getElementById('btnNovoEndereco').onclick = function () {
+      let qtdFieldset = document.querySelectorAll('#inputEnderecosEntrega > fieldset').length;
+      const enderecoCounter = qtdFieldset; // Obter o próximo número de endereço
+      document.getElementById('inputEnderecosEntrega').insertAdjacentHTML('beforeend',
+        `
+<fieldset class="border p-5 my-3 rounded" id="endereco-entrega${enderecoCounter}"> <!-- Adiciona o número do endereço no ID -->
+  <legend>Endereço ${enderecoCounter + 1}:</legend> <!-- Adiciona o número do endereço no título -->
+  <div class="input-group mb-3">
+    <input type="text" class="form-control" maxlength="9" name="deliveryAddresses[${enderecoCounter}].zipCode" id="cep${enderecoCounter}" placeholder="CEP">
+  </div>
+  <div class="input-group mb-3">
+    <input type="text" class="form-control" name="deliveryAddresses[${enderecoCounter}].street" id="logradouro${enderecoCounter}" placeholder="Logradouro">
+  </div>
+  <div class="input-group mb-3">
+    <input type="text" class="form-control" name="deliveryAddresses[${enderecoCounter}].number" id="numero${enderecoCounter}" placeholder="Número">
+  </div>
+  <div class="input-group mb-3">
+    <input type="text" class="form-control" name="deliveryAddresses[${enderecoCounter}].complement" id="complemento${enderecoCounter}" placeholder="Complemento">
+  </div>
+  <div class="input-group mb-3">
+    <input type="text" class="form-control" name="deliveryAddresses[${enderecoCounter}].neighborhood" id="bairro${enderecoCounter}" placeholder="Bairro">
+  </div>
+  <div class="input-group mb-3">
+    <input type="text" class="form-control" name="deliveryAddresses[${enderecoCounter}].city" id="cidade${enderecoCounter}" placeholder="Cidade">
+  </div>
+  <div class="input-group mb-3">
+    <input type="text" class="form-control" name="deliveryAddresses[${enderecoCounter}].state" id="uf${enderecoCounter}" placeholder="UF">
+  </div>
+</fieldset>
+`
+      );
+
+      // Adicionar event listener para o novo campo de CEP
+      const novoCepInput = document.getElementById(`cep${enderecoCounter}`);
+      novoCepInput.addEventListener('input', function () {
+        const cepValue = this.value.trim();
+        if (cepValue.length === 9) {
+
+          // Realiza a solicitação HTTP para a API do ViaCEP
+          fetch(`https://viacep.com.br/ws/${cepValue}/json/`)
+            .then(response => response.json())
+            .then(data => {
+              // Preenche os campos de endereço com os dados retornados
+              document.getElementById(`logradouro${enderecoCounter}`).value = data.logradouro;
+              document.getElementById(`bairro${enderecoCounter}`).value = data.bairro;
+              document.getElementById(`cidade${enderecoCounter}`).value = data.localidade;
+              document.getElementById(`uf${enderecoCounter}`).value = data.uf;
+            })
+            .catch(error => console.error('Erro ao buscar os dados do CEP:', error));
+        }
+      });
+    };
+
+
+    const cepFaturamentoInput = document.getElementById('cepFaturamento');
+    cepFaturamentoInput.addEventListener('input', function () {
+      const cepValue = this.value.trim();
+      if (cepValue.length === 9) {
+        preencherEndereco(cepValue, 'Faturamento');
+      }
+    });
+
+    function preencherEndereco(cep, tipo) {
+      fetch(`https://viacep.com.br/ws/${cep}/json/`)
+        .then(response => response.json())
+        .then(data => {
+          document.getElementById(`logradouro${tipo}`).value = data.logradouro || '';
+          document.getElementById(`bairro${tipo}`).value = data.bairro || '';
+          document.getElementById(`cidade${tipo}`).value = data.localidade || '';
+          document.getElementById(`uf${tipo}`).value = data.uf || '';
+        })
+        .catch(error => console.error('Erro ao buscar os dados do CEP:', error));
+    }
+
+
+    window.onload = function () {
+      document.getElementById('btnNovoEndereco').click();
+    };
+
+  </script>
+
+
+</body>
+
+</html>
