@@ -56,8 +56,7 @@ public class ProdutoController {
         int pageSize = 10;
 
         // Obtém a lista de usuários cadastrados no backoffice.
-        Page<Produto> produtosPage = repository
-                .findAll(PageRequest.of(page, pageSize, Sort.by(Sort.Direction.DESC, "id")));
+        Page<Produto> produtosPage = repository.findAll(PageRequest.of(page, pageSize, Sort.by(Sort.Direction.DESC, "id")));
 
         // Adiciona a lista de usuários ao modelo para exibição na página.
         model.addAttribute("produtos", produtosPage.getContent());
@@ -86,15 +85,23 @@ public class ProdutoController {
     }
 
     @GetMapping("buscar")
-    public String procurar(Model model, @RequestParam(name = "name", required = false) String name,
-            Authentication authentication) {
-
-        List<Produto> produtos = repository.findByNameContainingIgnoreCaseOrderByIdDesc(name);
-
-        model.addAttribute("produtos", produtos);
+    public String procurar(Model model, @RequestParam(name = "name", required = false) String name, Authentication authentication, @RequestParam(name = "page", defaultValue = "0") int page) {
+    
+        // Define o tamanho da página (quantidade de produtos por página)
+        int pageSize = 10;
+    
+        // Realiza a busca paginada dos produtos pelo nome.
+        Page<Produto> produtosPage = repository.findByNameContainingIgnoreCaseOrderByIdDesc(name, PageRequest.of(page, pageSize, Sort.by(Sort.Direction.DESC, "id")));
+    
+        // Adiciona a lista de produtos ao modelo para exibição na página.
+        model.addAttribute("produtos", produtosPage.getContent());
         model.addAttribute("usuarioAutenticado", utils.getUsuarioAutenticado(authentication));
+        model.addAttribute("currentPage", page);
+        model.addAttribute("totalPages", produtosPage.getTotalPages());
+    
         return "backoffice/produto/lista_produtos";
     }
+    
 
     @GetMapping("produtos/{id}")
     public String handleBackofficeGetProduto(@PathVariable Long id, Model model, Authentication authentication) {

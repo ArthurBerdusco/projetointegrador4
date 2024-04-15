@@ -4,7 +4,6 @@ import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
-import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -12,6 +11,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseStatus;
 
+import br.senac.ecommerce.tapeteyoga.model.Client;
 import br.senac.ecommerce.tapeteyoga.model.Produto;
 import br.senac.ecommerce.tapeteyoga.service.ProdutoService;
 
@@ -27,8 +27,19 @@ public class PaginaPrincipal {
     public String landingPage(Model model) {
         var listaProdutos = produtoService.buscarProdutosAtivos();
         model.addAttribute("produtoPage", listaProdutos);
-        return "index";
+        return "store/index";
     }
+
+    @GetMapping("/login")
+    public String login() {
+        return "store/login";
+    }
+
+    @GetMapping("/cadastro")
+    public String register(Client client) {
+        return "store/register";
+    }
+
 
     @GetMapping("/produto")
     public String obterporId(@RequestParam(name = "id", required = false) Long id, Model model) {
@@ -38,7 +49,7 @@ public class PaginaPrincipal {
         if (produtoVisualizar.isPresent()) {
             Produto produto = produtoVisualizar.get();
             model.addAttribute("produto", produto);
-            return "visualizar";
+            return "store/product";
         } else {
             return "index";
         }
