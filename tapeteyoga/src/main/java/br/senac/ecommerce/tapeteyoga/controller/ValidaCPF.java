@@ -1,4 +1,4 @@
-package br.senac.ecommerce.tapeteyoga.controller.backoffice.usuario;
+package br.senac.ecommerce.tapeteyoga.controller;
 
 import java.util.InputMismatchException;
 

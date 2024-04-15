@@ -12,6 +12,8 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+
+import br.senac.ecommerce.tapeteyoga.controller.ValidaCPF;
 import br.senac.ecommerce.tapeteyoga.controller.backoffice.Utils;
 import br.senac.ecommerce.tapeteyoga.model.Usuario;
 import br.senac.ecommerce.tapeteyoga.repository.UsuarioRepository;
@@ -82,8 +84,7 @@ public class UsuarioController {
     }
 
     @PostMapping("usuario/cadastra")
-    public String salvaFormulario(@Valid Usuario usuario, BindingResult result, Authentication authentication,
-            Model model) {
+    public String salvaFormulario(@Valid Usuario usuario, BindingResult result, Authentication authentication, Model model) {
 
         Usuario usuarioAutenticado = utils.getUsuarioAutenticado(authentication);
         model.addAttribute("usuarioAutenticado", usuarioAutenticado);
@@ -119,8 +120,7 @@ public class UsuarioController {
     }
 
     @PostMapping("usuario/edita")
-    public String handleBackofficeEditar(@Valid Usuario usuario,
-            BindingResult result, Authentication authentication, Model model) {
+    public String handleBackofficeEditar(@Valid Usuario usuario, BindingResult result, Authentication authentication, Model model) {
 
         Usuario usuarioAutenticado = utils.getUsuarioAutenticado(authentication);
         model.addAttribute("usuarioAutenticado", usuarioAutenticado);
