@@ -4,7 +4,6 @@ import java.util.Base64;
 
 import org.springframework.web.multipart.MultipartFile;
 
-
 public class ImagemProdutoDto {
     
     private Integer id;

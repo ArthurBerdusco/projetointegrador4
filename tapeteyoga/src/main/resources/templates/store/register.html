@@ -14,119 +14,136 @@
   <div class="container">
     <h2>Cadastro cliente</h2>
 
-
-
-    <form action="#" th:action="@{/cadastro}" th:object="${client}" method="post">
+    <form action="#" th:action="@{/cadastro}" th:object="${clientDTO}" method="post">
 
       <div class="info-pessoal shadow-sm bg-light p-5 mb-3">
 
         <h4 class="mb-3">Informações pessoais</h4>
-        <div class="input-group mb-3">
+        <div class="mb-3">
           <input type="text" class="form-control" placeholder="Nome completo" th:field="*{fullName}">
+          <span th:errors="*{fullName}" class="text-danger"></span>
         </div>
 
-        <div class="input-group mb-3">
+        <div class="mb-3">
           <input type="text" class="form-control" placeholder="CPF" th:field="*{cpf}">
+          <span th:errors="*{cpf}" class="text-danger"></span>
         </div>
 
-        <div class="input-group mb-3">
+        <div class="mb-3">
           <input type="date" class="form-control" placeholder="Data nascimento" th:field="*{birthDate}">
+          <span th:errors="*{birthDate}" class="text-danger"></span>
         </div>
 
-        <div class="input-group mb-3">
+        <div class="mb-3">
           <select class="form-select" th:field="*{gender}">
             <option value="Masculino">Masculino</option>
             <option value="Feminino">Feminino</option>
           </select>
+          <span th:errors="*{gender}" class="text-danger"></span>
         </div>
 
-        <div class="input-group mb-3">
+        <div class="mb-3">
           <input type="email" class="form-control" placeholder="Email" th:field="*{email}">
+          <span th:errors="*{email}" class="text-danger"></span>
         </div>
 
-        <div class="input-group mb-3">
+        <div class="mb-3">
           <input type="password" class="form-control" placeholder="Senha" th:field="*{password}">
+          <span th:errors="*{password}" class="text-danger"></span>
         </div>
 
       </div>
-
-
 
       <!-- ENDEREÇO DE FATURAMENTO -->
       <div class="container-faturamento shadow-sm bg-light p-5 mb-3">
         <h4>Endereço de faturamento: </h4>
         <fieldset id="faturamento">
-          <div class="input-group mb-3">
-            <input type="text" class="form-control" maxlength="9" placeholder="CEP" id="cepFaturamento"
-              name="billingAddress.zipCode">
+          <div class="mb-3">
+            <input type="text" class="form-control" maxlength="9" placeholder="CEP" id="cepFaturamento" th:field="*{billingAddress.zipCode}">
+            <span th:errors="*{billingAddress.zipCode}" class="text-danger"></span>
           </div>
-          <div class="input-group mb-3">
+          <div class="mb-3">
             <input type="text" class="form-control" placeholder="Logradouro" id="logradouroFaturamento"
-              name="billingAddress.street">
+              th:field="*{billingAddress.street}">
+            <span th:errors="*{billingAddress.street}" class="text-danger"></span>
           </div>
-          <div class="input-group mb-3">
+          <div class="mb-3">
             <input type="text" class="form-control" placeholder="Número" id="numeroFaturamento"
-              name="billingAddress.number">
+              th:field="*{billingAddress.number}">
+            <span th:errors="*{billingAddress.number}" class="text-danger"></span>
           </div>
-          <div class="input-group mb-3">
+          <div class="mb-3">
             <input type="text" class="form-control" placeholder="Complemento" id="complementoFaturamento"
-              name="billingAddress.complement">
+              th:field="*{billingAddress.complement}">
+            <span th:errors="*{billingAddress.complement}" class="text-danger"></span>
           </div>
-          <div class="input-group mb-3">
+          <div class="mb-3">
             <input type="text" class="form-control" placeholder="Bairro" id="bairroFaturamento"
-              name="billingAddress.neighborhood">
+              th:field="*{billingAddress.neighborhood}">
+            <span th:errors="*{billingAddress.neighborhood}" class="text-danger"></span>
           </div>
-          <div class="input-group mb-3">
+          <div class="mb-3">
             <input type="text" class="form-control" placeholder="Cidade" id="cidadeFaturamento"
-              name="billingAddress.city">
+              th:field="*{billingAddress.city}">
+            <span th:errors="*{billingAddress.city}" class="text-danger"></span>
           </div>
-          <div class="input-group mb-3">
-            <input type="text" class="form-control" placeholder="UF" id="ufFaturamento" name="billingAddress.state">
+          <div class="mb-3">
+            <input type="text" class="form-control" placeholder="UF" id="ufFaturamento"
+              th:field="*{billingAddress.state}">
+            <span th:errors="*{billingAddress.state}" class="text-danger"></span>
           </div>
         </fieldset>
       </div>
 
       <!-- ENDEREÇO(S) DE ENTREGA -->
       <div class="container-entrega shadow-sm bg-light p-5">
-        <h4>Endereços de entrega </h4>
+        <h4>Endereços de entrega</h4>
         <div id="inputEnderecosEntrega">
-          <fieldset th:each="address, addressIndex : *{deliveryAddresses}">
+          <fieldset class="border p-5 my-3 rounded" th:each="address, addressIndex : *{deliveryAddresses}">
             <legend th:text="'Endereço ' + ${addressIndex.index + 1} + ':'"></legend>
-            <div class="input-group mb-3">
+            <div class="mb-3">
               <input type="text" class="form-control" maxlength="9" placeholder="CEP"
-                name="deliveryAddresses[__${addressIndex.index}__].zipCode">
+                th:field="*{deliveryAddresses[__${addressIndex.index}__].zipCode}">
+              <span th:errors="*{deliveryAddresses[__${addressIndex.index}__].zipCode}" class="text-danger"></span>
             </div>
-            <div class="input-group mb-3">
+            <div class="mb-3">
               <input type="text" class="form-control" placeholder="Logradouro"
                 th:field="*{deliveryAddresses[__${addressIndex.index}__].street}">
+              <span th:errors="*{deliveryAddresses[__${addressIndex.index}__].street}" class="text-danger"></span>
             </div>
-            <div class="input-group mb-3">
+            <div class="mb-3">
               <input type="text" class="form-control" placeholder="Número"
                 th:field="*{deliveryAddresses[__${addressIndex.index}__].number}">
+              <span th:errors="*{deliveryAddresses[__${addressIndex.index}__].number}" class="text-danger"></span>
             </div>
-            <div class="input-group mb-3">
+            <div class="mb-3">
               <input type="text" class="form-control" placeholder="Complemento"
                 th:field="*{deliveryAddresses[__${addressIndex.index}__].complement}">
+              <span th:errors="*{deliveryAddresses[__${addressIndex.index}__].complement}" class="text-danger"></span>
             </div>
-            <div class="input-group mb-3">
+            <div class="mb-3">
               <input type="text" class="form-control" placeholder="Bairro"
                 th:field="*{deliveryAddresses[__${addressIndex.index}__].neighborhood}">
+              <span th:errors="*{deliveryAddresses[__${addressIndex.index}__].neighborhood}" class="text-danger"></span>
             </div>
-            <div class="input-group mb-3">
+            <div class="mb-3">
               <input type="text" class="form-control" placeholder="Cidade"
                 th:field="*{deliveryAddresses[__${addressIndex.index}__].city}">
+              <span th:errors="*{deliveryAddresses[__${addressIndex.index}__].city}" class="text-danger"></span>
             </div>
-            <div class="input-group mb-3">
+            <div class="mb-3">
               <input type="text" class="form-control" placeholder="UF"
                 th:field="*{deliveryAddresses[__${addressIndex.index}__].state}">
+              <span th:errors="*{deliveryAddresses[__${addressIndex.index}__].state}" class="text-danger"></span>
             </div>
+
+            <button type="button" class="btn btn-info" onclick="copiarEnderecoFaturamento(this.closest('fieldset'))">Copiar endereço de faturamento</button>
           </fieldset>
         </div>
         <div>
           <button class="btn btn-primary mb-3" type="button" id="btnNovoEndereco">Adicionar outro endereço</button>
         </div>
       </div>
-
       <button class="btn btn-primary" type="submit">Criar conta</button>
     </form>
   </div>
@@ -141,27 +158,28 @@
         `
 <fieldset class="border p-5 my-3 rounded" id="endereco-entrega${enderecoCounter}"> <!-- Adiciona o número do endereço no ID -->
   <legend>Endereço ${enderecoCounter + 1}:</legend> <!-- Adiciona o número do endereço no título -->
-  <div class="input-group mb-3">
+  <div class="mb-3">
     <input type="text" class="form-control" maxlength="9" name="deliveryAddresses[${enderecoCounter}].zipCode" id="cep${enderecoCounter}" placeholder="CEP">
   </div>
-  <div class="input-group mb-3">
+  <div class="mb-3">
     <input type="text" class="form-control" name="deliveryAddresses[${enderecoCounter}].street" id="logradouro${enderecoCounter}" placeholder="Logradouro">
   </div>
-  <div class="input-group mb-3">
+  <div class="mb-3">
     <input type="text" class="form-control" name="deliveryAddresses[${enderecoCounter}].number" id="numero${enderecoCounter}" placeholder="Número">
   </div>
-  <div class="input-group mb-3">
+  <div class="mb-3">
     <input type="text" class="form-control" name="deliveryAddresses[${enderecoCounter}].complement" id="complemento${enderecoCounter}" placeholder="Complemento">
   </div>
-  <div class="input-group mb-3">
+  <div class="mb-3">
     <input type="text" class="form-control" name="deliveryAddresses[${enderecoCounter}].neighborhood" id="bairro${enderecoCounter}" placeholder="Bairro">
   </div>
-  <div class="input-group mb-3">
+  <div class="mb-3">
     <input type="text" class="form-control" name="deliveryAddresses[${enderecoCounter}].city" id="cidade${enderecoCounter}" placeholder="Cidade">
   </div>
-  <div class="input-group mb-3">
+  <div class="mb-3">
     <input type="text" class="form-control" name="deliveryAddresses[${enderecoCounter}].state" id="uf${enderecoCounter}" placeholder="UF">
   </div>
+  <button type="button" class="btn btn-info" onclick="copiarEnderecoFaturamento(this.closest('fieldset'))">Copiar endereço de faturamento</button>
 </fieldset>
 `
       );
@@ -210,8 +228,36 @@
 
 
     window.onload = function () {
-      document.getElementById('btnNovoEndereco').click();
+
+      let qtdFieldset = document.querySelectorAll('#inputEnderecosEntrega > fieldset').length;
+      if(qtdFieldset == 0){
+        document.getElementById('btnNovoEndereco').click();
+      }
+      
     };
+
+    function copiarEnderecoFaturamento(fieldset) {
+
+        var cepFaturamento = document.getElementById('cepFaturamento').value;
+        var logradouroFaturamento = document.getElementById('logradouroFaturamento').value;
+        var numeroFaturamento = document.getElementById('numeroFaturamento').value;
+        var complementoFaturamento = document.getElementById('complementoFaturamento').value;
+        var bairroFaturamento = document.getElementById('bairroFaturamento').value;
+        var cidadeFaturamento = document.getElementById('cidadeFaturamento').value;
+        var ufFaturamento = document.getElementById('ufFaturamento').value;
+
+        // Seleciona os campos do endereço de entrega dentro do fieldset
+        var inputsEnderecoEntrega = fieldset.querySelectorAll('input');
+
+        // Define os valores dos campos de endereço de entrega para os valores do endereço de faturamento
+        inputsEnderecoEntrega[0].value = cepFaturamento;
+        inputsEnderecoEntrega[1].value = logradouroFaturamento;
+        inputsEnderecoEntrega[2].value = numeroFaturamento;
+        inputsEnderecoEntrega[3].value = complementoFaturamento;
+        inputsEnderecoEntrega[4].value = bairroFaturamento;
+        inputsEnderecoEntrega[5].value = cidadeFaturamento;
+        inputsEnderecoEntrega[6].value = ufFaturamento;
+    }
 
   </script>
 

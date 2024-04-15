@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseStatus;
 
-import br.senac.ecommerce.tapeteyoga.model.Client;
+import br.senac.ecommerce.tapeteyoga.model.ClientDTO;
 import br.senac.ecommerce.tapeteyoga.model.Produto;
 import br.senac.ecommerce.tapeteyoga.service.ProdutoService;
 
@@ -36,7 +36,7 @@ public class PaginaPrincipal {
     }
 
     @GetMapping("/cadastro")
-    public String register(Client client) {
+    public String register(ClientDTO client) {
         return "store/register";
     }
 
