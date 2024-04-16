@@ -8,7 +8,6 @@ import jakarta.persistence.ForeignKey;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
-import jakarta.validation.constraints.NotBlank;
 import lombok.Data;
 
 @Entity
@@ -19,24 +18,24 @@ public class BillingAddress {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     
-    @NotBlank
+
     private String zipCode;
     
-    @NotBlank
+
     private String street;
     
-    @NotBlank
+ 
     private String number;
     
     private String complement;
     
-    @NotBlank
+
     private String neighborhood;
     
-    @NotBlank
+
     private String city;
     
-    @NotBlank
+
     private String state;
 
     @OneToOne

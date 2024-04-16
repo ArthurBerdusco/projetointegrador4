@@ -3,6 +3,9 @@ package br.senac.ecommerce.tapeteyoga.model;
 import java.time.LocalDate;
 import java.util.List;
 
+import org.hibernate.validator.constraints.br.CPF;
+
+import jakarta.validation.Valid;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
@@ -16,7 +19,7 @@ public class ClientDTO {
     private Long id;
     
     @NotBlank(message = "O nome não pode estar em branco")
-    @Pattern(regexp = "^(\\p{L}{3,}+\\s){1,}\\p{L}{3,}+$", message = "O nome deve conter pelo menos duas palavras com no mínimo 3 letras em cada palavra")
+    @Pattern(regexp = "^(\\p{L}{3,}+\\s|de\\s){1,}\\p{L}{3,}+$", message = "O nome deve conter pelo menos duas palavras com no mínimo 3 letras em cada palavra")
     private String fullName;
     
     @NotBlank(message = "O email não pode estar em branco")
@@ -28,7 +31,7 @@ public class ClientDTO {
     private String password;
     
     @NotBlank(message = "O CPF não pode estar em branco")
-    @Pattern(regexp = "\\d{3}\\.\\d{3}\\.\\d{3}-\\d{2}", message = "O CPF deve estar no formato '999.999.999-99'")
+    @CPF(message = "CPF INVÁLIDO")
     private String cpf;
     
     @NotNull(message = "A data de nascimento não pode estar em branco")
@@ -37,8 +40,9 @@ public class ClientDTO {
     @NotBlank(message = "O gênero não pode estar em branco")
     private String gender;
     
-    private BillingAddress billingAddress;
+    @Valid
+    private BillingAddressDTO billingAddress;
     
-    private List<DeliveryAddress> deliveryAddresses;
+    private List<@Valid DeliveryAddressDTO> deliveryAddresses;
 
 }
