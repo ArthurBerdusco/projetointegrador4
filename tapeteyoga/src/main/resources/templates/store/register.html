@@ -59,7 +59,8 @@
         <h4>Endereço de faturamento: </h4>
         <fieldset id="faturamento">
           <div class="mb-3">
-            <input type="text" class="form-control" maxlength="9" placeholder="CEP" id="cepFaturamento" th:field="*{billingAddress.zipCode}">
+            <input type="text" class="form-control" maxlength="9" placeholder="CEP" id="cepFaturamento"
+              th:field="*{billingAddress.zipCode}">
             <span th:errors="*{billingAddress.zipCode}" class="text-danger"></span>
           </div>
           <div class="mb-3">
@@ -99,46 +100,7 @@
       <div class="container-entrega shadow-sm bg-light p-5">
         <h4>Endereços de entrega</h4>
         <div id="inputEnderecosEntrega">
-          <fieldset class="border p-5 my-3 rounded" th:each="address, addressIndex : *{deliveryAddresses}">
-            <legend th:text="'Endereço ' + ${addressIndex.index + 1} + ':'"></legend>
-            <div class="mb-3">
-              <input type="text" class="form-control" maxlength="9" placeholder="CEP"
-                th:field="*{deliveryAddresses[__${addressIndex.index}__].zipCode}">
-              <span th:errors="*{deliveryAddresses[__${addressIndex.index}__].zipCode}" class="text-danger"></span>
-            </div>
-            <div class="mb-3">
-              <input type="text" class="form-control" placeholder="Logradouro"
-                th:field="*{deliveryAddresses[__${addressIndex.index}__].street}">
-              <span th:errors="*{deliveryAddresses[__${addressIndex.index}__].street}" class="text-danger"></span>
-            </div>
-            <div class="mb-3">
-              <input type="text" class="form-control" placeholder="Número"
-                th:field="*{deliveryAddresses[__${addressIndex.index}__].number}">
-              <span th:errors="*{deliveryAddresses[__${addressIndex.index}__].number}" class="text-danger"></span>
-            </div>
-            <div class="mb-3">
-              <input type="text" class="form-control" placeholder="Complemento"
-                th:field="*{deliveryAddresses[__${addressIndex.index}__].complement}">
-              <span th:errors="*{deliveryAddresses[__${addressIndex.index}__].complement}" class="text-danger"></span>
-            </div>
-            <div class="mb-3">
-              <input type="text" class="form-control" placeholder="Bairro"
-                th:field="*{deliveryAddresses[__${addressIndex.index}__].neighborhood}">
-              <span th:errors="*{deliveryAddresses[__${addressIndex.index}__].neighborhood}" class="text-danger"></span>
-            </div>
-            <div class="mb-3">
-              <input type="text" class="form-control" placeholder="Cidade"
-                th:field="*{deliveryAddresses[__${addressIndex.index}__].city}">
-              <span th:errors="*{deliveryAddresses[__${addressIndex.index}__].city}" class="text-danger"></span>
-            </div>
-            <div class="mb-3">
-              <input type="text" class="form-control" placeholder="UF"
-                th:field="*{deliveryAddresses[__${addressIndex.index}__].state}">
-              <span th:errors="*{deliveryAddresses[__${addressIndex.index}__].state}" class="text-danger"></span>
-            </div>
 
-            <button type="button" class="btn btn-info" onclick="copiarEnderecoFaturamento(this.closest('fieldset'))">Copiar endereço de faturamento</button>
-          </fieldset>
         </div>
         <div>
           <button class="btn btn-primary mb-3" type="button" id="btnNovoEndereco">Adicionar outro endereço</button>
@@ -149,38 +111,42 @@
   </div>
 
   <script>
-
-
     document.getElementById('btnNovoEndereco').onclick = function () {
       let qtdFieldset = document.querySelectorAll('#inputEnderecosEntrega > fieldset').length;
       const enderecoCounter = qtdFieldset; // Obter o próximo número de endereço
       document.getElementById('inputEnderecosEntrega').insertAdjacentHTML('beforeend',
         `
-<fieldset class="border p-5 my-3 rounded" id="endereco-entrega${enderecoCounter}"> <!-- Adiciona o número do endereço no ID -->
-  <legend>Endereço ${enderecoCounter + 1}:</legend> <!-- Adiciona o número do endereço no título -->
-  <div class="mb-3">
-    <input type="text" class="form-control" maxlength="9" name="deliveryAddresses[${enderecoCounter}].zipCode" id="cep${enderecoCounter}" placeholder="CEP">
-  </div>
-  <div class="mb-3">
-    <input type="text" class="form-control" name="deliveryAddresses[${enderecoCounter}].street" id="logradouro${enderecoCounter}" placeholder="Logradouro">
-  </div>
-  <div class="mb-3">
-    <input type="text" class="form-control" name="deliveryAddresses[${enderecoCounter}].number" id="numero${enderecoCounter}" placeholder="Número">
-  </div>
-  <div class="mb-3">
-    <input type="text" class="form-control" name="deliveryAddresses[${enderecoCounter}].complement" id="complemento${enderecoCounter}" placeholder="Complemento">
-  </div>
-  <div class="mb-3">
-    <input type="text" class="form-control" name="deliveryAddresses[${enderecoCounter}].neighborhood" id="bairro${enderecoCounter}" placeholder="Bairro">
-  </div>
-  <div class="mb-3">
-    <input type="text" class="form-control" name="deliveryAddresses[${enderecoCounter}].city" id="cidade${enderecoCounter}" placeholder="Cidade">
-  </div>
-  <div class="mb-3">
-    <input type="text" class="form-control" name="deliveryAddresses[${enderecoCounter}].state" id="uf${enderecoCounter}" placeholder="UF">
-  </div>
-  <button type="button" class="btn btn-info" onclick="copiarEnderecoFaturamento(this.closest('fieldset'))">Copiar endereço de faturamento</button>
-</fieldset>
+        <fieldset class="border p-5 my-3 rounded" id="endereco-entrega${enderecoCounter}">
+            <legend>Endereço ${enderecoCounter + 1}:</legend>
+            <div class="mb-3">
+                <input type="text" class="form-control" maxlength="9" th:field="*{clientDTO.deliveryAddresses[endrecoCounter].zipCode}" id="cep${enderecoCounter}" placeholder="CEP">
+                <span th:errors="*{clientDTO.deliveryAddresses[endrecoCounter].zipCode}" class="text-danger"></span>
+            </div>
+            <div class="mb-3">
+                <input type="text" class="form-control" th:field="*{clientDTO.deliveryAddresses[endrecoCounter].street}" id="logradouro${enderecoCounter}" placeholder="Logradouro">
+                <span th:errors="*{clientDTO.deliveryAddresses[endrecoCounter].street}" class="text-danger"></span>
+            </div>
+            <div class="mb-3">
+                <input type="text" class="form-control" th:field="*{clientDTO.deliveryAddresses[endrecoCounter].number}" id="numero${enderecoCounter}" placeholder="Número">
+                <span th:errors="*{clientDTO.deliveryAddresses[endrecoCounter].number}" class="text-danger"></span>
+            </div>
+            <div class="mb-3">
+                <input type="text" class="form-control" th:field="*{clientDTO.deliveryAddresses[endrecoCounter].complement}" id="complemento${enderecoCounter}" placeholder="Complemento">
+            </div>
+            <div class="mb-3">
+                <input type="text" class="form-control" th:field="*{clientDTO.deliveryAddresses[endrecoCounter].neighborhood}" id="bairro${enderecoCounter}" placeholder="Bairro">
+                <span th:errors="*{clientDTO.deliveryAddresses[endrecoCounter].neighborhood}" class="text-danger"></span>
+            </div>
+            <div class="mb-3">
+                <input type="text" class="form-control" th:field="*{clientDTO.deliveryAddresses[endrecoCounter].city}" id="cidade${enderecoCounter}" placeholder="Cidade">
+                <span th:errors="*{clientDTO.deliveryAddresses[endrecoCounter].city}" class="text-danger"></span>
+            </div>
+            <div class="mb-3">
+                <input type="text" class="form-control" th:field="*{clientDTO.deliveryAddresses[endrecoCounter].state}" id="uf${enderecoCounter}" placeholder="UF">
+                <span th:errors="*{clientDTO.deliveryAddresses[endrecoCounter].state}" class="text-danger"></span>
+            </div>
+            <button type="button" class="btn btn-info" onclick="copiarEnderecoFaturamento(this.closest('fieldset'))">Copiar endereço de faturamento</button>
+        </fieldset>
 `
       );
 
@@ -189,20 +155,30 @@
       novoCepInput.addEventListener('input', function () {
         const cepValue = this.value.trim();
         if (cepValue.length === 9) {
-
           // Realiza a solicitação HTTP para a API do ViaCEP
           fetch(`https://viacep.com.br/ws/${cepValue}/json/`)
             .then(response => response.json())
             .then(data => {
-              // Preenche os campos de endereço com os dados retornados
-              document.getElementById(`logradouro${enderecoCounter}`).value = data.logradouro;
-              document.getElementById(`bairro${enderecoCounter}`).value = data.bairro;
-              document.getElementById(`cidade${enderecoCounter}`).value = data.localidade;
-              document.getElementById(`uf${enderecoCounter}`).value = data.uf;
+              // Verifica se os dados são válidos
+              if (data && data.logradouro && data.bairro && data.localidade && data.uf) {
+                // Preenche os campos de endereço com os dados retornados
+                document.getElementById(`logradouro${enderecoCounter}`).value = data.logradouro;
+                document.getElementById(`bairro${enderecoCounter}`).value = data.bairro;
+                document.getElementById(`cidade${enderecoCounter}`).value = data.localidade;
+                document.getElementById(`uf${enderecoCounter}`).value = data.uf;
+              } else {
+                document.getElementById(`logradouro${enderecoCounter}`).value = '';
+                document.getElementById(`bairro${enderecoCounter}`).value = '';
+                document.getElementById(`cidade${enderecoCounter}`).value = '';
+                document.getElementById(`uf${enderecoCounter}`).value = '';
+                alert("CEP inválido")
+                document.getElementById(`cep${enderecoCounter}`).value = '';
+              }
             })
             .catch(error => console.error('Erro ao buscar os dados do CEP:', error));
         }
       });
+
     };
 
 
@@ -218,6 +194,14 @@
       fetch(`https://viacep.com.br/ws/${cep}/json/`)
         .then(response => response.json())
         .then(data => {
+          
+
+          if (!(data && data.logradouro && data.bairro && data.localidade && data.uf)) {
+            alert("CPF inválido")
+            document.getElementById(`cep${tipo}`).value = '';
+
+          } 
+
           document.getElementById(`logradouro${tipo}`).value = data.logradouro || '';
           document.getElementById(`bairro${tipo}`).value = data.bairro || '';
           document.getElementById(`cidade${tipo}`).value = data.localidade || '';
@@ -230,37 +214,36 @@
     window.onload = function () {
 
       let qtdFieldset = document.querySelectorAll('#inputEnderecosEntrega > fieldset').length;
-      if(qtdFieldset == 0){
+      if (qtdFieldset == 0) {
         document.getElementById('btnNovoEndereco').click();
       }
-      
+
     };
 
     function copiarEnderecoFaturamento(fieldset) {
 
-        var cepFaturamento = document.getElementById('cepFaturamento').value;
-        var logradouroFaturamento = document.getElementById('logradouroFaturamento').value;
-        var numeroFaturamento = document.getElementById('numeroFaturamento').value;
-        var complementoFaturamento = document.getElementById('complementoFaturamento').value;
-        var bairroFaturamento = document.getElementById('bairroFaturamento').value;
-        var cidadeFaturamento = document.getElementById('cidadeFaturamento').value;
-        var ufFaturamento = document.getElementById('ufFaturamento').value;
+      var cepFaturamento = document.getElementById('cepFaturamento').value;
+      var logradouroFaturamento = document.getElementById('logradouroFaturamento').value;
+      var numeroFaturamento = document.getElementById('numeroFaturamento').value;
+      var complementoFaturamento = document.getElementById('complementoFaturamento').value;
+      var bairroFaturamento = document.getElementById('bairroFaturamento').value;
+      var cidadeFaturamento = document.getElementById('cidadeFaturamento').value;
+      var ufFaturamento = document.getElementById('ufFaturamento').value;
 
-        // Seleciona os campos do endereço de entrega dentro do fieldset
-        var inputsEnderecoEntrega = fieldset.querySelectorAll('input');
+      // Seleciona os campos do endereço de entrega dentro do fieldset
+      var inputsEnderecoEntrega = fieldset.querySelectorAll('input');
 
-        // Define os valores dos campos de endereço de entrega para os valores do endereço de faturamento
-        inputsEnderecoEntrega[0].value = cepFaturamento;
-        inputsEnderecoEntrega[1].value = logradouroFaturamento;
-        inputsEnderecoEntrega[2].value = numeroFaturamento;
-        inputsEnderecoEntrega[3].value = complementoFaturamento;
-        inputsEnderecoEntrega[4].value = bairroFaturamento;
-        inputsEnderecoEntrega[5].value = cidadeFaturamento;
-        inputsEnderecoEntrega[6].value = ufFaturamento;
+      // Define os valores dos campos de endereço de entrega para os valores do endereço de faturamento
+      inputsEnderecoEntrega[0].value = cepFaturamento;
+      inputsEnderecoEntrega[1].value = logradouroFaturamento;
+      inputsEnderecoEntrega[2].value = numeroFaturamento;
+      inputsEnderecoEntrega[3].value = complementoFaturamento;
+      inputsEnderecoEntrega[4].value = bairroFaturamento;
+      inputsEnderecoEntrega[5].value = cidadeFaturamento;
+      inputsEnderecoEntrega[6].value = ufFaturamento;
     }
 
   </script>
-
 
 </body>
 

@@ -5,38 +5,32 @@ import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 
-import br.senac.ecommerce.tapeteyoga.controller.ValidaCPF;
 import br.senac.ecommerce.tapeteyoga.model.BillingAddress;
+import br.senac.ecommerce.tapeteyoga.model.BillingAddressDTO;
 import br.senac.ecommerce.tapeteyoga.model.Client;
 import br.senac.ecommerce.tapeteyoga.model.ClientDTO;
 import br.senac.ecommerce.tapeteyoga.model.DeliveryAddress;
+import br.senac.ecommerce.tapeteyoga.model.DeliveryAddressDTO;
 import br.senac.ecommerce.tapeteyoga.repository.ClientRepository;
-import ch.qos.logback.core.model.Model;
 import jakarta.validation.Valid;
 
 @Controller
 @RequestMapping("cadastro")
-public class ClietController {
+public class ClientController {
 
     @Autowired
     ClientRepository clientRepository;
 
     @PostMapping("")
     public String cadastro(@Valid ClientDTO client, BindingResult result, Model model) {
-
-        // Valida o 
-        if(!client.getCpf().trim().isEmpty()){
-            if (!ValidaCPF.isCPF(client.getCpf())) {
-                result.rejectValue("cpf", "error.cpf", "CPF inválido");
-            }
-        }
-
-
+      
         if (result.hasErrors()) {
+            System.out.println("KKKKKKKKKKKKKKKKKKKKKKK" +  result.getAllErrors());
             return "store/register";
         }
 
@@ -60,7 +54,7 @@ public class ClietController {
         billingAddress.setState(client.getBillingAddress().getState());
         billingAddress.setClient(entity);
 
-        for (DeliveryAddress addresses : client.getDeliveryAddresses()) {
+        for (DeliveryAddressDTO addresses : client.getDeliveryAddresses()) {
             DeliveryAddress deliveryAddress = new DeliveryAddress();
             deliveryAddress.setZipCode(addresses.getZipCode());
             deliveryAddress.setStreet(addresses.getStreet());
