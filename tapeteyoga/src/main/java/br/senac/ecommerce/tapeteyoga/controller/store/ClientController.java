@@ -9,6 +9,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AnonymousAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -21,7 +22,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.servlet.ModelAndView;
 
 import br.senac.ecommerce.tapeteyoga.model.BillingAddress;
-import br.senac.ecommerce.tapeteyoga.model.BillingAddressDTO;
 import br.senac.ecommerce.tapeteyoga.model.Client;
 import br.senac.ecommerce.tapeteyoga.model.ClientDTO;
 import br.senac.ecommerce.tapeteyoga.model.DeliveryAddress;
@@ -38,15 +38,25 @@ public class ClientController {
     ClientRepository clientRepository;
 
     @Autowired
-    ClientService clientService;
+    private PasswordEncoder passwordEncoder;
 
     @PostMapping("")
-    public String cadastro(@Valid ClientDTO client, BindingResult result, Model model) {
-      
+    public String cadastro(@Valid ClientDTO client, BindingResult result) {
+
+        System.out.println("\n\n\n\n" + "NÃO ERA PRA ENTRAR AQUI " + " \n\n\n\n");
+
+        if (clientRepository.existsByCpf(client.getCpf())) {
+            result.rejectValue("cpf", "error.cpf", "CPF já cadastrado");
+        }
+
+        if (clientRepository.existsByEmail(client.getEmail()) && !client.getEmail().trim().isBlank()) {
+            result.rejectValue("email", "error.email", "Email já cadastrado");
+        }
+
         if (result.hasErrors()) {
-            System.out.println("KKKKKKKKKKKKKKKKKKKKKKK" +  result.getAllErrors());
             return "store/register";
         }
+    
 
         Client entity = new Client();
         List<DeliveryAddress> deliveryAddresses = new ArrayList<>();
@@ -56,7 +66,7 @@ public class ClientController {
         entity.setEmail(client.getEmail());
         entity.setBirthDate(client.getBirthDate());
         entity.setGender(client.getGender());
-        entity.setPassword(client.getPassword());
+        entity.setPassword(passwordEncoder.encode(client.getPassword()));
 
         BillingAddress billingAddress = new BillingAddress();
         billingAddress.setZipCode(client.getBillingAddress().getZipCode());
@@ -89,83 +99,43 @@ public class ClientController {
         return "redirect:/login";
     }
 
-    @GetMapping("/editar")
-    public ModelAndView alterar(Model model){
-        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-        String email = auth.getName();
-        Client client = clientService.findByEmail(email);
+    @PostMapping("{id}")
+    public String update(@PathVariable Long id, @Valid ClientDTO client, BindingResult result) {
 
-        ClientDTO clientDTO = new ClientDTO();
-        clientDTO.setId(client.getId());
-        clientDTO.setFullName(client.getFullName());
-        clientDTO.setBirthDate(client.getBirthDate());
-        clientDTO.setGender(client.getGender());
+        System.out.println("\n\n\n\n" + "CHEGUEI AQUI " + " \n\n\n\n");
 
-        ModelAndView modelAndView = new ModelAndView("store/edit-client");
-        modelAndView.addObject("clientDTO", clientDTO);
-        return modelAndView;
+        if (result.hasErrors()) {
+            System.out.println("\n\n\n\n" +result.getAllErrors() + "\n\n\n\n");
+            return "store/register"; // Retornar para a página de edição com mensagens de erro, se houver
+        }
+
+        // Recuperar o cliente existente do repositório
+        Client existingClient = clientRepository.findById(id).orElseThrow();
+
+        // Preencher o objeto Client com os dados atualizados do ClientDTO
+        existingClient.setFullName(client.getFullName());
+        existingClient.setCpf(client.getCpf());
+        existingClient.setEmail(client.getEmail());
+        existingClient.setBirthDate(client.getBirthDate());
+        existingClient.setGender(client.getGender());
+        existingClient.setPassword(passwordEncoder.encode(client.getPassword())); // Se necessário, atualize a senha
+
+        clientRepository.save(existingClient);
+
+        System.out.println("\n\n\n\n" + "SALVEI " + " \n\n\n\n");
+
+        return "redirect:/login";
     }
-    @PostMapping("/editar")
-    public String editClient(@Valid @ModelAttribute("clientDTO") ClientDTO clientDTO, BindingResult result){
-        if(result.hasErrors()){
-            return "store/edit-client";
-        }
-        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-        String emmail = auth.getName();
-        Client client = clientService.findByEmail(emmail);
 
-        client.setFullName(clientDTO.getFullName());
-        client.setBirthDate(clientDTO.getBirthDate());
-        client.setGender(clientDTO.getGender());
+    @GetMapping("{id}")
+    public String getClientForm(@PathVariable Long id, Model model) {
 
-        clientService.save(client);
 
-        return "redirect: /store/paginaPrincipal";
+        Client entity = clientRepository.findById(id).orElseThrow();
+        System.out.println("\n\n\n\n" +  entity + " \n\n\n\n");
+        model.addAttribute("clientDTO", entity);
+
+        return "store/register";
     }
-  
-    @GetMapping("/alterar-senha")
-    public String telaAlterarSenhaCliente(Model model) {
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        if (authentication == null || authentication instanceof AnonymousAuthenticationToken) {
-            return "redirect:/login";
-        }
-        
-        String email = authentication.getName(); 
-        Client client = clientService.findByEmail(email); 
-        
-        if (client == null) {
-            throw new RuntimeException("Cliente não encontrado para o email: " + email);
-        }
-    
-        client.setPassword("");
-    
-        client.setBillingAddress(null);
-        client.setDeliveryAddresses(null);
-    
-        model.addAttribute("client", client);
-    
-        return "cliente/alterarSenhaCliente";
-    }
-    @PostMapping("/alterar-senha")
-    public String alterarSenhaCliente(@ModelAttribute("client") Client client) {
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        if (authentication == null || authentication instanceof AnonymousAuthenticationToken) {
-            return "redirect:/login";
-        }
-        
-        String email = authentication.getName();
-        Client existingClient = clientService.findByEmail(email); 
-        
-        if (existingClient == null) {
-            throw new RuntimeException("Cliente não encontrado para o email: " + email);
-        }
-    
-        existingClient.setPassword(client.getPassword());
-        
-        clientService.save(existingClient);
-        
-        return "redirect:/store/paginaPrincipal"; 
-    }
-    
 
 }

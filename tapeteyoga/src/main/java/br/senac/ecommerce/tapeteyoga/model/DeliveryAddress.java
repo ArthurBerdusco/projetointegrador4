@@ -9,6 +9,7 @@ import jakarta.persistence.ManyToOne;
 import jakarta.persistence.ForeignKey;
 import jakarta.persistence.Table;
 import lombok.Data;
+import lombok.ToString;
 
 @Entity
 @Data
@@ -36,5 +37,18 @@ public class DeliveryAddress {
     @ManyToOne
     @JoinColumn(name = "client_id" , foreignKey = @ForeignKey(name = "fk_delivery_address"))
     private Client client;
+
+    
+    public String toString() {
+        return "DeliveryAddress{" +
+                "zipCode='" + zipCode + '\'' +
+                ", street='" + street + '\'' +
+                ", number='" + number + '\'' +
+                ", complement='" + complement + '\'' +
+                ", neighborhood='" + neighborhood + '\'' +
+                ", city='" + city + '\'' +
+                ", state='" + state + '\'' +
+                '}';
+    }
     
 }
