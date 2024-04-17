@@ -4,14 +4,16 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 import br.senac.ecommerce.tapeteyoga.model.BillingAddress;
-import br.senac.ecommerce.tapeteyoga.model.BillingAddressDTO;
 import br.senac.ecommerce.tapeteyoga.model.Client;
 import br.senac.ecommerce.tapeteyoga.model.ClientDTO;
 import br.senac.ecommerce.tapeteyoga.model.DeliveryAddress;
@@ -26,13 +28,26 @@ public class ClientController {
     @Autowired
     ClientRepository clientRepository;
 
+    @Autowired
+    private PasswordEncoder passwordEncoder;
+
     @PostMapping("")
-    public String cadastro(@Valid ClientDTO client, BindingResult result, Model model) {
-      
+    public String cadastro(@Valid ClientDTO client, BindingResult result) {
+
+        System.out.println("\n\n\n\n" + "NÃO ERA PRA ENTRAR AQUI " + " \n\n\n\n");
+
+        if (clientRepository.existsByCpf(client.getCpf())) {
+            result.rejectValue("cpf", "error.cpf", "CPF já cadastrado");
+        }
+
+        if (clientRepository.existsByEmail(client.getEmail()) && !client.getEmail().trim().isBlank()) {
+            result.rejectValue("email", "error.email", "Email já cadastrado");
+        }
+
         if (result.hasErrors()) {
-            System.out.println("KKKKKKKKKKKKKKKKKKKKKKK" +  result.getAllErrors());
             return "store/register";
         }
+    
 
         Client entity = new Client();
         List<DeliveryAddress> deliveryAddresses = new ArrayList<>();
@@ -42,7 +57,7 @@ public class ClientController {
         entity.setEmail(client.getEmail());
         entity.setBirthDate(client.getBirthDate());
         entity.setGender(client.getGender());
-        entity.setPassword(client.getPassword());
+        entity.setPassword(passwordEncoder.encode(client.getPassword()));
 
         BillingAddress billingAddress = new BillingAddress();
         billingAddress.setZipCode(client.getBillingAddress().getZipCode());
@@ -73,6 +88,45 @@ public class ClientController {
         clientRepository.save(entity);
 
         return "redirect:/login";
+    }
+
+    @PostMapping("{id}")
+    public String update(@PathVariable Long id, @Valid ClientDTO client, BindingResult result) {
+
+        System.out.println("\n\n\n\n" + "CHEGUEI AQUI " + " \n\n\n\n");
+
+        if (result.hasErrors()) {
+            System.out.println("\n\n\n\n" +result.getAllErrors() + "\n\n\n\n");
+            return "store/register"; // Retornar para a página de edição com mensagens de erro, se houver
+        }
+
+        // Recuperar o cliente existente do repositório
+        Client existingClient = clientRepository.findById(id).orElseThrow();
+
+        // Preencher o objeto Client com os dados atualizados do ClientDTO
+        existingClient.setFullName(client.getFullName());
+        existingClient.setCpf(client.getCpf());
+        existingClient.setEmail(client.getEmail());
+        existingClient.setBirthDate(client.getBirthDate());
+        existingClient.setGender(client.getGender());
+        existingClient.setPassword(passwordEncoder.encode(client.getPassword())); // Se necessário, atualize a senha
+
+        clientRepository.save(existingClient);
+
+        System.out.println("\n\n\n\n" + "SALVEI " + " \n\n\n\n");
+
+        return "redirect:/login";
+    }
+
+    @GetMapping("{id}")
+    public String getClientForm(@PathVariable Long id, Model model) {
+
+
+        Client entity = clientRepository.findById(id).orElseThrow();
+        System.out.println("\n\n\n\n" +  entity + " \n\n\n\n");
+        model.addAttribute("clientDTO", entity);
+
+        return "store/register";
     }
 
 }
