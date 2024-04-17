@@ -4,16 +4,22 @@ import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseStatus;
 
+import br.senac.ecommerce.tapeteyoga.model.Client;
 import br.senac.ecommerce.tapeteyoga.model.ClientDTO;
 import br.senac.ecommerce.tapeteyoga.model.Produto;
+import br.senac.ecommerce.tapeteyoga.service.ClientService;
 import br.senac.ecommerce.tapeteyoga.service.ProdutoService;
+import jakarta.servlet.http.HttpServletRequest;
 
 @Controller
 @RequestMapping("")
@@ -21,6 +27,9 @@ public class PaginaPrincipal {
 
     @Autowired
     private ProdutoService produtoService;
+
+    @Autowired
+    private ClientService clientService;
 
     @GetMapping("/")
     @ResponseStatus(HttpStatus.OK)
