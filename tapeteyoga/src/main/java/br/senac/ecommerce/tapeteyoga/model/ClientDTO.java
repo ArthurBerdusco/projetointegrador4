@@ -1,9 +1,13 @@
 package br.senac.ecommerce.tapeteyoga.model;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
 
 import org.hibernate.validator.constraints.br.CPF;
+import org.springframework.format.annotation.DateTimeFormat;
+
+import com.fasterxml.jackson.annotation.JsonFormat;
 
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Email;
@@ -35,6 +39,8 @@ public class ClientDTO {
     private String cpf;
     
     @NotNull(message = "A data de nascimento não pode estar em branco")
+    @DateTimeFormat(pattern = "yyyy-MM-dd")
+    @JsonFormat(pattern = "yyyy")
     private LocalDate birthDate;
     
     @NotBlank(message = "O gênero não pode estar em branco")
@@ -44,5 +50,23 @@ public class ClientDTO {
     private BillingAddressDTO billingAddress;
     
     private List<@Valid DeliveryAddressDTO> deliveryAddresses;
+
+    public ClientDTO() {
+        // Inicialize a lista de endereços de entrega
+
+        if(deliveryAddresses == null){
+            this.deliveryAddresses = new ArrayList<>();
+            DeliveryAddressDTO deliveryAddress = new DeliveryAddressDTO();
+            deliveryAddress.setZipCode("");
+            deliveryAddress.setStreet("");
+            deliveryAddress.setNumber("");
+            deliveryAddress.setComplement("");
+            deliveryAddress.setNeighborhood("");
+            deliveryAddress.setCity("");
+            deliveryAddress.setState("");
+            this.deliveryAddresses.add(deliveryAddress);
+        }
+        
+    }
 
 }
