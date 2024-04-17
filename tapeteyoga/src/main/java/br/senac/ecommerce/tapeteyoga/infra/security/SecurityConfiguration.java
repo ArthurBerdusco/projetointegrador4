@@ -30,7 +30,7 @@ public class SecurityConfiguration {
                 .authorizeHttpRequests(registry -> {
 
                     /* Todos */
-                    registry.requestMatchers("/setup", "/img/**", "/css/**", "/backoffice/setup", "/", "/produto", "/login", "/cadastro").permitAll();
+                    registry.requestMatchers("/setup", "/img/**", "/css/**", "/backoffice/setup", "/", "/login","/produto", "/cadastro").permitAll();
 
                     /* Administrador e Estoquista */
                     registry.requestMatchers("/backoffice/").hasAnyRole("Administrador", "Estoquista");
@@ -47,6 +47,14 @@ public class SecurityConfiguration {
                             .successHandler(new SimpleUrlAuthenticationSuccessHandler("/backoffice/home"))
                             .permitAll();
                 })
+                //  .formLogin(httpSecurityFormLoginConfigurer -> { 
+                 //   httpSecurityFormLoginConfigurer
+                            /* Configuração do formulário de login para Cliente */
+                   //        .loginPage("/login")
+                     //      .usernameParameter("email")
+                       //    .successHandler(new SimpleUrlAuthenticationSuccessHandler("/store/register"))
+                         //   .permitAll();
+               // })
                 .logout(logoutConfigurer -> logoutConfigurer
                         .logoutSuccessUrl("/backoffice")
                         .logoutUrl("/logout")
