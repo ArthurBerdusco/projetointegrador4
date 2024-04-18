@@ -58,7 +58,7 @@ public class Usuario {
 
     @NotBlank(message = "A senha é obrigatória", groups = {New.class})
     @Size(min = 4, message = "A senha deve ter pelo menos 4 caracteres", groups = {New.class})
-    @Null(message = "A senha não pode ser especificada para um novo usuário", groups = {New.class})
+    @Null(message = "A senha não pode ser vazia", groups = {New.class})
     private String password;
 
     @NotBlank(message = "A função do usuário é obrigatória")

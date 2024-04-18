@@ -37,9 +37,9 @@ public class PaginaPrincipal {
 
     @GetMapping("/cadastro")
     public String register(ClientDTO client) {
+        client.getDeliveryAddresses().get(0).setDefault(true);
         return "store/register";
     }
-
 
     @GetMapping("/produto")
     public String obterporId(@RequestParam(name = "id", required = false) Long id, Model model) {

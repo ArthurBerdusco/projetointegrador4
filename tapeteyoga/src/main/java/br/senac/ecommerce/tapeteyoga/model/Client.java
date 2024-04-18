@@ -15,7 +15,6 @@ import jakarta.persistence.Id;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.OneToOne;
 import lombok.Data;
-import lombok.ToString;
 
 @Entity
 @Data
@@ -39,10 +38,10 @@ public class Client {
 
     private String gender;
 
-    @OneToOne(mappedBy = "client", cascade = CascadeType.ALL)
+    @OneToOne(mappedBy = "client", cascade = { CascadeType.PERSIST, CascadeType.MERGE })
     private BillingAddress billingAddress;
 
-    @OneToMany(mappedBy = "client", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "client", cascade = { CascadeType.PERSIST, CascadeType.MERGE })
     private List<DeliveryAddress> deliveryAddresses;
 
 
@@ -56,7 +55,7 @@ public class Client {
                 ", cpf='" + cpf + '\'' +
                 ", birthDate=" + birthDate +
                 ", gender='" + gender + '\'' +
-                ", billingAddress=" + billingAddress + // Chamada ao toString() de BillingAddress
+                ", billingAddress=" + billingAddress + 
                 ", deliveryAddresses=" + deliveryAddresses +
                 '}';
     }

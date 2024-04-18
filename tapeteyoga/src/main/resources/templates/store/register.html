@@ -11,7 +11,7 @@
 
 <body style="background-color: rgb(241, 240, 233);">
 
-  <div class="container p-5 shadow-lg" style="background-color: rgba(255, 255, 164, 0.469);">
+  <div class="container p-5 shadow-lg" style="background-color: rgba(255, 255, 255, 0.469);">
     <div class="container">
       <div class="container text-center">
         <h2>Cadastre-se na Loja Harmony</h2>
@@ -73,6 +73,9 @@
         <div class="container-faturamento shadow-sm bg-light p-5 mb-3">
           <h4>Endereço de faturamento: </h4>
           <fieldset id="faturamento">
+
+            <input type="hidden" th:field="*{billingAddress.id}" readonly>
+
             <div class="mb-3">
               <input type="text" class="form-control" maxlength="9" placeholder="CEP" id="cepFaturamento"
                 th:field="*{billingAddress.zipCode}">
@@ -115,8 +118,14 @@
         <div class="container-entrega shadow-sm bg-light p-5">
           <h4>Endereços de entrega</h4>
           <div id="inputEnderecosEntrega">
+            <span th:errors="*{deliveryAddresses}" class="text-danger"></span>
             <fieldset class="border p-5 my-3 rounded" id="faturamento"
               th:each="address, iterStat : *{deliveryAddresses}">
+              <!-- ID -->
+              <input type="hidden" th:field="*{deliveryAddresses[__${iterStat.index}__].id}" readonly>
+              <legend th:text="'Endereço: ' + ${iterStat.index + 1}"></legend>
+              
+
               <div class="mb-3">
                 <input type="text" class="form-control" maxlength="9" placeholder="CEP" th:id="cep + ${iterStat.index}"
                   th:field="*{deliveryAddresses[__${iterStat.index}__].zipCode}">
@@ -153,17 +162,24 @@
                   th:field="*{deliveryAddresses[__${iterStat.index}__].state}">
                 <span th:errors="*{deliveryAddresses[__${iterStat.index}__].state}" class="text-danger"></span>
               </div>
-              <button type="button" class="btn btn-info"
+              <div class="form-check mb-3" id="firstCheck" th:style="${clientDTO.deliveryAddresses.size() > 1} ? 'display: block;' : 'display: none;'">
+                <input checked style="width: 20px; height: 20px;" class="form-check-input" type="checkbox" th:field="*{deliveryAddresses[__${iterStat.index}__].default}"  />
+                <label class="form-check-label">Principal </label>
+              </div>
+              <button type="button" class="btn btn-primary"
                 onclick="copiarEnderecoFaturamento(this.closest('fieldset'))">Copiar endereço de faturamento</button>
             </fieldset>
 
           </div>
           <div>
-            <button class="btn btn-primary mb-3" type="button" id="btnNovoEndereco">Adicionar outro endereço</button>
+            <button class="btn btn-warning mb-3" type="button" id="btnNovoEndereco">Adicionar outro endereço</button>
           </div>
         </div>
-        <button class="btn btn-primary mt-3" type="submit"
-          th:text="${clientDTO.id == null} ? 'Criar conta' : 'Salvar'"><label for=""></label></button>
+        <div class="container text-end">
+          <button class="btn btn-success btn-lg mt-3 " type="submit"
+            th:text="${clientDTO.id == null} ? 'Criar conta' : 'Salvar'"></button>
+        </div>
+
       </form>
     </div>
   </div>
@@ -182,19 +198,19 @@
         .then(data => {
 
           const parentFieldset = cepInput.closest('fieldset');
-          
+
           if (!(data && data.logradouro && data.bairro && data.localidade && data.uf)) {
             alert("CEP inválido");
-                // Limpar os campos de endereço
-                parentFieldset.querySelector('[id^="logradouro"]').value = '';
-                parentFieldset.querySelector('[id^="bairro"]').value = '';
-                parentFieldset.querySelector('[id^="cidade"]').value = '';
-                parentFieldset.querySelector('[id^="uf"]').value = '';
-                return;
+            // Limpar os campos de endereço
+            parentFieldset.querySelector('[id^="logradouro"]').value = '';
+            parentFieldset.querySelector('[id^="bairro"]').value = '';
+            parentFieldset.querySelector('[id^="cidade"]').value = '';
+            parentFieldset.querySelector('[id^="uf"]').value = '';
+            return;
           }
 
           // Obter o fieldset pai do input do CEP
-          
+
 
           // Atualizar os inputs do fieldset com os dados do CEP
           parentFieldset.querySelector('[id^="logradouro"]').value = data.logradouro || '';
@@ -235,17 +251,22 @@
       const inputsEnderecoEntrega = fieldset.querySelectorAll('input');
 
       // Define os valores dos campos de endereço de entrega para os valores do endereço de faturamento
-      inputsEnderecoEntrega[0].value = cepFaturamento;
-      inputsEnderecoEntrega[1].value = logradouroFaturamento;
-      inputsEnderecoEntrega[2].value = numeroFaturamento;
-      inputsEnderecoEntrega[3].value = complementoFaturamento;
-      inputsEnderecoEntrega[4].value = bairroFaturamento;
-      inputsEnderecoEntrega[5].value = cidadeFaturamento;
-      inputsEnderecoEntrega[6].value = ufFaturamento;
+      inputsEnderecoEntrega[1].value = cepFaturamento;
+      inputsEnderecoEntrega[2].value = logradouroFaturamento;
+      inputsEnderecoEntrega[3].value = numeroFaturamento;
+      inputsEnderecoEntrega[4].value = complementoFaturamento;
+      inputsEnderecoEntrega[5].value = bairroFaturamento;
+      inputsEnderecoEntrega[6].value = cidadeFaturamento;
+      inputsEnderecoEntrega[7].value = ufFaturamento;
     }
 
     // Adiciona evento de click para adicionar novo endereço de entrega
     document.getElementById('btnNovoEndereco').onclick = function () {
+      
+        
+        document.getElementById('firstCheck').style.display = 'block';
+    
+
       const qtdFieldset = document.querySelectorAll('#inputEnderecosEntrega > fieldset').length;
       const enderecoCounter = qtdFieldset;
 
@@ -254,6 +275,7 @@
         `
         <fieldset class="border p-5 my-3 rounded" id="endereco-entrega${enderecoCounter}">
             <legend>Endereço ${enderecoCounter + 1}:</legend>
+            <input type="hidden" name="deliveryAddresses[${qtdFieldset}].id" readonly>
             <div class="mb-3">
                 <input type="text" class="form-control cep-input" id="cep${enderecoCounter}" name="deliveryAddresses[${qtdFieldset}].zipCode" maxlength="9" placeholder="CEP" oninput="preencherEndereco('cep${enderecoCounter}', 'logradouro${enderecoCounter}', 'bairro${enderecoCounter}', 'cidade${enderecoCounter}', 'uf${enderecoCounter}')">
             </div>
@@ -275,7 +297,11 @@
             <div class="mb-3">
                 <input type="text" class="form-control" name="deliveryAddresses[${qtdFieldset}].state" id="uf${enderecoCounter}" placeholder="UF">
             </div>
-            <button type="button" class="btn btn-info" onclick="copiarEnderecoFaturamento(this.closest('fieldset'))">Copiar endereço de faturamento</button>
+            <div class="form-check mb-3">
+                <input style="width: 20px; height: 20px;" class="form-check-input" type="checkbox" name="deliveryAddresses[${qtdFieldset}].default"  />
+                <label class="form-check-label">Principal </label>
+              </div>
+            <button type="button" class="btn btn-primary" onclick="copiarEnderecoFaturamento(this.closest('fieldset'))">Copiar endereço de faturamento</button>
         </fieldset>
 `
       );

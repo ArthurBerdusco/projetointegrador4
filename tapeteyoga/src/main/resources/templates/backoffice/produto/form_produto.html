@@ -113,9 +113,7 @@
                                     <div class="card-body">
                                         <div class="d-flex align-items-center" style="gap: 20px;">
                                             <label for="principal${iterStat.index}">Principal: </label>
-                                            <input type="checkbox"
-                                                th:field="*{imagens[__${iterStat.index}__].principal}"
-                                                th:disabled="${usuarioAutenticado.role!='Administrador'}" />
+                                            <input type="checkbox" th:field="*{imagens[__${iterStat.index}__].principal}" th:disabled="${usuarioAutenticado.role!='Administrador'}" />
                                         </div>
                                     </div>
                                     <div class="card-footer">

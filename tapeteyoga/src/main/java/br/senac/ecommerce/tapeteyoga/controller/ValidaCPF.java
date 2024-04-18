@@ -9,8 +9,6 @@ public class ValidaCPF {
 
         CPF = CPF.replace("-", "").replace(".", "");
 
-        System.out.println("KKKKKKKKKKKKKKKKKK" + CPF + " KKKKKKKKKKKKKKKKKKKK");
-
         if (CPF.equals("00000000000") ||
                 CPF.equals("11111111111") ||
                 CPF.equals("22222222222") || CPF.equals("33333333333") ||
