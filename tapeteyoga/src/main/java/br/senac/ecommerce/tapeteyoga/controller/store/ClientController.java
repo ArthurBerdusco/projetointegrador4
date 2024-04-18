@@ -26,8 +26,10 @@ import br.senac.ecommerce.tapeteyoga.model.Client;
 import br.senac.ecommerce.tapeteyoga.model.ClientDTO;
 import br.senac.ecommerce.tapeteyoga.model.DeliveryAddress;
 import br.senac.ecommerce.tapeteyoga.model.DeliveryAddressDTO;
+import br.senac.ecommerce.tapeteyoga.repository.BillingAddressRepository;
 import br.senac.ecommerce.tapeteyoga.repository.ClientRepository;
-import br.senac.ecommerce.tapeteyoga.service.ClientService;
+import br.senac.ecommerce.tapeteyoga.repository.DeliveryAddressRepository;
+
 import jakarta.validation.Valid;
 
 @Controller
@@ -38,12 +40,34 @@ public class ClientController {
     ClientRepository clientRepository;
 
     @Autowired
+    BillingAddressRepository billingAddressRepository;
+
+    @Autowired
+    DeliveryAddressRepository deliveryAddressRepository;
+
+    @Autowired
     private PasswordEncoder passwordEncoder;
 
     @PostMapping("")
     public String cadastro(@Valid ClientDTO client, BindingResult result) {
 
-        System.out.println("\n\n\n\n" + "NÃO ERA PRA ENTRAR AQUI " + " \n\n\n\n");
+        int contAddressDefault = 0;
+
+        for (DeliveryAddressDTO address : client.getDeliveryAddresses()) {
+            if (address.isDefault()) {
+                contAddressDefault++;
+            }
+        }
+
+        if (contAddressDefault > 1) {
+            result.rejectValue("deliveryAddresses", "error.deliveryAddresses","Defina apenas um endereço como principal");
+        } else if (contAddressDefault == 0) {
+            result.rejectValue("deliveryAddresses", "error.deliveryAddresses", "Defina um endereço como principal");
+        }
+
+        if (client.getPassword().trim().isEmpty() || client.getPassword().length() < 4) {
+            result.rejectValue("password", "error.password", "Senha ter pelo menos 4 caracteres");
+        }
 
         if (clientRepository.existsByCpf(client.getCpf())) {
             result.rejectValue("cpf", "error.cpf", "CPF já cadastrado");
@@ -56,7 +80,6 @@ public class ClientController {
         if (result.hasErrors()) {
             return "store/register";
         }
-    
 
         Client entity = new Client();
         List<DeliveryAddress> deliveryAddresses = new ArrayList<>();
@@ -78,16 +101,17 @@ public class ClientController {
         billingAddress.setState(client.getBillingAddress().getState());
         billingAddress.setClient(entity);
 
-        for (DeliveryAddressDTO addresses : client.getDeliveryAddresses()) {
+        for (DeliveryAddressDTO address : client.getDeliveryAddresses()) {
             DeliveryAddress deliveryAddress = new DeliveryAddress();
-            deliveryAddress.setZipCode(addresses.getZipCode());
-            deliveryAddress.setStreet(addresses.getStreet());
-            deliveryAddress.setNumber(addresses.getNumber());
-            deliveryAddress.setComplement(addresses.getComplement());
-            deliveryAddress.setNeighborhood(addresses.getNeighborhood());
-            deliveryAddress.setCity(addresses.getCity());
-            deliveryAddress.setState(addresses.getState());
+            deliveryAddress.setZipCode(address.getZipCode());
+            deliveryAddress.setStreet(address.getStreet());
+            deliveryAddress.setNumber(address.getNumber());
+            deliveryAddress.setComplement(address.getComplement());
+            deliveryAddress.setNeighborhood(address.getNeighborhood());
+            deliveryAddress.setCity(address.getCity());
+            deliveryAddress.setState(address.getState());
             deliveryAddress.setClient(entity);
+            deliveryAddress.setDefault(address.isDefault());
             deliveryAddresses.add(deliveryAddress);
         }
 
@@ -102,10 +126,21 @@ public class ClientController {
     @PostMapping("{id}")
     public String update(@PathVariable Long id, @Valid ClientDTO client, BindingResult result) {
 
-        System.out.println("\n\n\n\n" + "CHEGUEI AQUI " + " \n\n\n\n");
+        int contAddressDefault = 0;
+
+        for (DeliveryAddressDTO address : client.getDeliveryAddresses()) {
+            if (address.isDefault()) {
+                contAddressDefault++;
+            }
+        }
+
+        if (contAddressDefault > 1) {
+            result.rejectValue("deliveryAddresses", "error.deliveryAddresses", "Defina apenas um endereço como principal");
+        } else if (contAddressDefault == 0) {
+            result.rejectValue("deliveryAddresses", "error.deliveryAddresses", "Defina um endereço como principal");
+        }
 
         if (result.hasErrors()) {
-            System.out.println("\n\n\n\n" +result.getAllErrors() + "\n\n\n\n");
             return "store/register"; // Retornar para a página de edição com mensagens de erro, se houver
         }
 
@@ -118,11 +153,54 @@ public class ClientController {
         existingClient.setEmail(client.getEmail());
         existingClient.setBirthDate(client.getBirthDate());
         existingClient.setGender(client.getGender());
-        existingClient.setPassword(passwordEncoder.encode(client.getPassword())); // Se necessário, atualize a senha
+        // Check if a new password is provided
+        if (client.getPassword() != null && !client.getPassword().isEmpty()) {
+            // If a new password is provided, encode and set it
+            existingClient.setPassword(passwordEncoder.encode(client.getPassword()));
+        } else {
+            // If no new password is provided, retain the existing password
+            if (existingClient != null) {
+                existingClient.setPassword(existingClient.getPassword());
+            }
+        }
+
+        BillingAddress existingBillingAddress = billingAddressRepository.findById(client.getBillingAddress().getId())
+                .orElseThrow();
+        existingBillingAddress.setZipCode(client.getBillingAddress().getZipCode());
+        existingBillingAddress.setStreet(client.getBillingAddress().getStreet());
+        existingBillingAddress.setNumber(client.getBillingAddress().getNumber());
+        existingBillingAddress.setComplement(client.getBillingAddress().getComplement());
+        existingBillingAddress.setNeighborhood(client.getBillingAddress().getNeighborhood());
+        existingBillingAddress.setCity(client.getBillingAddress().getCity());
+        existingBillingAddress.setState(client.getBillingAddress().getState());
+
+        List<DeliveryAddress> existingDeliveryAddresses = new ArrayList<>();
+
+        for (DeliveryAddressDTO address : client.getDeliveryAddresses()) {
+
+            DeliveryAddress deliveryAddress;
+
+            if (address.getId() == null) {
+                deliveryAddress = new DeliveryAddress();
+            } else {
+                deliveryAddress = deliveryAddressRepository.findById(address.getId()).orElseThrow();
+            }
+            deliveryAddress.setZipCode(address.getZipCode());
+            deliveryAddress.setStreet(address.getStreet());
+            deliveryAddress.setNumber(address.getNumber());
+            deliveryAddress.setComplement(address.getComplement());
+            deliveryAddress.setNeighborhood(address.getNeighborhood());
+            deliveryAddress.setCity(address.getCity());
+            deliveryAddress.setState(address.getState());
+            deliveryAddress.setClient(existingClient);
+            deliveryAddress.setDefault(address.isDefault());
+            existingDeliveryAddresses.add(deliveryAddress);
+        }
+
+        existingClient.setBillingAddress(existingBillingAddress);
+        existingClient.setDeliveryAddresses(existingDeliveryAddresses);
 
         clientRepository.save(existingClient);
-
-        System.out.println("\n\n\n\n" + "SALVEI " + " \n\n\n\n");
 
         return "redirect:/login";
     }
@@ -130,9 +208,8 @@ public class ClientController {
     @GetMapping("{id}")
     public String getClientForm(@PathVariable Long id, Model model) {
 
-
         Client entity = clientRepository.findById(id).orElseThrow();
-        System.out.println("\n\n\n\n" +  entity + " \n\n\n\n");
+
         model.addAttribute("clientDTO", entity);
 
         return "store/register";

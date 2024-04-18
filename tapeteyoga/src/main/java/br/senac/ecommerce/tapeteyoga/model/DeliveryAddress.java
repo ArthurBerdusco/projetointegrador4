@@ -9,7 +9,6 @@ import jakarta.persistence.ManyToOne;
 import jakarta.persistence.ForeignKey;
 import jakarta.persistence.Table;
 import lombok.Data;
-import lombok.ToString;
 
 @Entity
 @Data
@@ -19,6 +18,8 @@ public class DeliveryAddress {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
+    private boolean isDefault;
     
     private String zipCode;
     
