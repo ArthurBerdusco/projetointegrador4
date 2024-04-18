@@ -7,31 +7,22 @@ import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import br.senac.ecommerce.tapeteyoga.model.Client;
 import br.senac.ecommerce.tapeteyoga.repository.ClientRepository;
 
 @Service
-public class ClientService implements UserDetailsService {
+public class ClientService {
 
     @Autowired
     private ClientRepository repository;
 
-    @Override
-    public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
-        Optional<Client> client = repository.findByEmail(email);
-        if (client.isPresent()) {
-            var clientObj = client.get();
-            return User.builder()
-                    .username(clientObj.getEmail())
-                    .password(clientObj.getPassword())
-                    .roles("Client")
-                    .build();
-        } else {
-            throw new UsernameNotFoundException(email);
-        }
-    }
+    @Autowired
+    private PasswordEncoder passwordEncoder;
+
+ 
     public Client findByEmail(String email) {
         Optional<Client> clientOptional = repository.findByEmail(email);
         return clientOptional.orElseThrow(() -> new RuntimeException("Cliente não encontrado para o email: " + email));
@@ -40,6 +31,12 @@ public class ClientService implements UserDetailsService {
     public Client save(Client client) {
         return repository.save(client);
     }
-
+    public boolean validarLogin(String email, String password) {
+        Client cliente = findByEmail(email);
+        if(cliente != null){
+            return passwordEncoder.matches(password, cliente.getPassword());
+        }
+        return false;
+    }
 
 }

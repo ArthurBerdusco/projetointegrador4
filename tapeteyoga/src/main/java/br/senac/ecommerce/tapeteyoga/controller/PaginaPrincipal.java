@@ -40,8 +40,22 @@ public class PaginaPrincipal {
     }
 
     @GetMapping("/login")
-    public String login() {
+    public String login(Model model) {
+        model.addAttribute("client", new Client());
         return "store/login";
+    }
+    @PostMapping("/login")
+    public String processamentoLogin(@ModelAttribute("client") Client client, Model model){
+       boolean valido = clientService.validarLogin(client.getEmail(), client.getPassword());
+       if(valido){
+        model.addAttribute("email", client.getEmail());
+        return "redirect: ";
+        /* Redirecione a página desejada */
+       }else{
+        model.addAttribute("Error", "Usuário e/ou senha inválidos");
+        
+        return "store/login";
+       }
     }
 
     @GetMapping("/cadastro")
