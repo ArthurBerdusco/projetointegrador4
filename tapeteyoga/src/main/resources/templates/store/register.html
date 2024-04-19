@@ -132,7 +132,7 @@
           <div id="inputEnderecosEntrega">
             <span th:errors="*{deliveryAddresses}" class="text-danger"></span>
             <fieldset class="border p-5 my-3 rounded" id="faturamento"
-              th:each="address, iterStat : *{deliveryAddresses}">
+              th:each="address, iterStat : *{deliveryAddresses}" th:if="${address.active}">
               <!-- ID -->
               <input type="hidden" th:field="*{deliveryAddresses[__${iterStat.index}__].id}" readonly>
               <legend th:text="'Endereço: ' + ${iterStat.index + 1}"></legend>

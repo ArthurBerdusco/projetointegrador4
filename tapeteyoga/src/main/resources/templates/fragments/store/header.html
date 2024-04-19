@@ -19,13 +19,17 @@
     </div>
 
     <!-- Links à direita -->
-    <span th:if="${nameClient != null}" class="d-flex btn btn-primary text-light fs-5">
-      <a th:href="'/cadastro/' + ${client.id}" style="text-decoration: none; color: white;">
-        Olá, <span th:text="${client.fullName}"></span>
-      </a>
 
+<span th:if="${nameClient != null}" class="d-flex btn btn-primary text-light fs-5">
+    Olá, <span th:text="${nameClient}"></span>
+    <a th:href="'/cadastro/' + ${client.id}" style="text-decoration: none; color: white;">
+        <span th:text="${client.fullName}"></span>
+    </a>
+    <form th:action="@{/sair}" method="post">
+        <button class="mx-2 btn btn-danger" type="submit">Sair</button>
+    </form>
+</span>
 
-    </span>
     <span th:unless="${nameClient != null}">
       <div id="login-section" class="d-flex">
         <a href="/login" class="text-light fs-5" id="login-link">Entrar</a>

@@ -7,7 +7,8 @@ import lombok.Data;
 public class DeliveryAddressDTO {
 
     private boolean isDefault;
-
+    private boolean active = true; // Adicionar a propriedade 'active'
+    
     private Long id;
 
     @NotBlank(message = "O CEP não pode estar em branco")

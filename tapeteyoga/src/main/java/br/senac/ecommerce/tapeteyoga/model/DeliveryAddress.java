@@ -20,6 +20,8 @@ public class DeliveryAddress {
     private Long id;
 
     private boolean isDefault;
+
+    private boolean active = true; // Novo campo para marcar se o endereço está ativo ou não
     
     private String zipCode;
     
