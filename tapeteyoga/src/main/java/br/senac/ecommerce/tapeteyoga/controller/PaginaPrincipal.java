@@ -17,9 +17,11 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import br.senac.ecommerce.tapeteyoga.model.Client;
 import br.senac.ecommerce.tapeteyoga.model.ClientDTO;
 import br.senac.ecommerce.tapeteyoga.model.Produto;
+import br.senac.ecommerce.tapeteyoga.repository.ClientRepository;
 import br.senac.ecommerce.tapeteyoga.service.ClientService;
 import br.senac.ecommerce.tapeteyoga.service.ProdutoService;
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpSession;
 
 @Controller
 @RequestMapping("")
@@ -31,9 +33,22 @@ public class PaginaPrincipal {
     @Autowired
     private ClientService clientService;
 
+    @Autowired
+    private ClientRepository clientRepository;
+
     @GetMapping("/")
     @ResponseStatus(HttpStatus.OK)
-    public String landingPage(Model model) {
+
+    public String landingPage(Model model, HttpSession session) {
+        if (session.getAttribute("UsuarioLogado") != null) {
+            String emailCliente = (String) session.getAttribute("UsuarioLogado");
+            Optional<Client> clienteOptional = clientRepository.findByEmail(emailCliente);
+            if (clienteOptional.isPresent()) {
+                Client cliente = clienteOptional.get();
+                String nomeCliente = cliente.getFullName();
+                model.addAttribute("nameClient", nomeCliente);
+            }
+        }
         var listaProdutos = produtoService.buscarProdutosAtivos();
         model.addAttribute("produtoPage", listaProdutos);
         return "store/index";
@@ -44,18 +59,19 @@ public class PaginaPrincipal {
         model.addAttribute("client", new Client());
         return "store/login";
     }
+
     @PostMapping("/login")
-    public String processamentoLogin(@ModelAttribute("client") Client client, Model model){
-       boolean valido = clientService.validarLogin(client.getEmail(), client.getPassword());
-       if(valido){
-        model.addAttribute("email", client.getEmail());
-        return "redirect: ";
-        /* Redirecione a página desejada */
-       }else{
-        model.addAttribute("Error", "Usuário e/ou senha inválidos");
-        
-        return "store/login";
-       }
+    public String processamentoLogin(@ModelAttribute("client") Client client, Model model, HttpSession session) {
+        boolean valido = clientService.validarLogin(client.getEmail(), client.getPassword());
+        if (valido) {
+            session.setAttribute("UsuarioLogado", client.getEmail());
+            return "redirect:/";
+            /* Redirecione a página desejada */
+        } else {
+            model.addAttribute("Error", "Usuário e/ou senha inválidos");
+
+            return "store/login";
+        }
     }
 
     @GetMapping("/cadastro")

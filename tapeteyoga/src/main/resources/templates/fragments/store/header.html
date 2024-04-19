@@ -19,6 +19,10 @@
     </div>
 
     <!-- Links à direita -->
+    <span th:if="${nameClient != null}" class="text-light fs-5">
+      Olá, <span th:text="${nameClient}"></span>
+  </span>
+  <span th:unless="${nameClient != null}">
     <div id="login-section" class="d-flex">
       <a href="/login" class="text-light fs-5" id="login-link">Entrar</a>
       <label for="" class="text-light fs-5">/</label>

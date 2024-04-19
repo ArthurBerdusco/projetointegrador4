@@ -28,15 +28,17 @@ public class ClientService {
         return clientOptional.orElseThrow(() -> new RuntimeException("Cliente não encontrado para o email: " + email));
     }
 
-    public Client save(Client client) {
-        return repository.save(client);
+   public boolean validarLogin(String email, String password) {
+    Optional<Client> clienteOptional = repository.findByEmail(email);
+    if (clienteOptional.isPresent()) {
+        Client cliente = clienteOptional.get();
+        return passwordEncoder.matches(password, cliente.getPassword());
     }
-    public boolean validarLogin(String email, String password) {
-        Client cliente = findByEmail(email);
-        if(cliente != null){
-            return passwordEncoder.matches(password, cliente.getPassword());
-        }
-        return false;
-    }
+    return false;
+}
+
+//public Optional<Client> findByEmail(String email) {
+   // return repository.findByEmail(email);
+//}
 
 }
