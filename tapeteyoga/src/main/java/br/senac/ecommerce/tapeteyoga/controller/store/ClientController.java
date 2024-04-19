@@ -60,7 +60,8 @@ public class ClientController {
         }
 
         if (contAddressDefault > 1) {
-            result.rejectValue("deliveryAddresses", "error.deliveryAddresses","Defina apenas um endereço como principal");
+            result.rejectValue("deliveryAddresses", "error.deliveryAddresses",
+                    "Defina apenas um endereço como principal");
         } else if (contAddressDefault == 0) {
             result.rejectValue("deliveryAddresses", "error.deliveryAddresses", "Defina um endereço como principal");
         }
@@ -135,7 +136,8 @@ public class ClientController {
         }
 
         if (contAddressDefault > 1) {
-            result.rejectValue("deliveryAddresses", "error.deliveryAddresses", "Defina apenas um endereço como principal");
+            result.rejectValue("deliveryAddresses", "error.deliveryAddresses",
+                    "Defina apenas um endereço como principal");
         } else if (contAddressDefault == 0) {
             result.rejectValue("deliveryAddresses", "error.deliveryAddresses", "Defina um endereço como principal");
         }
@@ -185,15 +187,21 @@ public class ClientController {
             } else {
                 deliveryAddress = deliveryAddressRepository.findById(address.getId()).orElseThrow();
             }
-            deliveryAddress.setZipCode(address.getZipCode());
-            deliveryAddress.setStreet(address.getStreet());
-            deliveryAddress.setNumber(address.getNumber());
-            deliveryAddress.setComplement(address.getComplement());
-            deliveryAddress.setNeighborhood(address.getNeighborhood());
-            deliveryAddress.setCity(address.getCity());
-            deliveryAddress.setState(address.getState());
-            deliveryAddress.setClient(existingClient);
-            deliveryAddress.setDefault(address.isDefault());
+            if (address.isActive()) { // Verificar se o endereço está ativo
+                deliveryAddress.setZipCode(address.getZipCode());
+                deliveryAddress.setStreet(address.getStreet());
+                deliveryAddress.setNumber(address.getNumber());
+                deliveryAddress.setComplement(address.getComplement());
+                deliveryAddress.setNeighborhood(address.getNeighborhood());
+                deliveryAddress.setCity(address.getCity());
+                deliveryAddress.setState(address.getState());
+                deliveryAddress.setClient(existingClient);
+                deliveryAddress.setDefault(address.isDefault());
+            } else {
+                // Marcar o endereço como inativo
+                deliveryAddress.setActive(false);
+            }
+
             existingDeliveryAddresses.add(deliveryAddress);
         }
 
@@ -213,6 +221,20 @@ public class ClientController {
         model.addAttribute("clientDTO", entity);
 
         return "store/register";
+    }
+
+    @PostMapping("endereco/excluir/{addressId}")
+    public String deleteAddress(@PathVariable Long addressId) {
+        Optional<DeliveryAddress> addressOptional = deliveryAddressRepository.findById(addressId);
+
+        if (addressOptional.isPresent()) {
+            DeliveryAddress address = addressOptional.get();
+            address.setActive(false); // Adicione um novo campo 'active' em DeliveryAddress para marcar se está ativo
+                                      // ou não
+            deliveryAddressRepository.save(address);
+        }
+
+        return "redirect:/cadastro"; // Redirecionar de volta para a página de cadastro após a exclusão
     }
 
 }

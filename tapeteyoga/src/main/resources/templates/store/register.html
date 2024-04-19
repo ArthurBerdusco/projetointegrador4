@@ -120,11 +120,11 @@
           <div id="inputEnderecosEntrega">
             <span th:errors="*{deliveryAddresses}" class="text-danger"></span>
             <fieldset class="border p-5 my-3 rounded" id="faturamento"
-              th:each="address, iterStat : *{deliveryAddresses}">
+              th:each="address, iterStat : *{deliveryAddresses}" th:if="${address.active}">
               <!-- ID -->
               <input type="hidden" th:field="*{deliveryAddresses[__${iterStat.index}__].id}" readonly>
               <legend th:text="'Endereço: ' + ${iterStat.index + 1}"></legend>
-              
+
 
               <div class="mb-3">
                 <input type="text" class="form-control" maxlength="9" placeholder="CEP" th:id="cep + ${iterStat.index}"
@@ -162,8 +162,16 @@
                   th:field="*{deliveryAddresses[__${iterStat.index}__].state}">
                 <span th:errors="*{deliveryAddresses[__${iterStat.index}__].state}" class="text-danger"></span>
               </div>
-              <div class="form-check mb-3" id="firstCheck" th:style="${clientDTO.deliveryAddresses.size() > 1} ? 'display: block;' : 'display: none;'">
-                <input checked style="width: 20px; height: 20px;" class="form-check-input" type="checkbox" th:field="*{deliveryAddresses[__${iterStat.index}__].default}"  />
+              <!-- Checkbox para marcar como ativo -->
+              <div class="form-check mb-3">
+                <input type="checkbox" class="form-check-input"
+                  th:field="*{deliveryAddresses[__${iterStat.index}__].active}">
+                <label class="form-check-label">Ativo</label>
+              </div>
+              <div class="form-check mb-3" id="firstCheck"
+                th:style="${clientDTO.deliveryAddresses.size() > 1} ? 'display: block;' : 'display: none;'">
+                <input checked style="width: 20px; height: 20px;" class="form-check-input" type="checkbox"
+                  th:field="*{deliveryAddresses[__${iterStat.index}__].default}" />
                 <label class="form-check-label">Principal </label>
               </div>
               <button type="button" class="btn btn-primary"
@@ -262,10 +270,10 @@
 
     // Adiciona evento de click para adicionar novo endereço de entrega
     document.getElementById('btnNovoEndereco').onclick = function () {
-      
-        
-        document.getElementById('firstCheck').style.display = 'block';
-    
+
+
+      document.getElementById('firstCheck').style.display = 'block';
+
 
       const qtdFieldset = document.querySelectorAll('#inputEnderecosEntrega > fieldset').length;
       const enderecoCounter = qtdFieldset;
