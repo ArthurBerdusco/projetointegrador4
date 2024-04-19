@@ -21,6 +21,8 @@
     <!-- Links à direita -->
     <span th:if="${nameClient != null}" class="d-flex text-light fs-5">
       Olá, <span th:text="${nameClient}"></span>
+      <form th:action="@{/sair}" method="post"><button class="mx-2 btn btn-danger" type="submit">Sair</button></form>
+
 
     </span>
     <span th:unless="${nameClient != null}">
