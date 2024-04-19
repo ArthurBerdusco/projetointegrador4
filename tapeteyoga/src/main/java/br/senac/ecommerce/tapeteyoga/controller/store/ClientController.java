@@ -29,7 +29,7 @@ import br.senac.ecommerce.tapeteyoga.model.DeliveryAddressDTO;
 import br.senac.ecommerce.tapeteyoga.repository.BillingAddressRepository;
 import br.senac.ecommerce.tapeteyoga.repository.ClientRepository;
 import br.senac.ecommerce.tapeteyoga.repository.DeliveryAddressRepository;
-
+import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
 
 @Controller
@@ -214,7 +214,27 @@ public class ClientController {
     }
 
     @GetMapping("{id}")
-    public String getClientForm(@PathVariable Long id, Model model) {
+    public String getClientForm(@PathVariable Long id, Model model, HttpSession session) {
+
+        if (session.getAttribute("UsuarioLogado") != null) {
+            String emailCliente = (String) session.getAttribute("UsuarioLogado");
+            Optional<Client> clienteOptional = clientRepository.findByEmail(emailCliente);
+            if (clienteOptional.isPresent()) {
+                Client cliente = clienteOptional.get();
+                String nomeCliente = cliente.getFullName();
+                session.setAttribute("clientId", cliente.getId());
+                model.addAttribute("nameClient", nomeCliente);
+                model.addAttribute("client", cliente);
+            }
+        }
+
+        // Verifica se há um cliente autenticado na sessão
+        Long clientId = (Long) session.getAttribute("clientId");
+        
+        if (clientId == null || !clientId.equals(id)) {
+            // Redireciona para a página inicial ou para uma página de erro
+            return "redirect:/";
+        }
 
         Client entity = clientRepository.findById(id).orElseThrow();
 

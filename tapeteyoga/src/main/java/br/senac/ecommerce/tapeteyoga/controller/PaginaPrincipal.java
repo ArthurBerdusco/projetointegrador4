@@ -44,8 +44,10 @@ public class PaginaPrincipal {
             Optional<Client> clienteOptional = clientRepository.findByEmail(emailCliente);
             if (clienteOptional.isPresent()) {
                 Client cliente = clienteOptional.get();
+                session.setAttribute("clientId", cliente.getId());
                 String nomeCliente = cliente.getFullName();
                 model.addAttribute("nameClient", nomeCliente);
+                model.addAttribute("client", cliente);
             }
         }
         var listaProdutos = produtoService.buscarProdutosAtivos();
@@ -73,7 +75,20 @@ public class PaginaPrincipal {
     }
 
     @GetMapping("/cadastro")
-    public String register(ClientDTO client) {
+    public String register(ClientDTO client, HttpSession session, Model model) {
+
+        if (session.getAttribute("UsuarioLogado") != null) {
+            String emailCliente = (String) session.getAttribute("UsuarioLogado");
+            Optional<Client> clienteOptional = clientRepository.findByEmail(emailCliente);
+            if (clienteOptional.isPresent()) {
+                Client cliente = clienteOptional.get();
+                String nomeCliente = cliente.getFullName();
+                session.setAttribute("clientId", cliente.getId());
+                model.addAttribute("nameClient", nomeCliente);
+                model.addAttribute("client", cliente);
+            }
+        }
+
         client.getDeliveryAddresses().get(0).setDefault(true);
         return "store/register";
     }
@@ -87,7 +102,9 @@ public class PaginaPrincipal {
             if (clienteOptional.isPresent()) {
                 Client cliente = clienteOptional.get();
                 String nomeCliente = cliente.getFullName();
+                session.setAttribute("clientId", cliente.getId());
                 model.addAttribute("nameClient", nomeCliente);
+                model.addAttribute("client", cliente);
             }
         }
     

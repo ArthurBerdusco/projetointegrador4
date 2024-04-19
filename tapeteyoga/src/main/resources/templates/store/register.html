@@ -10,16 +10,28 @@
 </head>
 
 <body style="background-color: rgb(241, 240, 233);">
+  <div th:replace="fragments/store/header.html :: loja-header"></div>
 
-  <div class="container p-5 shadow-lg" style="background-color: rgba(255, 255, 255, 0.469);">
+  <div class="container p-5 shadow-lg" style="background-color: rgba(255, 255, 255, 0.469); margin-top: 100px;">
     <div class="container">
-      <div class="container text-center">
-        <h2>Cadastre-se na Loja Harmony</h2>
-        <p class="row">Seja bem-vindo à loja Harmony, o seu destino para encontrar os melhores tapetes de yoga para
-          aprimorar sua prática diária. Cadastre-se agora para desfrutar de uma experiência de compra harmoniosa e
-          tranquila. Ao se cadastrar, você terá acesso a uma variedade de tapetes de yoga de alta qualidade,
-          cuidadosamente selecionados para atender às suas necessidades e preferências individuais.</p>
-      </div>
+
+      <span th:if="${clientDTO == null}">
+        <div class="container text-center">
+
+          <h2>Cadastre-se na Loja Harmony</h2>
+          <p class="row">Seja bem-vindo à loja Harmony, o seu destino para encontrar os melhores tapetes de yoga para
+            aprimorar sua prática diária. Cadastre-se agora para desfrutar de uma experiência de compra harmoniosa e
+            tranquila. Ao se cadastrar, você terá acesso a uma variedade de tapetes de yoga de alta qualidade,
+            cuidadosamente selecionados para atender às suas necessidades e preferências individuais.</p>
+        </div>
+      </span>
+
+      <span th:unless="${clientDTO == null}">
+        <div class="container text-center">
+          <h3>Olá, <span th:text="${clientDTO.fullName}"></span></h3>
+          <h4>Editar dados</h4>
+        </div>
+      </span>
 
       <form th:action="@{${clientDTO.id != null} ? '/cadastro/' + ${clientDTO.id} : '/cadastro'}"
         th:object="${clientDTO}" method="POST">
@@ -161,12 +173,6 @@
                 <input type="text" class="form-control" placeholder="UF" th:id="uf + ${iterStat.index}"
                   th:field="*{deliveryAddresses[__${iterStat.index}__].state}">
                 <span th:errors="*{deliveryAddresses[__${iterStat.index}__].state}" class="text-danger"></span>
-              </div>
-              <!-- Checkbox para marcar como ativo -->
-              <div class="form-check mb-3">
-                <input type="checkbox" class="form-check-input"
-                  th:field="*{deliveryAddresses[__${iterStat.index}__].active}">
-                <label class="form-check-label">Ativo</label>
               </div>
               <div class="form-check mb-3" id="firstCheck"
                 th:style="${clientDTO.deliveryAddresses.size() > 1} ? 'display: block;' : 'display: none;'">
