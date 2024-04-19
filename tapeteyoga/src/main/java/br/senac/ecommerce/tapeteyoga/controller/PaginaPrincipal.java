@@ -102,5 +102,12 @@ public class PaginaPrincipal {
         }
     }
 
+    @PostMapping("/sair")
+    public String sair(HttpSession session){
+        session.invalidate();
+        return "redirect:/";
+
+    }
+
     
 }
