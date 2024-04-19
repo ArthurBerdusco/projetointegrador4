@@ -140,44 +140,44 @@
 
               <div class="mb-3">
                 <input type="text" class="form-control" maxlength="9" placeholder="CEP" th:id="cep + ${iterStat.index}"
-                  th:field="*{deliveryAddresses[__${iterStat.index}__].zipCode}" readonly>
+                  th:field="*{deliveryAddresses[__${iterStat.index}__].zipCode}" th:readonly="${clientDTO.deliveryAddresses.size() > 1}">
                 <span th:errors="*{deliveryAddresses[__${iterStat.index}__].zipCode}" class="text-danger"></span>
               </div>
               <div class="mb-3">
                 <input type="text" class="form-control" placeholder="Logradouro" th:id="logradouro + ${iterStat.index}"
-                  th:field="*{deliveryAddresses[__${iterStat.index}__].street}" readonly>
+                  th:field="*{deliveryAddresses[__${iterStat.index}__].street}" th:readonly="${clientDTO.deliveryAddresses.size() > 1}">
                 <span th:errors="*{deliveryAddresses[__${iterStat.index}__].street}" class="text-danger"></span>
               </div>
               <div class="mb-3">
                 <input type="text" class="form-control" placeholder="Número" th:id="numero + ${iterStat.index}"
-                  th:field="*{deliveryAddresses[__${iterStat.index}__].number}" readonly>
+                  th:field="*{deliveryAddresses[__${iterStat.index}__].number}" th:readonly="${clientDTO.deliveryAddresses.size() > 1}">
                 <span th:errors="*{deliveryAddresses[__${iterStat.index}__].number}" class="text-danger"></span>
               </div>
               <div class="mb-3">
                 <input type="text" class="form-control" placeholder="Complemento"
                   th:id="complemento + ${iterStat.index}"
-                  th:field="*{deliveryAddresses[__${iterStat.index}__].complement}" readonly>
+                  th:field="*{deliveryAddresses[__${iterStat.index}__].complement}" th:readonly="${clientDTO.deliveryAddresses.size() > 1}">
                 <span th:errors="*{deliveryAddresses[__${iterStat.index}__].complement}" class="text-danger"></span>
               </div>
               <div class="mb-3">
                 <input type="text" class="form-control" placeholder="Bairro" th:id="bairro + ${iterStat.index}"
-                  th:field="*{deliveryAddresses[__${iterStat.index}__].neighborhood}" readonly>
+                  th:field="*{deliveryAddresses[__${iterStat.index}__].neighborhood}" th:readonly="${clientDTO.deliveryAddresses.size() > 1}">
                 <span th:errors="*{deliveryAddresses[__${iterStat.index}__].neighborhood}" class="text-danger"></span>
               </div>
               <div class="mb-3">
                 <input type="text" class="form-control" placeholder="Cidade" th:id="cidade + ${iterStat.index}"
-                  th:field="*{deliveryAddresses[__${iterStat.index}__].city}" readonly>
+                  th:field="*{deliveryAddresses[__${iterStat.index}__].city}" th:readonly="${clientDTO.deliveryAddresses.size() > 1}">
                 <span th:errors="*{deliveryAddresses[__${iterStat.index}__].city}" class="text-danger"></span>
               </div>
               <div class="mb-3">
                 <input type="text" class="form-control" placeholder="UF" th:id="uf + ${iterStat.index}"
-                  th:field="*{deliveryAddresses[__${iterStat.index}__].state}" readonly>
+                  th:field="*{deliveryAddresses[__${iterStat.index}__].state}" th:readonly="${clientDTO.deliveryAddresses.size() > 1}">
                 <span th:errors="*{deliveryAddresses[__${iterStat.index}__].state}" class="text-danger"></span>
               </div>
               <div class="form-check mb-3" id="firstCheck"
                 th:style="${clientDTO.deliveryAddresses.size() > 1} ? 'display: block;' : 'display: none;'">
                 <input checked style="width: 20px; height: 20px;" class="form-check-input" type="checkbox"
-                  th:field="*{deliveryAddresses[__${iterStat.index}__].default}" readonly />
+                  th:field="*{deliveryAddresses[__${iterStat.index}__].default}" th:readonly="${clientDTO.deliveryAddresses.size() > 1}" />
                 <label class="form-check-label">Principal </label>
 
               </div>
@@ -185,7 +185,8 @@
               <div class="d-flex justify-content-between">
                 <button type="button" class="btn btn-primary"
                   onclick="copiarEnderecoFaturamento(this.closest('fieldset'))">Copiar endereço de faturamento</button>
-                <button class="btn btn-danger btn-delete-address" th:attr="data-id=${address.id}" type="button">Deletar</button>
+                <button class="btn btn-danger btn-delete-address" th:attr="data-id=${address.id}"
+                  type="button">Deletar</button>
               </div>
             </fieldset>
 
@@ -204,6 +205,18 @@
   </div>
 
   <script>
+
+    window.onload = function () {
+      var fieldsetCount = document.querySelectorAll('fieldset[id^="faturamento-"]').length;
+
+      if (fieldsetCount === 1) {
+        document.getElementById('firstCheck').style.display = 'none';
+        document.querySelectorAll('.btn-delete-address').forEach(function (button) {
+          button.style.display = 'none';
+        });
+      }
+    };
+
     // Função para preencher o endereço com base no CEP
     function preencherEndereco(cepInputId) {
       const cepInput = document.getElementById(cepInputId);
@@ -326,27 +339,27 @@
       );
     };
 
-    $(document).ready(function() {
-    $('.btn-delete-address').click(function() {
+    $(document).ready(function () {
+      $('.btn-delete-address').click(function () {
         var addressId = $(this).data('id'); // Obter o ID do endereço a ser excluído
         var confirmation = confirm('Tem certeza de que deseja excluir este endereço?');
         if (confirmation) {
-            $.ajax({
-                url: '/cadastro/endereco/excluir/' + addressId,
-                type: 'DELETE',
-                success: function(response) {
-                    // Recarregar a página ou atualizar a lista de endereços após a exclusão
-                    location.reload(); // Recarregar a página
-                    // Você pode atualizar a lista de endereços sem recarregar a página
-                    // Aqui você pode adicionar código para atualizar a lista de endereços
-                },
-                error: function(xhr, status, error) {
-                    console.error('Erro ao excluir endereço:', error);
-                }
-            });
+          $.ajax({
+            url: '/cadastro/endereco/excluir/' + addressId,
+            type: 'POST',
+            success: function (response) {
+              // Recarregar a página ou atualizar a lista de endereços após a exclusão
+              location.reload(); // Recarregar a página
+              // Você pode atualizar a lista de endereços sem recarregar a página
+              // Aqui você pode adicionar código para atualizar a lista de endereços
+            },
+            error: function (xhr, status, error) {
+              console.error('Erro ao excluir endereço:', error);
+            }
+          });
         }
+      });
     });
-});
 
 
 

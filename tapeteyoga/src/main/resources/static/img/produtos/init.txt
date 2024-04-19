@@ -1,6 +1,0 @@
-              <!-- Checkbox para marcar como ativo -->
-              <div class="form-check mb-3">
-                <input type="checkbox" class="form-check-input"
-                  th:field="*{deliveryAddresses[__${iterStat.index}__].active}">
-                <label class="form-check-label">Ativo</label>
-              </div>

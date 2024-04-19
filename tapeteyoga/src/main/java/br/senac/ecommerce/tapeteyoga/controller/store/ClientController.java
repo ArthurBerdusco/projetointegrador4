@@ -211,11 +211,11 @@ public class ClientController {
 
         clientRepository.save(existingClient);
 
-        return "redirect:/";
+        return "redirect:/cadastro/{id}"; 
     }
 
     @GetMapping("{id}")
-    public String getClientForm(@PathVariable Long id, Model model, HttpSession session) {
+    public String getClientForm(@PathVariable Long id, Model model, HttpSession session, ClientDTO client) {
 
         if (session.getAttribute("UsuarioLogado") != null) {
             String emailCliente = (String) session.getAttribute("UsuarioLogado");
@@ -244,22 +244,21 @@ public class ClientController {
         return "store/register";
     }
 
-    @DeleteMapping("endereco/excluir/{addressId}")
+    @PostMapping("endereco/excluir/{addressId}")
     public String deleteAddress(@PathVariable Long addressId) {
 
         System.out.println("\n\n\n" + "CHEGUEI AQUI" + "\n\n\n");
 
         Optional<DeliveryAddress> addressOptional = deliveryAddressRepository.findById(addressId);
 
-
         if (addressOptional.isPresent()) {
+            
+            System.out.println("\n\n\n" + "DELETANDO...." + "\n\n\n");
             DeliveryAddress address = addressOptional.get();
-            address.setActive(false); // Adicione um novo campo 'active' em DeliveryAddress para marcar se está ativo
-                                      // ou não
-            deliveryAddressRepository.save(address);
+            deliveryAddressRepository.delete(address);
         }
 
-        return "redirect:/cadastro"; // Redirecionar de volta para a página de cadastro após a exclusão
+        return "redirect:/cadastro"; 
     }
 
 
