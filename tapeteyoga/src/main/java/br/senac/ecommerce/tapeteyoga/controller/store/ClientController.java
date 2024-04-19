@@ -13,6 +13,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -210,7 +211,7 @@ public class ClientController {
 
         clientRepository.save(existingClient);
 
-        return "redirect:/login";
+        return "redirect:/";
     }
 
     @GetMapping("{id}")
@@ -230,7 +231,7 @@ public class ClientController {
 
         // Verifica se há um cliente autenticado na sessão
         Long clientId = (Long) session.getAttribute("clientId");
-        
+
         if (clientId == null || !clientId.equals(id)) {
             // Redireciona para a página inicial ou para uma página de erro
             return "redirect:/";
@@ -243,9 +244,13 @@ public class ClientController {
         return "store/register";
     }
 
-    @PostMapping("endereco/excluir/{addressId}")
+    @DeleteMapping("endereco/excluir/{addressId}")
     public String deleteAddress(@PathVariable Long addressId) {
+
+        System.out.println("\n\n\n" + "CHEGUEI AQUI" + "\n\n\n");
+
         Optional<DeliveryAddress> addressOptional = deliveryAddressRepository.findById(addressId);
+
 
         if (addressOptional.isPresent()) {
             DeliveryAddress address = addressOptional.get();
@@ -256,5 +261,6 @@ public class ClientController {
 
         return "redirect:/cadastro"; // Redirecionar de volta para a página de cadastro após a exclusão
     }
+
 
 }

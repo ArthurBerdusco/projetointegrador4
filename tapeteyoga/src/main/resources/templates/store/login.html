@@ -33,62 +33,43 @@
     <div class="container-fluid h-custom">
       <div class="row d-flex justify-content-center align-items-center h-100">
         <div class="col-md-9 col-lg-6 col-xl-5">
-          <img src="https://mdbcdn.b-cdn.net/img/Photos/new-templates/bootstrap-login-form/draw2.webp" class="img-fluid"
+          <img src="/img/logincliente.jpg" class="img-fluid"
             alt="Sample image">
         </div>
         <div class="col-md-8 col-lg-6 col-xl-4 offset-xl-1">
           <!-- Formulário de Login -->
           <form th:action="@{/login}" method="post" th:object="${client}">
-            <!-- Botões de Login Social -->
-            <div class="d-flex flex-row align-items-center justify-content-center justify-content-lg-start">
-              <p class="lead fw-normal mb-0 me-3">Sign in with</p>
-              <button type="button" data-mdb-button-init data-mdb-ripple-init class="btn btn-primary btn-floating mx-1">
-                <i class="fab fa-facebook-f"></i>
-              </button>
-              <button type="button" data-mdb-button-init data-mdb-ripple-init class="btn btn-primary btn-floating mx-1">
-                <i class="fab fa-twitter"></i>
-              </button>
-              <button type="button" data-mdb-button-init data-mdb-ripple-init class="btn btn-primary btn-floating mx-1">
-                <i class="fab fa-linkedin-in"></i>
-              </button>
-            </div>
-            <!-- Divisor -->
-            <div class="divider d-flex align-items-center my-4">
-              <p class="text-center fw-bold mx-3 mb-0">Or</p>
-            </div>
-            <!-- Inputs de Email e Senha -->
             <div data-mdb-input-init class="form-outline mb-4">
-              <input type="email" id="form3Example3" class="form-control form-control-lg"
-                placeholder="Enter a valid email address" th:field="*{email}" required>
-              <label class="form-label" for="form3Example3">Email address</label>
+                <input type="email" id="form3Example3" class="form-control form-control-lg"
+                    placeholder="Insira um endereço de e-mail válido" th:field="*{email}" required>
+                <label class="form-label" for="form3Example3">Endereço de e-mail</label>
             </div>
             <div data-mdb-input-init class="form-outline mb-3">
-              <input type="password" id="form3Example4" class="form-control form-control-lg"
-                placeholder="Enter password" th:field="*{password}">
-              <label class="form-label" for="form3Example4">Password</label>
-              <small class="text-danger" th:if="${Error}">
-                "Usuário e/ou senha não encontrados!"
-              </small>
+                <input type="password" id="form3Example4" class="form-control form-control-lg"
+                    placeholder="Insira a senha" th:field="*{password}">
+                <label class="form-label" for="form3Example4">Senha</label>
+                <small class="text-danger" th:if="${Error}">
+                    "Usuário e/ou senha não encontrados!"
+                </small>
             </div>
-
+        
             <!-- Botão de Login -->
-            <button type="submit" class="btn btn-primary btn-lg">Login</button>
+            <button type="submit" class="btn btn-primary btn-lg">Entrar</button>
             <!-- Checkbox de Lembrar Senha e Link de Esqueci a Senha -->
             <div class="d-flex justify-content-between align-items-center">
-              <div class="form-check mb-0">
-                <input class="form-check-input me-2" type="checkbox" value="" id="form2Example3" />
-                <label class="form-check-label" for="form2Example3">Remember me</label>
-              </div>
-              <a href="#!" class="text-body">Forgot password?</a>
+                <div class="form-check mb-0">
+                    <input class="form-check-input me-2" type="checkbox" value="" id="form2Example3" />
+                    <label class="form-check-label" for="form2Example3">Lembrar-me</label>
+                </div>
+                <a href="#!" class="text-body">Esqueceu a senha?</a>
             </div>
-          </form>
-          <!-- Fim do Formulário de Login -->
+        </form>        
         </div>
       </div>
     </div>
     <div
       class="d-flex flex-column flex-md-row text-center text-md-start justify-content-between py-4 px-4 px-xl-5 bg-primary">
-      <div class="text-white mb-3 mb-md-0">Copyright © 2020. All rights reserved.</div>
+      <div class="text-white mb-3 mb-md-0">Copyright © 2024. Harmony todos os direitos reservados.</div>
       <div>
         <a href="#!" class="text-white me-4">
           <i class="fab fa-facebook-f"></i>

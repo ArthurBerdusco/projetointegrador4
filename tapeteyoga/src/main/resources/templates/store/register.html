@@ -7,6 +7,7 @@
   <title>Formulário de Cadastro</title>
   <!-- Incluindo Bootstrap CSS -->
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
 </head>
 
 <body style="background-color: rgb(241, 240, 233);">
@@ -15,9 +16,8 @@
   <div class="container p-5 shadow-lg" style="background-color: rgba(255, 255, 255, 0.469); margin-top: 100px;">
     <div class="container">
 
-      <span th:if="${clientDTO == null}">
+      <span th:if="${nameClient == null}">
         <div class="container text-center">
-
           <h2>Cadastre-se na Loja Harmony</h2>
           <p class="row">Seja bem-vindo à loja Harmony, o seu destino para encontrar os melhores tapetes de yoga para
             aprimorar sua prática diária. Cadastre-se agora para desfrutar de uma experiência de compra harmoniosa e
@@ -26,12 +26,13 @@
         </div>
       </span>
 
-      <span th:unless="${clientDTO == null}">
+      <span th:if="${nameClient != null}">
         <div class="container text-center">
           <h3>Olá, <span th:text="${clientDTO.fullName}"></span></h3>
           <h4>Editar dados</h4>
         </div>
       </span>
+
 
       <form th:action="@{${clientDTO.id != null} ? '/cadastro/' + ${clientDTO.id} : '/cadastro'}"
         th:object="${clientDTO}" method="POST">
@@ -131,57 +132,61 @@
           <h4>Endereços de entrega</h4>
           <div id="inputEnderecosEntrega">
             <span th:errors="*{deliveryAddresses}" class="text-danger"></span>
-            <fieldset class="border p-5 my-3 rounded" id="faturamento"
+            <fieldset class="border p-5 my-3 rounded" th:attr="id='faturamento-' + ${iterStat.index}"
               th:each="address, iterStat : *{deliveryAddresses}" th:if="${address.active}">
               <!-- ID -->
               <input type="hidden" th:field="*{deliveryAddresses[__${iterStat.index}__].id}" readonly>
               <legend th:text="'Endereço: ' + ${iterStat.index + 1}"></legend>
 
-
               <div class="mb-3">
                 <input type="text" class="form-control" maxlength="9" placeholder="CEP" th:id="cep + ${iterStat.index}"
-                  th:field="*{deliveryAddresses[__${iterStat.index}__].zipCode}">
+                  th:field="*{deliveryAddresses[__${iterStat.index}__].zipCode}" readonly>
                 <span th:errors="*{deliveryAddresses[__${iterStat.index}__].zipCode}" class="text-danger"></span>
               </div>
               <div class="mb-3">
                 <input type="text" class="form-control" placeholder="Logradouro" th:id="logradouro + ${iterStat.index}"
-                  th:field="*{deliveryAddresses[__${iterStat.index}__].street}">
+                  th:field="*{deliveryAddresses[__${iterStat.index}__].street}" readonly>
                 <span th:errors="*{deliveryAddresses[__${iterStat.index}__].street}" class="text-danger"></span>
               </div>
               <div class="mb-3">
                 <input type="text" class="form-control" placeholder="Número" th:id="numero + ${iterStat.index}"
-                  th:field="*{deliveryAddresses[__${iterStat.index}__].number}">
+                  th:field="*{deliveryAddresses[__${iterStat.index}__].number}" readonly>
                 <span th:errors="*{deliveryAddresses[__${iterStat.index}__].number}" class="text-danger"></span>
               </div>
               <div class="mb-3">
                 <input type="text" class="form-control" placeholder="Complemento"
                   th:id="complemento + ${iterStat.index}"
-                  th:field="*{deliveryAddresses[__${iterStat.index}__].complement}">
+                  th:field="*{deliveryAddresses[__${iterStat.index}__].complement}" readonly>
                 <span th:errors="*{deliveryAddresses[__${iterStat.index}__].complement}" class="text-danger"></span>
               </div>
               <div class="mb-3">
                 <input type="text" class="form-control" placeholder="Bairro" th:id="bairro + ${iterStat.index}"
-                  th:field="*{deliveryAddresses[__${iterStat.index}__].neighborhood}">
+                  th:field="*{deliveryAddresses[__${iterStat.index}__].neighborhood}" readonly>
                 <span th:errors="*{deliveryAddresses[__${iterStat.index}__].neighborhood}" class="text-danger"></span>
               </div>
               <div class="mb-3">
                 <input type="text" class="form-control" placeholder="Cidade" th:id="cidade + ${iterStat.index}"
-                  th:field="*{deliveryAddresses[__${iterStat.index}__].city}">
+                  th:field="*{deliveryAddresses[__${iterStat.index}__].city}" readonly>
                 <span th:errors="*{deliveryAddresses[__${iterStat.index}__].city}" class="text-danger"></span>
               </div>
               <div class="mb-3">
                 <input type="text" class="form-control" placeholder="UF" th:id="uf + ${iterStat.index}"
-                  th:field="*{deliveryAddresses[__${iterStat.index}__].state}">
+                  th:field="*{deliveryAddresses[__${iterStat.index}__].state}" readonly>
                 <span th:errors="*{deliveryAddresses[__${iterStat.index}__].state}" class="text-danger"></span>
               </div>
               <div class="form-check mb-3" id="firstCheck"
                 th:style="${clientDTO.deliveryAddresses.size() > 1} ? 'display: block;' : 'display: none;'">
                 <input checked style="width: 20px; height: 20px;" class="form-check-input" type="checkbox"
-                  th:field="*{deliveryAddresses[__${iterStat.index}__].default}" />
+                  th:field="*{deliveryAddresses[__${iterStat.index}__].default}" readonly />
                 <label class="form-check-label">Principal </label>
+
               </div>
-              <button type="button" class="btn btn-primary"
-                onclick="copiarEnderecoFaturamento(this.closest('fieldset'))">Copiar endereço de faturamento</button>
+
+              <div class="d-flex justify-content-between">
+                <button type="button" class="btn btn-primary"
+                  onclick="copiarEnderecoFaturamento(this.closest('fieldset'))">Copiar endereço de faturamento</button>
+                <button class="btn btn-danger btn-delete-address" th:attr="data-id=${address.id}" type="button">Deletar</button>
+              </div>
             </fieldset>
 
           </div>
@@ -320,6 +325,34 @@
 `
       );
     };
+
+    $(document).ready(function() {
+    $('.btn-delete-address').click(function() {
+        var addressId = $(this).data('id'); // Obter o ID do endereço a ser excluído
+        var confirmation = confirm('Tem certeza de que deseja excluir este endereço?');
+        if (confirmation) {
+            $.ajax({
+                url: '/cadastro/endereco/excluir/' + addressId,
+                type: 'DELETE',
+                success: function(response) {
+                    // Recarregar a página ou atualizar a lista de endereços após a exclusão
+                    location.reload(); // Recarregar a página
+                    // Você pode atualizar a lista de endereços sem recarregar a página
+                    // Aqui você pode adicionar código para atualizar a lista de endereços
+                },
+                error: function(xhr, status, error) {
+                    console.error('Erro ao excluir endereço:', error);
+                }
+            });
+        }
+    });
+});
+
+
+
+
+
+
 
   </script>
 
