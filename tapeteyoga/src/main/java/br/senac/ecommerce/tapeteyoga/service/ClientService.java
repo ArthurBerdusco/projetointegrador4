@@ -22,18 +22,15 @@ public class ClientService {
     @Autowired
     private PasswordEncoder passwordEncoder;
 
- 
     public Client findByEmail(String email) {
         Optional<Client> clientOptional = repository.findByEmail(email);
         return clientOptional.orElseThrow(() -> new RuntimeException("Cliente não encontrado para o email: " + email));
     }
 
-    public Client save(Client client) {
-        return repository.save(client);
-    }
     public boolean validarLogin(String email, String password) {
-        Client cliente = findByEmail(email);
-        if(cliente != null){
+        Optional<Client> clienteOptional = repository.findByEmail(email);
+        if (clienteOptional.isPresent()) {
+            Client cliente = clienteOptional.get();
             return passwordEncoder.matches(password, cliente.getPassword());
         }
         return false;
