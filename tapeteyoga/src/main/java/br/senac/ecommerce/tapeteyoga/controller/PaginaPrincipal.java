@@ -20,7 +20,6 @@ import br.senac.ecommerce.tapeteyoga.model.Produto;
 import br.senac.ecommerce.tapeteyoga.repository.ClientRepository;
 import br.senac.ecommerce.tapeteyoga.service.ClientService;
 import br.senac.ecommerce.tapeteyoga.service.ProdutoService;
-import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
 
 @Controller
@@ -66,7 +65,6 @@ public class PaginaPrincipal {
         if (valido) {
             session.setAttribute("UsuarioLogado", client.getEmail());
             return "redirect:/";
-            /* Redirecione a página desejada */
         } else {
             model.addAttribute("Error", "Usuário e/ou senha inválidos");
 
@@ -81,10 +79,20 @@ public class PaginaPrincipal {
     }
 
     @GetMapping("/produto")
-    public String obterporId(@RequestParam(name = "id", required = false) Long id, Model model) {
-
+    public String obterporId(@RequestParam(name = "id", required = false) Long id, Model model, HttpSession session) {
+        // Verifica se o cliente está logado
+        if (session.getAttribute("UsuarioLogado") != null) {
+            String emailCliente = (String) session.getAttribute("UsuarioLogado");
+            Optional<Client> clienteOptional = clientRepository.findByEmail(emailCliente);
+            if (clienteOptional.isPresent()) {
+                Client cliente = clienteOptional.get();
+                String nomeCliente = cliente.getFullName();
+                model.addAttribute("nameClient", nomeCliente);
+            }
+        }
+    
         Optional<Produto> produtoVisualizar = produtoService.buscarProdutoPorId(id);
-
+    
         if (produtoVisualizar.isPresent()) {
             Produto produto = produtoVisualizar.get();
             model.addAttribute("produto", produto);
@@ -94,4 +102,5 @@ public class PaginaPrincipal {
         }
     }
 
+    
 }
