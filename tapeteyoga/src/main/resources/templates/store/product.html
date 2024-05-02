@@ -86,8 +86,12 @@
                         </select>
                     </div>
         
-                    <div class="text-end mt-3">
-                        <button class="btn btn-success" id="comprarBtn" disabled>Comprar</button>
+                    <div class="text-center mt-3">
+                        <form id="addToCartForm" method="POST" action="/carrinho">
+                            <input type="hidden" name="produtoId" th:value="${produto.id}" />
+                            <input type="hidden" name="quantidade" id="quantidadeHidden" /> <!-- Campo oculto para armazenar a quantidade -->
+                            <button type="button" onclick="adicionarAoCarrinho()" class="btn btn-success">Adicionar ao carrinho</button>
+                        </form>
                     </div>
                 </div>
             </div>
@@ -114,6 +118,12 @@
     $('#carouselExampleControls').carousel({
         interval: false
     });
+
+    function adicionarAoCarrinho() {
+        var quantidadeSelecionada = document.getElementById("quantidade").value;
+        document.getElementById("quantidadeHidden").value = quantidadeSelecionada;
+        document.getElementById("addToCartForm").submit();
+    }
 </script>
 
 

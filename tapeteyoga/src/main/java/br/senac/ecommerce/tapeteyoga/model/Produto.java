@@ -8,6 +8,7 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import lombok.Data;
@@ -32,6 +33,9 @@ public class Produto {
     private Integer stockQuantity;
 
     private boolean isActive = true;
+
+    @ManyToOne
+    private Carrinho carrinho;
 
     @OneToMany(mappedBy = "produto", cascade = { CascadeType.PERSIST, CascadeType.MERGE })
     private List<ImagemProduto> imagens;
@@ -100,7 +104,6 @@ public class Produto {
     public void setImagens(List<ImagemProduto> imagens) {
         this.imagens = imagens;
     }
-
 
     @Override
     public String toString() {

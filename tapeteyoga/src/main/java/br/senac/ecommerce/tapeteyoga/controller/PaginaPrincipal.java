@@ -3,8 +3,6 @@ package br.senac.ecommerce.tapeteyoga.controller;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -12,8 +10,8 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseStatus;
 
+import br.senac.ecommerce.tapeteyoga.model.Carrinho;
 import br.senac.ecommerce.tapeteyoga.model.Client;
 import br.senac.ecommerce.tapeteyoga.model.ClientDTO;
 import br.senac.ecommerce.tapeteyoga.model.Produto;
@@ -35,21 +33,25 @@ public class PaginaPrincipal {
     @Autowired
     private ClientRepository clientRepository;
 
-    @GetMapping("/")
-    @ResponseStatus(HttpStatus.OK)
-
+    @GetMapping
     public String landingPage(Model model, HttpSession session) {
+        // Verifica se o carrinho já está na sessão; se não estiver, cria um novo
+        Carrinho carrinho = (Carrinho) session.getAttribute("carrinho");
+        if (carrinho == null) {
+            carrinho = new Carrinho();
+            session.setAttribute("carrinho", carrinho);
+
+        }
+
         if (session.getAttribute("UsuarioLogado") != null) {
             String emailCliente = (String) session.getAttribute("UsuarioLogado");
             Optional<Client> clienteOptional = clientRepository.findByEmail(emailCliente);
             if (clienteOptional.isPresent()) {
                 Client cliente = clienteOptional.get();
-                session.setAttribute("clientId", cliente.getId());
-                String nomeCliente = cliente.getFullName();
-                model.addAttribute("nameClient", nomeCliente);
-                model.addAttribute("client", cliente);
+                session.setAttribute("client", cliente);
             }
         }
+
         var listaProdutos = produtoService.buscarProdutosAtivos();
         model.addAttribute("produtoPage", listaProdutos);
         return "store/index";
@@ -74,6 +76,7 @@ public class PaginaPrincipal {
         }
     }
 
+
     @GetMapping("/cadastro")
     public String register(ClientDTO client, HttpSession session, Model model) {
 
@@ -95,6 +98,13 @@ public class PaginaPrincipal {
 
     @GetMapping("/produto")
     public String obterporId(@RequestParam(name = "id", required = false) Long id, Model model, HttpSession session) {
+
+        Carrinho carrinho = (Carrinho) session.getAttribute("carrinho");
+        if (carrinho == null) {
+            carrinho = new Carrinho();
+            session.setAttribute("carrinho", carrinho);
+        }
+
         // Verifica se o cliente está logado
         if (session.getAttribute("UsuarioLogado") != null) {
             String emailCliente = (String) session.getAttribute("UsuarioLogado");
@@ -107,9 +117,9 @@ public class PaginaPrincipal {
                 model.addAttribute("client", cliente);
             }
         }
-    
+
         Optional<Produto> produtoVisualizar = produtoService.buscarProdutoPorId(id);
-    
+
         if (produtoVisualizar.isPresent()) {
             Produto produto = produtoVisualizar.get();
             model.addAttribute("produto", produto);
@@ -120,11 +130,10 @@ public class PaginaPrincipal {
     }
 
     @PostMapping("/sair")
-    public String sair(HttpSession session){
+    public String sair(HttpSession session) {
         session.invalidate();
         return "redirect:/";
 
     }
 
-    
 }

@@ -20,26 +20,24 @@
 
     <!-- Links à direita -->
 
-    <span th:if="${nameClient != null}" class="d-flex align-items-center">
-      <a th:href="'/cadastro/' + ${client.id}" class="text-light btn btn-primary text-decoration-none me-2">
-        <span th:text="'Olá, ' + ${client.fullName}"></span>
+    <span th:if="${session.client != null}" class="d-flex align-items-center">
+      <a th:href="'/cadastro/' + ${session.client.id}" class="text-light btn btn-primary text-decoration-none me-2">
+        <span th:text="'Olá, ' + ${session.client.fullName}"></span>
     </a>
       <form th:action="@{/sair}" method="post">
           <button class="btn btn-danger mx-2" type="submit">Sair</button>
       </form>
   </span>
-  
 
-
-    <span th:unless="${nameClient != null}">
+    <span th:unless="${session.client != null}">
       <div id="login-section" class="d-flex">
         <a href="/login" class="text-light fs-5" id="login-link">Entrar</a>
         <label for="" class="text-light fs-5">/</label>
         <a href="/cadastro" class="text-light fs-5" id="cadastrar-link">Cadastrar-se</a>
       </div>
     </span>
-    <label style="cursor: pointer;" class="text-light fs-5"><img class="mx-2" src="/img/cart.svg"
-        width="40px">Carrinho</label>
-  </div>
+    <a href="/carrinho" th:text="'Carrinho ' + (${session.carrinho != null && session.carrinho.itens != null ? session.carrinho.itens.size() : ''})"></a>
 
+  </div>
+ 
 </nav>
