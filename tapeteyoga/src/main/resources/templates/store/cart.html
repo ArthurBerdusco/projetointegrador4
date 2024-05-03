@@ -118,16 +118,20 @@
 
                 <div class="row mt-3">
                     <div class="container bg-light">
-                        <div class="container">
-
-
-
-
+                        <div class="container" th:if="${session.client == null}">
                             <label for="">Entrega</label><br>
                             <input type="text" placeholder="CEP *">
                             <br>
                             <a target="_blank" href="https://buscacepinter.correios.com.br/app/endereco/index.php">Não
                                 lembro meu CEP</a>
+                        </div>
+
+                        <div class="div" th:unless="${session.client == null}">
+                            <label for="">Entrega</label><br>
+                            <label for="">usuario logado</label><br>
+                            <label th:text="${session}"></label>
+                            <button>Escolher outro endereco</button>
+
                         </div>
                     </div>
                 </div>
