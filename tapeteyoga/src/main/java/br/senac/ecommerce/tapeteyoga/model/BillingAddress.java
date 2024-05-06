@@ -1,10 +1,10 @@
 package br.senac.ecommerce.tapeteyoga.model;
 
 import jakarta.persistence.Entity;
+import jakarta.persistence.ForeignKey;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
-import jakarta.persistence.ForeignKey;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
@@ -37,6 +37,10 @@ public class BillingAddress {
     
 
     private String state;
+
+    private String longitude;
+
+    private String latitude;
 
     @OneToOne
     @JoinColumn(name = "client_id", foreignKey = @ForeignKey(name = "fk_billing_address"))

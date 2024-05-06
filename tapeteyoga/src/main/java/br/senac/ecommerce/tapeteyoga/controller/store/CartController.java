@@ -3,17 +3,22 @@ package br.senac.ecommerce.tapeteyoga.controller.store;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import br.senac.ecommerce.tapeteyoga.model.Carrinho;
+import br.senac.ecommerce.tapeteyoga.model.Client;
+import br.senac.ecommerce.tapeteyoga.model.Frete;
 import br.senac.ecommerce.tapeteyoga.model.ImagemProduto;
 import br.senac.ecommerce.tapeteyoga.model.ItemCarrinho;
 import br.senac.ecommerce.tapeteyoga.model.Produto;
+import br.senac.ecommerce.tapeteyoga.repository.ClientRepository;
 import br.senac.ecommerce.tapeteyoga.repository.ImagemProdutoRepository;
 import br.senac.ecommerce.tapeteyoga.repository.ProdutoRepository;
 import jakarta.servlet.http.HttpSession;
@@ -26,14 +31,42 @@ public class CartController {
 
     @Autowired
     ImagemProdutoRepository imgRepository;
-    
+
+    @Autowired
+    ClientRepository clientRepository;
+
+     @Autowired
+     List<Frete> tiposDeFrete;
+
+
     @GetMapping("/carrinho")
-    public String seeCart(HttpSession session){
+    public String seeCart(HttpSession session, Model model) {
+
+        Carrinho carrinho = (Carrinho) session.getAttribute("carrinho");
+        if (carrinho == null) {
+            carrinho = new Carrinho();
+            session.setAttribute("carrinho", carrinho);
+
+        }
+
+        
+
+        if (session.getAttribute("UsuarioLogado") != null) {
+            String emailCliente = (String) session.getAttribute("UsuarioLogado");
+            Optional<Client> clienteOptional = clientRepository.findByEmail(emailCliente);
+            if (clienteOptional.isPresent()) {
+                Client cliente = clienteOptional.get();
+                session.setAttribute("client", cliente);
+                session.setAttribute("frete", tiposDeFrete);
+                session.setAttribute("entrega", cliente.getMainDeliveryAddress());
+            }
+        }
+
         return "store/cart";
     }
 
     @PostMapping("/carrinho")
-    public String addInCart(HttpSession session, @RequestParam("produtoId") Long produtoId, @RequestParam("quantidade") int quantidade){
+    public String addInCart(HttpSession session, @RequestParam("produtoId") Long produtoId, @RequestParam("quantidade") int quantidade) {
 
         boolean produtoJaAdicionado = false;
 
@@ -44,74 +77,71 @@ public class CartController {
         Carrinho carrinho = (Carrinho) session.getAttribute("carrinho");
         List<ItemCarrinho> itens = carrinho.getItens();
 
-        if(itens == null){
+        if (itens == null) {
             itens = new ArrayList<>();
         }
 
-        for(ItemCarrinho item : itens){
+        for (ItemCarrinho item : itens) {
 
-            if(item.getProduto().getId().equals(produtoId)){
+            if (item.getProduto().getId().equals(produtoId)) {
                 item.setQuantidade(item.getQuantidade() + quantidade);
                 item.setProduto(produto);
                 item.setCarrinho(carrinho);
                 item.setImagem(imgProduto.getNomeArquivo());
-                produtoJaAdicionado=true;
+                produtoJaAdicionado = true;
             }
-            
-            
+
         }
 
-        if(!produtoJaAdicionado){
+        if (!produtoJaAdicionado) {
             ItemCarrinho item = new ItemCarrinho();
             item.setCarrinho(carrinho);
             item.setProduto(produto);
             item.setQuantidade(quantidade);
             item.setImagem(imgProduto.getNomeArquivo());
             itens.add(item);
-           
+
         }
-       
+
         carrinho.setItens(itens);
         carrinho.atualizarTotal();
-        session.setAttribute("carrinho", carrinho);
-
-        return "redirect:/produto?id="+produtoId.toString();
-    }
-
-    @PostMapping("/item")
-    public String incrementarProduto(HttpSession session, @RequestParam("itemId") Long itemId){
-     
-        Carrinho carrinho = (Carrinho) session.getAttribute("carrinho");
-
-        List<ItemCarrinho> itens = carrinho.getItens();
-
-        for(ItemCarrinho item : itens){
-            if(itemId == item.getProduto().getId()){
-                item.setQuantidade(item.getQuantidade() + 1);
-            }
-        }
-        
-
-        System.out.println("\n\n\n" + "ANTES DE INCREMENTAR" + carrinho.getItens() + "\n\n\n");
-        carrinho.setItens(itens);
-
-        carrinho.atualizarTotal();
-        System.out.println("\n\n\n" + "DEPOIS DE INCREMENTAR" + carrinho.getItens() + "\n\n\n");
         session.setAttribute("carrinho", carrinho);
 
         return "redirect:/carrinho";
-        
     }
 
-    @PostMapping("/itemreduzir")
-    public String decrementarProduto(HttpSession session, @RequestParam("itemId") Long itemId){
-        
+    @PostMapping("/item")
+    public String incrementarProduto(HttpSession session, @RequestParam("itemId") Long itemId) {
+
         Carrinho carrinho = (Carrinho) session.getAttribute("carrinho");
 
         List<ItemCarrinho> itens = carrinho.getItens();
 
-        for(ItemCarrinho item : itens){
-            if(itemId == item.getProduto().getId()){
+        for (ItemCarrinho item : itens) {
+            if (itemId == item.getProduto().getId()) {
+                item.setQuantidade(item.getQuantidade() + 1);
+            }
+        }
+
+        carrinho.setItens(itens);
+
+        carrinho.atualizarTotal();
+
+        session.setAttribute("carrinho", carrinho);
+
+        return "redirect:/carrinho";
+
+    }
+
+    @PostMapping("/itemreduzir")
+    public String decrementarProduto(HttpSession session, @RequestParam("itemId") Long itemId) {
+
+        Carrinho carrinho = (Carrinho) session.getAttribute("carrinho");
+
+        List<ItemCarrinho> itens = carrinho.getItens();
+
+        for (ItemCarrinho item : itens) {
+            if (itemId == item.getProduto().getId()) {
                 item.setQuantidade(item.getQuantidade() - 1);
             }
 
@@ -122,16 +152,16 @@ public class CartController {
         session.setAttribute("carrinho", carrinho);
 
         return "redirect:/carrinho";
-        
+
     }
 
     @PostMapping("/remover")
     public String removerDoCarrinho(HttpSession session, @RequestParam("itemId") Long itemId) {
-    
+
         Carrinho carrinho = (Carrinho) session.getAttribute("carrinho");
-    
+
         List<ItemCarrinho> itens = carrinho.getItens();
-    
+
         // Itera sobre os itens do carrinho
         Iterator<ItemCarrinho> iterator = itens.iterator();
         while (iterator.hasNext()) {
@@ -140,21 +170,26 @@ public class CartController {
                 // Remove o item do carrinho
                 iterator.remove();
                 // Atualiza o subtotal do carrinho
-                
+
                 carrinho.removerValor(item.getTotal());
                 break; // Se encontrar o item, não é necessário continuar iterando
             }
 
-            
         }
 
-    
         session.setAttribute("carrinho", carrinho);
-    
+
         return "redirect:/carrinho";
     }
-    
-    
 
+    @GetMapping("/pagamento")
+    public String pagamento(HttpSession session) {
+
+        if (session.getAttribute("UsuarioLogado") == null) {
+            return "redirect:/login";
+        }
+
+        return "store/checkout";
+    }
 
 }

@@ -37,4 +37,8 @@ public class DeliveryAddressDTO {
         this.isDefault = false;
     }
 
+    private String longitude;
+
+    private String latitude;
+
 }
