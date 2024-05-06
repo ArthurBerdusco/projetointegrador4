@@ -40,7 +40,6 @@ public class PaginaPrincipal {
         if (carrinho == null) {
             carrinho = new Carrinho();
             session.setAttribute("carrinho", carrinho);
-
         }
 
         if (session.getAttribute("UsuarioLogado") != null) {
@@ -58,16 +57,26 @@ public class PaginaPrincipal {
     }
 
     @GetMapping("/login")
-    public String login(Model model) {
-        model.addAttribute("client", new Client());
+    public String login(Client client, HttpSession session) {
+
+        if (session.getAttribute("UsuarioLogado") != null) {
+            return "redirect:/";
+        }
+
         return "store/login";
     }
 
     @PostMapping("/login")
     public String processamentoLogin(@ModelAttribute("client") Client client, Model model, HttpSession session) {
         boolean valido = clientService.validarLogin(client.getEmail(), client.getPassword());
-        if (valido) {
-            session.setAttribute("UsuarioLogado", client.getEmail());
+
+        session.setAttribute("UsuarioLogado", client.getEmail());
+
+        Carrinho carrinho = (Carrinho) session.getAttribute("carrinho");
+        
+        if (valido && carrinho.getItens().size() > 0) {
+            return "redirect:/carrinho";
+        } else if (valido) {
             return "redirect:/";
         } else {
             model.addAttribute("Error", "Usuário e/ou senha inválidos");
@@ -76,20 +85,11 @@ public class PaginaPrincipal {
         }
     }
 
-
     @GetMapping("/cadastro")
     public String register(ClientDTO client, HttpSession session, Model model) {
 
         if (session.getAttribute("UsuarioLogado") != null) {
-            String emailCliente = (String) session.getAttribute("UsuarioLogado");
-            Optional<Client> clienteOptional = clientRepository.findByEmail(emailCliente);
-            if (clienteOptional.isPresent()) {
-                Client cliente = clienteOptional.get();
-                String nomeCliente = cliente.getFullName();
-                session.setAttribute("clientId", cliente.getId());
-                model.addAttribute("nameClient", nomeCliente);
-                model.addAttribute("client", cliente);
-            }
+            return "redirect:/";
         }
 
         client.getDeliveryAddresses().get(0).setDefault(true);

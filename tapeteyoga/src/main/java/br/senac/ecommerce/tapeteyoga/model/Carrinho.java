@@ -1,6 +1,7 @@
 package br.senac.ecommerce.tapeteyoga.model;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.List;
 
 import jakarta.persistence.CascadeType;
@@ -22,7 +23,7 @@ public class Carrinho {
     private Long id;
 
     @OneToMany(mappedBy = "carrinho", cascade = { CascadeType.PERSIST, CascadeType.MERGE })
-    private List<ItemCarrinho> itens;
+    private List<ItemCarrinho> itens = new ArrayList<>();
 
     private BigDecimal total;
 

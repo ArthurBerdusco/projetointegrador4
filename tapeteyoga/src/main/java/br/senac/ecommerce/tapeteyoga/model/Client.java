@@ -2,6 +2,7 @@ package br.senac.ecommerce.tapeteyoga.model;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.format.annotation.DateTimeFormat;
 
@@ -44,6 +45,13 @@ public class Client {
     @OneToMany(mappedBy = "client", cascade = { CascadeType.PERSIST, CascadeType.MERGE })
     private List<DeliveryAddress> deliveryAddresses;
 
+    public DeliveryAddress getMainDeliveryAddress() {
+        Optional<DeliveryAddress> mainAddress = deliveryAddresses.stream()
+            .filter(DeliveryAddress::isDefault)
+            .findFirst();
+        
+        return mainAddress.orElse(null);
+    }
 
     @Override
     public String toString() {

@@ -7,4 +7,6 @@ import br.senac.ecommerce.tapeteyoga.model.DeliveryAddress;
 
 public interface DeliveryAddressRepository extends JpaRepository<DeliveryAddress, Long> {
   
+    DeliveryAddress findByIsDefaultTrueAndClientId(Long clientId);
+    
 }

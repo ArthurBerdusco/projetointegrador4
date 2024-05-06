@@ -30,7 +30,7 @@ public class SecurityConfiguration {
                 .authorizeHttpRequests(registry -> {
 
                     /* Todos */
-                    registry.requestMatchers("/setup", "/img/**", "/css/**", "/backoffice/setup", "/", "/produto", "/login", "/cadastro", "/cadastro/**","/sair", "/carrinho", "/item", "/item/**", "/itemreduzir", "/remover").permitAll();
+                    registry.requestMatchers("/setup", "/img/**", "/css/**", "/backoffice/setup", "/", "/produto", "/login", "/cadastro", "/pagamento" , "/cadastro/**","/sair", "/carrinho", "/item", "/item/**", "/itemreduzir", "/remover").permitAll();
 
                     /* Administrador e Estoquista */
                     registry.requestMatchers("/backoffice/").hasAnyRole("Administrador", "Estoquista");

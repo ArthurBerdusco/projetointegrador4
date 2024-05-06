@@ -29,4 +29,8 @@ public class BillingAddressDTO {
     private String state;
 
     private Client client;
+
+    private String longitude;
+
+    private String latitude;
 }
