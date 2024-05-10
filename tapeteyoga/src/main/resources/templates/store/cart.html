@@ -49,8 +49,6 @@
                                 <input type="hidden" name="itemId" th:value="${item.produto.id}" readonly />
                                 <button class="btn btn-primary" type="submit"> > </button>
                             </form>
-
-
                         </div>
 
 
@@ -58,7 +56,6 @@
                             <input type="hidden" name="itemId" th:value="${item.produto.id}" readonly />
                             <button type="submit" class="btn btn-danger btn-sm mt-3">Remover do carrinho</button>
                         </form>
-
 
                     </div>
 
@@ -151,6 +148,10 @@
                 <div class="row mt-3">
                     <a class="btn btn-danger" href="/pagamento">IR PARA PAGAMENTO</a>
                     <a class="btn btn-light" href="/">CONTINUAR COMPRANDO</a>
+                    <form action="/pedidos" th:method="post">
+                        <button class="btn btn-success" href="/">COMPRAR</button>
+                    </form>
+                    
                 </div>
 
 

@@ -40,6 +40,9 @@ public class Produto {
     @OneToMany(mappedBy = "produto", cascade = { CascadeType.PERSIST, CascadeType.MERGE })
     private List<ImagemProduto> imagens;
 
+    @OneToMany(mappedBy = "produto", cascade = { CascadeType.PERSIST, CascadeType.MERGE })
+    private List<ItemPedido> itensPedido;
+
     // Getters e Setters
     public Long getId() {
         return id;
@@ -115,6 +118,7 @@ public class Produto {
                 ", stockQuantity=" + stockQuantity +
                 ", isActive=" + isActive +
                 ", rating=" + rating +
+                "imagens=" + imagens +
                 '}';
     }
 }

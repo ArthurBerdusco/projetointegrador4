@@ -49,8 +49,6 @@ public class CartController {
 
         }
 
-        
-
         if (session.getAttribute("UsuarioLogado") != null) {
             String emailCliente = (String) session.getAttribute("UsuarioLogado");
             Optional<Client> clienteOptional = clientRepository.findByEmail(emailCliente);
@@ -59,6 +57,7 @@ public class CartController {
                 session.setAttribute("client", cliente);
                 session.setAttribute("frete", tiposDeFrete);
                 session.setAttribute("entrega", cliente.getMainDeliveryAddress());
+
             }
         }
 
@@ -190,6 +189,11 @@ public class CartController {
         }
 
         return "store/checkout";
+    }
+
+    @PostMapping("/comprar")
+    public String compra(HttpSession session, Model model){
+        return "store/orders";
     }
 
 }
