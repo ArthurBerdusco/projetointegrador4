@@ -33,6 +33,9 @@ public class Client {
 
     private String cpf;
 
+    @OneToMany(mappedBy = "cliente", cascade = {CascadeType.PERSIST, CascadeType.MERGE})
+    private List<Pedido> pedidos;
+
     @DateTimeFormat(pattern = "yyyy-MM-dd")
     @JsonFormat(pattern = "yyyy/MM/dd")
     private LocalDate birthDate;
