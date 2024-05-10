@@ -20,6 +20,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
 
 import br.senac.ecommerce.tapeteyoga.model.BillingAddress;
@@ -259,6 +260,37 @@ public class ClientController {
         }
 
         return "redirect:/cadastro"; 
+    }
+
+    @PostMapping("/addEndereco")
+    public String adicionarEndereco(
+            @RequestParam("novoCEP") String cep,
+            @RequestParam("novoLogradouro") String logradouro,
+            @RequestParam("novoNumero") String numero,
+            @RequestParam("novoComplemento") String complemento,
+            @RequestParam("novoBairro") String bairro,
+            @RequestParam("novoCidade") String cidade,
+            @RequestParam("novoUF") String uf,
+            HttpSession session
+            ) {
+                Client client = (Client) session.getAttribute("client");
+
+                DeliveryAddress endereco = new DeliveryAddress();
+                endereco.setClient(client);
+                endereco.setZipCode(cep);
+                endereco.setStreet(logradouro);
+                endereco.setNumber(numero);
+                endereco.setComplement(complemento);
+                endereco.setNeighborhood(bairro);
+                endereco.setCity(cidade);
+                endereco.setState(uf);
+                endereco.setActive(true);
+                endereco.setDefault(false);
+
+                
+                deliveryAddressRepository.save(endereco);
+
+        return "redirect:/carrinho";
     }
 
 
