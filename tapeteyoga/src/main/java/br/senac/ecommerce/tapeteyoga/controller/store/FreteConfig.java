@@ -1,6 +1,7 @@
 package br.senac.ecommerce.tapeteyoga.controller.store;
 
 import java.math.BigDecimal;
+import java.util.Random;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -10,18 +11,31 @@ import br.senac.ecommerce.tapeteyoga.model.Frete;
 @Configuration
 public class FreteConfig {
 
+    private BigDecimal valor;
+
+    public FreteConfig() {
+        generateRandomValue();
+    }
+
+    private void generateRandomValue() {
+        Random random = new Random();
+        valor = BigDecimal.valueOf(9 + (30 - 9) * random.nextDouble());
+    }
+
     @Bean
     public Frete freteExpresso() {
-        return new Frete("Expresso", new BigDecimal(2.5)); // Preço por km para entrega expressa: R$2.50
+        return new Frete("Expresso", valor, 3);
     }
 
     @Bean
     public Frete freteEconomico() {
-        return new Frete("Econômico", new BigDecimal(1.5)); // Preço por km para entrega econômica: R$1.50
+        BigDecimal valorComDesconto = valor.multiply(BigDecimal.valueOf(0.8)); // 20% discount
+        return new Frete("Econômico", valorComDesconto, 8);
     }
 
     @Bean
     public Frete fretePadrao() {
-        return new Frete("Padrão", new BigDecimal(2.0)); // Preço por km para entrega padrão: R$2.00
+        BigDecimal valorComDesconto = valor.multiply(BigDecimal.valueOf(0.9)); // 10% discount
+        return new Frete("Padrão", valorComDesconto, 5);
     }
 }

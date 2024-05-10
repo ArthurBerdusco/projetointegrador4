@@ -1,11 +1,356 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="pt-br">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Pagamento</title>
+    <th:insert th:insert="fragments/bootstrap.html :: bootstrap"></th:insert>
 </head>
+
 <body>
-    <h1>pagamento</h1>
+    <div th:replace="fragments/store/header.html :: loja-header"></div>
+    <div class="container" style="margin-top: 100px;">
+        <h1 class="mt-5">Formulário de Pagamento</h1>
+
+        <div class="row">
+
+
+
+            <div class="col-6">
+                <h3>Resumo do pedido</h3>
+
+
+                <div class="row">
+                    <div class="container">
+                        <div class="d-flex justify-content-between">
+                            <label for="" th:text="'Valor dos Produtos: '"></label>
+                            <label for="" th:text="'R$' + ${session.carrinho.total}"></label>
+                        </div>
+
+                        <div class="d-flex justify-content-between">
+                            <label for="" th:text="'Valor do Frete:'"></label>
+                            <label id="freteValue" for="" th:text="'R$ 0'"></label>
+                        </div>
+
+                        <div class="d-flex justify-content-between">
+                            <label for="" th:text="'Total a prazo: '"></label>
+                            <label id="totalAPrazo" for="" th:text="'R$' + ${session.carrinho.total}"></label>
+                        </div>
+
+                        <div class="text-end">
+                            <label th:if="${session.carrinho.total != null}"
+                                th:text="'(em até 10x de R$ ' + ${session.carrinho.total / 10} + ' sem juros)'"></label>
+                        </div>
+
+                        <div class="d-flex justify-content-between">
+                            <label for="" th:text="'Total à vista no Pix: '"></label>
+                            <label id="totalAVista" for=""
+                                th:text="'R$' + ${#numbers.formatDecimal(session.carrinho.total * 0.95, 0, 'COMMA', 2, 'POINT')}"></label>
+                        </div>
+
+                    </div>
+
+                    <!-- INFORMAÇÕES DA ENTREGA -->
+                    <div class="col-6" th:unless="${session.client == null}">
+
+                        <label for="">Entrega</label><br>
+                        <label for="" id="idEnderecoPrincipal" th:text="${session.entrega.id}"></label>
+                        <label for="" id="enderecoPrincipal"
+                            th:text="${session.entrega.street} + ', ' + ${session.entrega.number} +' / ' + ${session.entrega.state}"></label>
+                        <label for="" id="cepPrincipal" th:text="${session.entrega.zipCode}"></label>
+
+                        <div class="container">
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <div class="list-group">
+                                        <div th:each="frete : ${session.frete}" class="list-group-item">
+                                            <input type="radio" th:value="${frete.valor}" name="freteradio">
+                                            <label th:text="${frete.tipoEntrega}" class="ml-2"></label>
+                                            <span class="badge badge-primary badge-pill ml-2">
+                                                <label class="text-success"
+                                                    th:text="'R$ ' + ${#numbers.formatDecimal(frete.valor,  0, 'COMMA', 2, 'POINT')}"></label>
+                                            </span>
+                                            <span th:text="'Chegará em ' +${frete.dias} + ' dias'" class="ml-2"></span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Modal -->
+                        <div class="modal fade" id="enderecoModal" tabindex="-1" aria-labelledby="enderecoModalLabel"
+                            aria-hidden="true">
+                            <div class="modal-dialog">
+                                <div class="modal-content">
+                                    <div class="modal-header">
+                                        <h5 class="modal-title" id="enderecoModalLabel">Escolha um endereço</h5>
+                                        <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                            aria-label="Close"></button>
+                                    </div>
+                                    <div class="modal-body">
+                                        <form id="enderecoForm">
+                                            <!-- Loop through delivery addresses -->
+                                            <th:block th:each="endereco : ${session.client.deliveryAddresses}">
+                                                <div class="mb-3 endereco-item">
+                                                    <!-- Opção de seleção de rádio -->
+                                                    <input type="radio" name="endereco" th:value="${endereco.id}" />
+                                                    <!-- id -->
+                                                    <label class="form-label id"
+                                                        th:text="${endereco.id}"></label>
+                                                    <!-- Rua -->
+                                                    <label class="form-label endereco"
+                                                        th:text="${endereco.street}"></label>
+                                                    <!-- Número -->
+                                                    <label class="form-label numero"
+                                                        th:text="${endereco.number}"></label>
+                                                    <!-- CEP -->
+                                                    <label class="form-label cep" th:text="${endereco.zipCode}"></label>
+                                                    <!-- Complemento -->
+                                                    <label class="form-label complemento"
+                                                        th:text="${endereco.complement}"></label>
+                                                </div>
+                                            </th:block>
+                                        </form>
+                                        <div id="camposEnderecoExtra" style="display: none;">
+                                            <!-- Modelo para campos de endereço extra -->
+                                            <div class="mb-3 endereco-item">
+                                                <form action="/cadastro/addEndereco" th:method="post">
+                                                    <input type="number" class="form-control" placeholder="CEP"
+                                                        id="novoCEP" name="novoCEP" oninput="verificarCEP(this.value)">
+                                                    <input type="text" class="form-control" placeholder="Logradouro"
+                                                        id="novoLogradouro" name="novoLogradouro" required>
+                                                    <input type="text" class="form-control" placeholder="Número"
+                                                        id="novoNumero" name="novoNumero" required>
+                                                    <input type="text" class="form-control" placeholder="Complemento"
+                                                        id="novoComplemento" name="novoComplemento">
+                                                    <input type="text" class="form-control" placeholder="Bairro"
+                                                        id="novoBairro" name="novoBairro">
+                                                    <input type="text" class="form-control" placeholder="Cidade"
+                                                        id="novoCidade" name="novoCidade">
+                                                    <input type="text" class="form-control" placeholder="UF" id="novoUF"
+                                                        name="novoUF">
+                                                    <button class="btn btn-success">Salvar</button>
+                                                </form>
+                                            </div>
+                                        </div>
+                                        <button class="btn btn-info" onclick="adicionarCampoEndereco()">Adicionar outro
+                                            endereço</button>
+
+                                    </div>
+                                    <div class="modal-footer">
+                                        <button type="button" class="btn btn-secondary"
+                                            data-bs-dismiss="modal">Fechar</button>
+                                        <button type="button" class="btn btn-primary"
+                                            onclick="selecionarEndereco()">Selecionar</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <button type="button" class="btn btn-primary" data-bs-toggle="modal"
+                            data-bs-target="#enderecoModal">Selecionar outro endereço</button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row border border-secondary my-2 bg-light" th:each="item : ${session.carrinho.itens}">
+
+                <img th:src="${'/img/produtos/' + item.imagem}" class="img-fluid" style="width: 200px;">
+
+                <div class="col">
+                    <label th:text="${item.produto.name}"></label>
+                    <label th:text="${item.produto.description}"></label>
+
+                </div>
+
+                <div class="col">
+                    <div class="row">
+                        <label th:text="'Preço unitário'"></label>
+                        <label th:text="'R$ ' + ${item.quantidade * item.produto.price}"></label>
+                    </div>
+                </div>
+                <div class="col text-center">
+                    <label th:text="Quant."></label>
+
+                    <div class="col d-flex justify-content-center mt-4" style="gap: 10px;">
+                        <h3 th:text="${item.quantidade}"></h3>
+                    </div>
+
+                </div>
+
+                <div class="col">
+                    <div class="row">
+                        <label th:text="'Preço à vista no boleto'"></label>
+                        <label th:text="'R$ ' + ${item.quantidade * item.total}"></label>
+                    </div>
+                </div>
+
+            </div>
+
+        </div>
+
+
+
+        <div class="col-4">
+
+            <div class="form-check">
+                <input class="form-check-input" type="radio" name="metodoPagamento" id="boletoRadio" value="boleto"
+                    onchange="mostrarInfoPagamento()">
+                <label class="form-check-label" for="boletoRadio">
+                    Boleto Bancário
+                </label>
+            </div>
+            <div class="form-check">
+                <input class="form-check-input" type="radio" name="metodoPagamento" id="cartaoRadio" value="cartao"
+                    onchange="mostrarInfoPagamento()">
+                <label class="form-check-label" for="cartaoRadio">
+                    Cartão de Crédito
+                </label>
+            </div>
+
+            <!-- Informações do Boleto -->
+            <div class="info-pagamento d-none mt-3" id="infoBoleto">
+                <h5>Informações do Boleto</h5>
+                <p>Para efetuar o pagamento, utilize o boleto gerado.</p>
+                <h3 id="totalAVistaPedido" th:text="'Valor total do pedido (5%desconto): ' + 'R$' + ${#numbers.formatDecimal(session.carrinho.total * 0.95, 0, 'COMMA', 2, 'POINT')}"></h3>
+            </div>
+
+            <!-- Informações do Cartão de Crédito -->
+            <div class="info-pagamento d-none mt-3" id="infoCartao">
+                <h5>Informações do Cartão de Crédito</h5>
+                <div class="form-group">
+                    <label for="numeroCartao">Número do Cartão:</label>
+                    <input type="text" class="form-control" id="numeroCartao" name="numeroCartao">
+                </div>
+                <div class="form-group">
+                    <label for="nomeTitular">Nome do Titular:</label>
+                    <input type="text" class="form-control" id="nomeTitular" name="nomeTitular">
+                </div>
+                <div class="form-row">
+                    <div class="form-group col-md-6">
+                        <label for="dataValidade">Data de Validade:</label>
+                        <input type="text" class="form-control" id="dataValidade" name="dataValidade"
+                            placeholder="MM/AA">
+                    </div>
+                    <div class="form-group col-md-6">
+                        <label for="cvv">CVV:</label>
+                        <input type="text" class="form-control" id="cvv" name="cvv" placeholder="CVV">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="parcelas">Número de Parcelas:</label>
+                    <select class="form-control" id="parcelas" name="parcelas">
+                        <option value="1" th:text="'1x R$ ' + ${#numbers.formatDecimal(session.carrinho.total, 0, 'COMMA', 2, 'POINT')}"></option>
+                        <option value="2" th:text="'2x R$ ' + ${#numbers.formatDecimal(session.carrinho.total / 2, 0, 'COMMA', 2, 'POINT')}"></option>
+                        <option value="3" th:text="'3x R$ ' + ${#numbers.formatDecimal(session.carrinho.total / 3, 0, 'COMMA', 2, 'POINT')}"></option>
+                        <option value="4" th:text="'4x R$ ' + ${#numbers.formatDecimal(session.carrinho.total / 4, 0, 'COMMA', 2, 'POINT')}"></option>
+                        <option value="5" th:text="'5x R$ ' + ${#numbers.formatDecimal(session.carrinho.total / 5, 0, 'COMMA', 2, 'POINT')}"></option>
+                        <option value="6" th:text="'6x R$ ' + ${#numbers.formatDecimal(session.carrinho.total / 6, 0, 'COMMA', 2, 'POINT')}"></option>
+                        <option value="7" th:text="'7x R$ ' + ${#numbers.formatDecimal(session.carrinho.total / 7, 0, 'COMMA', 2, 'POINT')}"></option>
+                        <option value="8" th:text="'8x R$ ' + ${#numbers.formatDecimal(session.carrinho.total / 8, 0, 'COMMA', 2, 'POINT')}"></option>
+                        <option value="9" th:text="'9x R$ ' + ${#numbers.formatDecimal(session.carrinho.total / 9, 0, 'COMMA', 2, 'POINT')}"></option>
+                        <option value="10" th:text="'10x R$ ' + ${#numbers.formatDecimal(session.carrinho.total / 10, 0, 'COMMA', 2, 'POINT')}"></option>
+                    </select>
+                    
+                </div>
+            </div>
+            <form action="/checkout" th:method="post">
+                <button class="btn btn-success" href="/">FINALIZAR COMPRA</button>
+            </form>
+
+
+
+        </div>
+    </div>
+
+    </div>
+    <script>
+        function mostrarInfoPagamento() {
+            var radios = document.getElementsByName('metodoPagamento');
+            var infoBoleto = document.getElementById("infoBoleto");
+            var infoCartao = document.getElementById("infoCartao");
+
+            for (var i = 0; i < radios.length; i++) {
+                if (radios[i].checked) {
+                    var valorSelecionado = radios[i].value;
+
+                    if (valorSelecionado === 'boleto') {
+                        infoBoleto.classList.remove('d-none');
+                        infoCartao.classList.add('d-none');
+
+                    } else if (valorSelecionado === 'cartao') {
+                        infoBoleto.classList.add('d-none');
+                        infoCartao.classList.remove('d-none');
+
+                    }
+                }
+            }
+        }
+
+        function adicionarCampoEndereco() {
+            var camposEnderecoExtra = document.getElementById('camposEnderecoExtra');
+            var novoCampoEndereco = camposEnderecoExtra.querySelector('.endereco-item').cloneNode(true);
+            camposEnderecoExtra.style.display = 'block'; // Mostrar os campos de endereço extra
+        }
+
+        function selecionarEndereco() {
+
+            var enderecoSelecionado = document.querySelector('input[name="endereco"]:checked');
+            if (enderecoSelecionado) {
+                var endereco = enderecoSelecionado.closest('.endereco-item');
+
+                // Atualize as informações de endereço na página principal
+
+                document.getElementById("idEnderecoPrincipal").innerText = endereco.querySelector('.id').innerText;
+                document.getElementById("enderecoPrincipal").innerText = endereco.querySelector('.endereco').innerText + ", " + endereco.querySelector('.numero').innerText + " / ";
+                document.getElementById("cepPrincipal").innerText = endereco.querySelector('.cep').innerText;
+                // Feche o modal
+                var myModalEl = document.getElementById('enderecoModal');
+                var modal = bootstrap.Modal.getInstance(myModalEl);
+                modal.hide();
+
+            } else {
+                alert("Por favor, selecione um endereço.");
+            }
+        }
+
+        
+    </script>
+
+<script th:inline="javascript">
+    /*<![CDATA[*/
+    // Get all radio buttons with name "freteradio"
+    var radioButtons = document.querySelectorAll('input[name="freteradio"]');
+
+    // Add change event listener to each radio button
+    radioButtons.forEach(function (radioButton) {
+        radioButton.addEventListener('change', function () {
+            // Get the selected value
+            var selectedValue = parseFloat(this.value);
+
+            // Update the label with the selected freight value
+            document.getElementById("freteValue").innerText = 'R$ ' + selectedValue.toFixed(2);
+
+            // Get the total value of products
+            var totalProduto = parseFloat([[${ session.carrinho.total }]]);
+
+            // Calculate the new total values based on the selected freight value
+            var totalAPrazo = totalProduto + selectedValue;
+            var totalAVista = totalProduto * 0.95 + selectedValue;
+
+            // Update the labels with the calculated values
+            document.getElementById("totalAPrazo").innerText = 'R$ ' + totalAPrazo.toFixed(2);
+            document.getElementById("totalAVista").innerText = 'R$ ' + totalAVista.toFixed(2);
+
+            // document.getElementById("totalAPrazoPedido").innerText = 'R$ ' + totalAPrazo.toFixed(2);
+            document.getElementById("totalAVistaPedido").innerText = 'Valor total do pedido (Parcelado): R$ ' + totalAVista.toFixed(2);
+
+
+        });
+    });
+    /*]]>*/ 
+    </script>
 </body>
+
 </html>
