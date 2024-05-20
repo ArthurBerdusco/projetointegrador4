@@ -28,11 +28,9 @@ public class Carrinho {
     private BigDecimal total;
 
     public void atualizarTotal() {
-        this.total = BigDecimal.ZERO; // Inicializa o total como zero
+        this.total = BigDecimal.ZERO; 
         for (ItemCarrinho item : this.itens) {
-            System.out.println("TOTAL: " + this.total);
-            this.total = this.total.add(item.getTotal()); // Soma o total de cada item ao total do carrinho
-            System.out.println("TOTAL: " + this.total);
+            this.total = this.total.add(item.getTotal()); 
         }
     }
 

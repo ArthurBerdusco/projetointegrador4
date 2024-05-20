@@ -10,4 +10,5 @@ import br.senac.ecommerce.tapeteyoga.model.Pedido;
 public interface PedidoRepository extends JpaRepository<Pedido, Long> {
   
     List<Pedido> findAllByOrderByIdDesc();
+    List<Pedido> findAllByOrderByDataPedidoDesc();
 }

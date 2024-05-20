@@ -30,10 +30,10 @@ public class SecurityConfiguration {
                 .authorizeHttpRequests(registry -> {
 
                     /* Todos */
-                    registry.requestMatchers("/checkout","/addEndereco", "/setup", "/img/**", "/css/**", "/backoffice/setup", "/", "/produto", "/login", "/cadastro", "/pagamento" , "/cadastro/**","/sair", "/carrinho", "/item", "/item/**", "/itemreduzir", "/remover","/pedidos", "/pedidos/**", "/comprar").permitAll();
+                    registry.requestMatchers("/resumo", "/resumo/**", "/pagamento", "/pagamento/**","/addEndereco", "/setup", "/img/**", "/css/**", "/css", "/backoffice/setup", "/", "/produto", "/login", "/cadastro", "/cadastro/**","/sair", "/carrinho", "/item", "/item/**", "/itemreduzir", "/remover","/pedidos", "/pedidos/**", "/comprar").permitAll();
 
                     /* Administrador e Estoquista */
-                    registry.requestMatchers("/backoffice/").hasAnyRole("Administrador", "Estoquista");
+                    registry.requestMatchers("/backoffice/", "/backoffice/pedidos", "/backoffice/pedidos/**").hasAnyRole("Administrador", "Estoquista");
 
                     /* Estoquista ---> NÃO PODE ACESSAR /backoffice/listar-produtos */
                     registry.requestMatchers("/backoffice/usuarios").hasRole("Administrador");

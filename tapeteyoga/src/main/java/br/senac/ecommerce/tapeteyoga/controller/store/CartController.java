@@ -176,19 +176,10 @@ public class CartController {
 
         }
 
+        carrinho.atualizarTotal();
         session.setAttribute("carrinho", carrinho);
 
         return "redirect:/carrinho";
-    }
-
-    @GetMapping("/pagamento")
-    public String pagamento(HttpSession session) {
-
-        if (session.getAttribute("UsuarioLogado") == null) {
-            return "redirect:/login";
-        }
-
-        return "store/checkout";
     }
 
     @PostMapping("/comprar")
