@@ -66,16 +66,15 @@
                                     <tbody>
                                         <tr th:each="frete : ${session.frete}">
                                             <td>
-                                                <input type="radio" th:value="${frete.valor}" name="freteradio">
+                                                <input type="radio" th:value="${frete.id}" name="freteradio" th:checked="${frete.id == session.selectedFreteId}">
                                             </td>
                                             <td th:text="${frete.tipoEntrega}" class="ml-2"></td>
                                             <td>
                                                 <span class="badge badge-primary badge-pill">
-                                                    <label class="text-success h6"
-                                                        th:text="'R$ ' + ${#numbers.formatDecimal(frete.valor,  0, 'COMMA', 2, 'POINT')}"></label>
+                                                    <label class="text-success h6" th:text="'R$ ' + ${#numbers.formatDecimal(frete.valor,  0, 'COMMA', 2, 'POINT')}"></label>
                                                 </span>
                                             </td>
-                                            <td th:text="'Chegará em ' +${frete.dias} + ' dias'" class="ml-2"></td>
+                                            <td th:text="'Chegará em ' + ${frete.dias} + ' dias'" class="ml-2"></td>
                                         </tr>
                                     </tbody>
                                 </table>

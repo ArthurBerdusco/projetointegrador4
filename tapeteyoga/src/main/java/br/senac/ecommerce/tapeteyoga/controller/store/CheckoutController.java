@@ -31,7 +31,7 @@ import jakarta.servlet.http.HttpSession;
 public class CheckoutController {
 
     @Autowired
-     List<Frete> tiposDeFrete;
+    List<Frete> tiposDeFrete;
 
     @Autowired
     ClientRepository clientRepository;
@@ -39,19 +39,17 @@ public class CheckoutController {
     @Autowired
     DeliveryAddressRepository deliveryAddressRepository;
 
-    @GetMapping
-    public String pagamento(HttpSession session) {
+    @PostMapping
+    public String pagamento(@RequestParam(value = "freteradio", required = false) Long freteId, HttpSession session) {
 
         if (session.getAttribute("UsuarioLogado") == null) {
             return "redirect:/login";
         }
 
-
         Carrinho carrinho = (Carrinho) session.getAttribute("carrinho");
         if (carrinho == null) {
             carrinho = new Carrinho();
             session.setAttribute("carrinho", carrinho);
-
         }
 
         if (session.getAttribute("UsuarioLogado") != null) {
@@ -63,6 +61,14 @@ public class CheckoutController {
                 session.setAttribute("frete", tiposDeFrete);
                 session.setAttribute("entrega", cliente.getMainDeliveryAddress());
 
+                if (freteId != null) {
+                    Optional<Frete> selectedFrete = tiposDeFrete.stream().filter(f -> f.getId().equals(freteId))
+                            .findFirst();
+                    if (selectedFrete.isPresent()) {
+                        session.setAttribute("selectedFreteId", freteId);
+                        // carrinho.setFrete(selectedFrete.get());
+                    }
+                }
             }
         }
 
@@ -71,50 +77,50 @@ public class CheckoutController {
 
     @PostMapping("/concluir-pedido")
 public String concluirPedido(HttpSession session, @RequestParam("idEnderecoPrincipal") String idEndereco,
-                             @RequestParam("valorFrete") String frete, @RequestParam("formaPagamento") String formaPagamento) {
+        @RequestParam("valorFrete") String frete, @RequestParam("formaPagamento") String formaPagamento) {
 
-    DeliveryAddress endereco = deliveryAddressRepository.findById(Long.valueOf(idEndereco)).orElseThrow();
-    
+    // Retrieve the delivery address
+    DeliveryAddress endereco = deliveryAddressRepository.findById(Long.valueOf(idEndereco))
+            .orElseThrow(() -> new IllegalArgumentException("Endereço não encontrado"));
+
+    // Create a new Pedido object
     Pedido pedido = new Pedido();
     List<ItemPedido> itensPedido = new ArrayList<>();
 
-    Client client = clientRepository.findById((Long) session.getAttribute("clientId")).orElseThrow();
+    // Retrieve the client
+    Client client = clientRepository.findById((Long) session.getAttribute("clientId"))
+            .orElseThrow(() -> new IllegalArgumentException("Cliente não encontrado"));
 
+    // Retrieve the cart
     Carrinho carrinho = (Carrinho) session.getAttribute("carrinho");
 
+    // Calculate the total order value
     BigDecimal valorFrete = new BigDecimal(frete);
     BigDecimal totalPedido = carrinho.getTotal().add(valorFrete);
 
-
-    System.out.println("\n\n\n" + carrinho.getTotal() + "\n\n\n");
-    System.out.println("\n\n\n" + valorFrete + "\n\n\n");
-    System.out.println("\n\n\n" + totalPedido + "\n\n\n" + " --> TOTAL PEDIDO ANTES");
-
-    if(formaPagamento.equals("Boleto Bancário")) {
-        totalPedido = totalPedido.multiply(new BigDecimal(0.95)); // Ajusta o total para pagamento via boleto
+    // Apply discount for "Boleto Bancário" payment method
+    if (formaPagamento.equals("Boleto Bancário")) {
+        totalPedido = totalPedido.multiply(new BigDecimal(0.95));
     }
 
-    System.out.println("\n\n\n" + totalPedido + "\n\n\n" + " --> TOTAL PEDIDO DEPOIS");
+    System.err.println("\n\n\n" + carrinho + "\n\n\n");
 
+    // Set properties on the Pedido object
     pedido.setTotal(totalPedido);
     pedido.setCliente(client);
     pedido.setStatus("Aguardando pagamento");
     pedido.setEnderecoEntrega(endereco);
     pedido.setValorFrete(valorFrete);
     pedido.setFormaPagamento(formaPagamento);
-    
     pedido.setSerial(ThreadLocalRandom.current().nextLong(1000000000L, 10000000000L));
 
-    // Obtém a data e hora atual
+    // Set formatted order date
     LocalDateTime dataAtual = LocalDateTime.now();
-
-    // Formata a data e hora no padrão 'dd/MM/yyyy - hh:mm'
     DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy - HH:mm");
     String dataHoraFormatada = dataAtual.format(formatter);
-
-    // Define a data formatada no pedido
     pedido.setDataPedido(dataHoraFormatada);
 
+    // Transfer items from the cart to the order
     for (ItemCarrinho itemCarrinho : carrinho.getItens()) {
         ItemPedido itemPedido = new ItemPedido();
         itemPedido.setProduto(itemCarrinho.getProduto());
@@ -126,10 +132,12 @@ public String concluirPedido(HttpSession session, @RequestParam("idEnderecoPrinc
 
     pedido.setItens(itensPedido);
 
-    session.setAttribute("pedido", pedido); // Armazena o pedido na sessão
-    //session.removeAttribute("carrinho"); // Remove o carrinho da sessão
+    // Store the order in the session and remove the cart
+    session.setAttribute("pedido", pedido);
+    //session.removeAttribute("carrinho");
 
-    return "redirect:/resumo"; // Redireciona para a página de resumo do pedido
+    // Redirect to the order summary page
+    return "redirect:/resumo";
 }
 
 
@@ -142,23 +150,22 @@ public String concluirPedido(HttpSession session, @RequestParam("idEnderecoPrinc
             @RequestParam("novoBairro") String bairro,
             @RequestParam("novoCidade") String cidade,
             @RequestParam("novoUF") String uf,
-            HttpSession session
-            ) {
-                Client client = (Client) session.getAttribute("client");
+            HttpSession session) {
+        Client client = (Client) session.getAttribute("client");
 
-                DeliveryAddress endereco = new DeliveryAddress();
-                endereco.setClient(client);
-                endereco.setZipCode(cep);
-                endereco.setStreet(logradouro);
-                endereco.setNumber(numero);
-                endereco.setComplement(complemento);
-                endereco.setNeighborhood(bairro);
-                endereco.setCity(cidade);
-                endereco.setState(uf);
-                endereco.setActive(true);
-                endereco.setDefault(false);
+        DeliveryAddress endereco = new DeliveryAddress();
+        endereco.setClient(client);
+        endereco.setZipCode(cep);
+        endereco.setStreet(logradouro);
+        endereco.setNumber(numero);
+        endereco.setComplement(complemento);
+        endereco.setNeighborhood(bairro);
+        endereco.setCity(cidade);
+        endereco.setState(uf);
+        endereco.setActive(true);
+        endereco.setDefault(false);
 
-                deliveryAddressRepository.save(endereco);
+        deliveryAddressRepository.save(endereco);
 
         return "redirect:/pagamento";
     }

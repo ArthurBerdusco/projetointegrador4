@@ -24,18 +24,19 @@ public class FreteConfig {
 
     @Bean
     public Frete freteExpresso() {
-        return new Frete("Expresso", valor, 3);
+        return new Frete(1L, "Expresso", valor, 3);
     }
+    
 
     @Bean
     public Frete freteEconomico() {
         BigDecimal valorComDesconto = valor.multiply(BigDecimal.valueOf(0.8)); // 20% discount
-        return new Frete("Econômico", valorComDesconto, 8);
+        return new Frete(2L, "Econômico", valorComDesconto, 8);
     }
 
     @Bean
     public Frete fretePadrao() {
         BigDecimal valorComDesconto = valor.multiply(BigDecimal.valueOf(0.9)); // 10% discount
-        return new Frete("Padrão", valorComDesconto, 5);
+        return new Frete(3L, "Padrão", valorComDesconto, 5);
     }
 }
