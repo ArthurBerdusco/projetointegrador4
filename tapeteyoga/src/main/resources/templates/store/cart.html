@@ -174,28 +174,26 @@
                                         <form action="/pagamento" method="post">
                                             <div class="list-group">
                                                 <div th:each="frete : ${session.frete}" class="list-group-item">
-                                                    <input type="text" th:value="${frete.id}" readonly hidden>
                                                     <input type="radio" th:value="${frete.id}" name="freteradio">
                                                     <label th:text="${frete.tipoEntrega}" class="ml-2"></label>
                                                     <span class="badge badge-primary badge-pill ml-2">
                                                         <label class="text-success"
-                                                            th:text="'R$ ' + ${#numbers.formatDecimal(frete.valor,  0, 'COMMA', 2, 'POINT')}"></label>
+                                                               th:text="'R$ ' + ${#numbers.formatDecimal(frete.valor,  0, 'COMMA', 2, 'POINT')}"></label>
                                                     </span>
-                                                    <span th:text="'Chegará em ' +${frete.dias} + ' dias'"
-                                                        class="ml-2"></span>
+                                                    <span th:text="'Chegará em ' + ${frete.dias} + ' dias'" class="ml-2"></span>
                                                 </div>
                                             </div>
-
+                                        
                                             <div class="text-center my-3">
-                                                <button type="button" class="btn btn-primary" data-bs-toggle="modal"
-                                                    data-bs-target="#enderecoModal">Selecionar outro endereço</button>
+                                                <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#enderecoModal">
+                                                    Selecionar outro endereço
+                                                </button>
                                             </div>
-
+                                        
                                             <div class="row bg-light mt-3 p-4 shadow rounded">
                                                 <div class="col">
                                                     <div class="row mb-3">
-                                                        <button type="submit" class="btn btn-secondary">IR PARA
-                                                            PAGAMENTO</button>
+                                                        <button type="submit" class="btn btn-secondary">IR PARA PAGAMENTO</button>
                                                     </div>
                                                     <div class="row">
                                                         <a class="btn btn-warning" href="/">CONTINUAR COMPRANDO</a>
@@ -203,6 +201,7 @@
                                                 </div>
                                             </div>
                                         </form>
+                                        
                                     </div>
                                 </div>
                             </div>
@@ -318,7 +317,7 @@
 
                 // Calculate the new total values based on the selected freight value
                 var totalAPrazo = totalProduto + selectedValue;
-                var totalAVista = totalProduto * 0.95 + selectedValue;
+                var totalAVista = (totalProduto + selectedValue) * 0.95;
 
                 // Update the labels with the calculated values
                 document.getElementById("totalAPrazo").innerText = 'R$ ' + totalAPrazo.toFixed(2);

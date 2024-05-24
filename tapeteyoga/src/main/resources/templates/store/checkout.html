@@ -441,51 +441,59 @@ valorFrete = parseFloat(freteSelecionado.value);
 
         
     </script>
-
 <script th:inline="javascript">
     /*<![CDATA[*/
     // Get all radio buttons with name "freteradio"
     var radioButtons = document.querySelectorAll('input[name="freteradio"]');
-
+    
+    // Function to update the freight value and total values
+    function updateValues(selectedValue) {
+        // Update the label with the selected freight value
+        document.getElementById("freteValue").innerText = 'R$ ' + selectedValue.toFixed(2);
+    
+        // Get the total value of products
+        var totalProduto = parseFloat([[${ session.carrinho.total }]]);
+    
+        // Calculate the new total values based on the selected freight value
+        var totalAPrazo = totalProduto + selectedValue;
+        var totalAVista = (totalProduto + selectedValue) * 0.95;
+    
+        // Update the labels with the calculated values
+        document.getElementById("totalAPrazo").innerText = 'R$ ' + totalAPrazo.toFixed(2);
+        document.getElementById("totalAVista").innerText = 'R$ ' + totalAVista.toFixed(2);
+    
+        document.getElementById("totalAVistaPedido").innerText = 'Valor total do pedido (Boleto): R$ ' + totalAVista.toFixed(2);
+    
+        // Update the value of freight in installments
+        var parcelas = document.getElementById('parcelas').querySelectorAll('option');
+        parcelas.forEach(function (option) {
+            var numParcelas = parseInt(option.value);
+            var valorParcela = (totalProduto + selectedValue) / numParcelas;
+            option.innerText = numParcelas + 'x R$ ' + valorParcela.toFixed(2);
+        });
+    }
+    
     // Add change event listener to each radio button
     radioButtons.forEach(function (radioButton) {
         radioButton.addEventListener('change', function () {
             // Get the selected value
             var selectedValue = parseFloat(this.value);
-
-            // Update the label with the selected freight value
-            document.getElementById("freteValue").innerText = 'R$ ' + selectedValue.toFixed(2);
-
-            // Get the total value of products
-            var totalProduto = parseFloat([[${ session.carrinho.total }]]);
-
-            // Calculate the new total values based on the selected freight value
-            var totalAPrazo = totalProduto + selectedValue;
-            var totalAVista = (totalProduto + selectedValue )* 0.95  ;
-
-            // Update the labels with the calculated values
-            document.getElementById("totalAPrazo").innerText = 'R$ ' + totalAPrazo.toFixed(2);
-            document.getElementById("totalAVista").innerText = 'R$ ' + totalAVista.toFixed(2);
-
-            // document.getElementById("totalAPrazoPedido").innerText = 'R$ ' + totalAPrazo.toFixed(2);
-            document.getElementById("totalAVistaPedido").innerText = 'Valor total do pedido (Boleto): R$ ' + totalAVista.toFixed(2);
-
-            // Obtenha o valor do frete selecionado
-        var selectedFrete = parseFloat(this.value);
-
-// Atualize o valor do frete nas parcelas
-var parcelas = document.getElementById('parcelas').querySelectorAll('option');
-parcelas.forEach(function (option) {
-    var numParcelas = parseInt(option.value);
-    var valorParcela = ([[${ session.carrinho.total }]] + selectedFrete) / numParcelas;
-    option.innerText = numParcelas + 'x R$ ' + valorParcela.toFixed(2);
-});
-
-
+            updateValues(selectedValue);
         });
     });
-    /*]]>*/ 
+    
+    window.onload = function() {
+        // Find the selected radio button
+        var selectedRadioButton = document.querySelector('input[name="freteradio"]:checked');
+        if (selectedRadioButton) {
+            // Get the selected value
+            var selectedValue = parseFloat(selectedRadioButton.value);
+            updateValues(selectedValue);
+        }
+    }
+    /*]]>*/
     </script>
+    
 </body>
 
 </html>

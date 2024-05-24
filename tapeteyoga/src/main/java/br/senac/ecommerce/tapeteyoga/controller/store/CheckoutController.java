@@ -10,7 +10,6 @@ import java.util.concurrent.ThreadLocalRandom;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -40,9 +39,9 @@ public class CheckoutController {
     DeliveryAddressRepository deliveryAddressRepository;
 
     @PostMapping
-    public String pagamento(@RequestParam(value = "freteradio", required = false) Long freteId, HttpSession session) {
+    public String pagamento(@RequestParam(value = "freteradio", required = false) BigDecimal freteId, HttpSession session) {
 
-        if (session.getAttribute("UsuarioLogado") == null) {
+        if (session.getAttribute("UsuarioLogado") == null) {  
             return "redirect:/login";
         }
 
@@ -51,6 +50,7 @@ public class CheckoutController {
             carrinho = new Carrinho();
             session.setAttribute("carrinho", carrinho);
         }
+      
 
         if (session.getAttribute("UsuarioLogado") != null) {
             String emailCliente = (String) session.getAttribute("UsuarioLogado");
@@ -103,7 +103,6 @@ public String concluirPedido(HttpSession session, @RequestParam("idEnderecoPrinc
         totalPedido = totalPedido.multiply(new BigDecimal(0.95));
     }
 
-    System.err.println("\n\n\n" + carrinho + "\n\n\n");
 
     // Set properties on the Pedido object
     pedido.setTotal(totalPedido);
